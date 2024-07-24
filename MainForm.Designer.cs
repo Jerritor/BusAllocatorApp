@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            checklisttableLayoutPanel = new TableLayoutPanel();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            tableLayoutPanel1 = new TableLayoutPanel();
             button7 = new Button();
             button4 = new Button();
             button6 = new Button();
@@ -44,85 +45,117 @@
             button1 = new Button();
             button2 = new Button();
             button5 = new Button();
-            checklisttableLayoutPanel.SuspendLayout();
+            dataGridView1 = new DataGridView();
+            label2 = new Label();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            button8 = new Button();
+            button9 = new Button();
+            button10 = new Button();
+            panel2 = new Panel();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            label3 = new Label();
+            textBox1 = new TextBox();
+            backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            tableLayoutPanel1.SuspendLayout();
             panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            tableLayoutPanel2.SuspendLayout();
+            panel2.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
             SuspendLayout();
             // 
-            // checklisttableLayoutPanel
+            // tableLayoutPanel1
             // 
-            checklisttableLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            checklisttableLayoutPanel.ColumnCount = 3;
-            checklisttableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
-            checklisttableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
-            checklisttableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 252F));
-            checklisttableLayoutPanel.Controls.Add(button7, 2, 4);
-            checklisttableLayoutPanel.Controls.Add(button4, 1, 4);
-            checklisttableLayoutPanel.Controls.Add(button6, 2, 3);
-            checklisttableLayoutPanel.Controls.Add(button3, 1, 3);
-            checklisttableLayoutPanel.Controls.Add(label1, 0, 0);
-            checklisttableLayoutPanel.Controls.Add(panel1, 0, 1);
-            checklisttableLayoutPanel.Controls.Add(button1, 1, 1);
-            checklisttableLayoutPanel.Controls.Add(button2, 1, 2);
-            checklisttableLayoutPanel.Controls.Add(button5, 2, 2);
-            checklisttableLayoutPanel.Location = new Point(12, 12);
-            checklisttableLayoutPanel.Name = "checklisttableLayoutPanel";
-            checklisttableLayoutPanel.RowCount = 6;
-            checklisttableLayoutPanel.RowStyles.Add(new RowStyle());
-            checklisttableLayoutPanel.RowStyles.Add(new RowStyle());
-            checklisttableLayoutPanel.RowStyles.Add(new RowStyle());
-            checklisttableLayoutPanel.RowStyles.Add(new RowStyle());
-            checklisttableLayoutPanel.RowStyles.Add(new RowStyle());
-            checklisttableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            checklisttableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            checklisttableLayoutPanel.Size = new Size(832, 496);
-            checklisttableLayoutPanel.TabIndex = 0;
+            tableLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel1.ColumnCount = 3;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.Controls.Add(button7, 2, 4);
+            tableLayoutPanel1.Controls.Add(button4, 1, 4);
+            tableLayoutPanel1.Controls.Add(button6, 2, 3);
+            tableLayoutPanel1.Controls.Add(button3, 1, 3);
+            tableLayoutPanel1.Controls.Add(label1, 0, 0);
+            tableLayoutPanel1.Controls.Add(panel1, 0, 1);
+            tableLayoutPanel1.Controls.Add(button1, 1, 1);
+            tableLayoutPanel1.Controls.Add(button2, 1, 2);
+            tableLayoutPanel1.Controls.Add(button5, 2, 2);
+            tableLayoutPanel1.Controls.Add(dataGridView1, 0, 6);
+            tableLayoutPanel1.Controls.Add(label2, 0, 5);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 7);
+            tableLayoutPanel1.Controls.Add(panel2, 0, 8);
+            tableLayoutPanel1.Location = new Point(12, 12);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 9;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel1.Size = new Size(896, 583);
+            tableLayoutPanel1.TabIndex = 0;
             // 
             // button7
             // 
+            button7.BackColor = SystemColors.ActiveCaptionText;
+            button7.Dock = DockStyle.Left;
             button7.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            button7.ForeColor = SystemColors.ControlLightLight;
             button7.Location = new Point(648, 166);
             button7.Name = "button7";
-            button7.Size = new Size(181, 40);
+            button7.Size = new Size(245, 40);
             button7.TabIndex = 13;
             button7.Text = "Set Date";
-            button7.UseVisualStyleBackColor = true;
+            button7.UseVisualStyleBackColor = false;
             // 
             // button4
             // 
+            button4.BackColor = SystemColors.ControlText;
+            button4.Dock = DockStyle.Fill;
             button4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            button4.ForeColor = SystemColors.ControlLightLight;
             button4.Location = new Point(400, 166);
             button4.Name = "button4";
             button4.Size = new Size(242, 40);
             button4.TabIndex = 10;
             button4.Text = "Edit Date";
-            button4.UseVisualStyleBackColor = true;
+            button4.UseVisualStyleBackColor = false;
             // 
             // button6
             // 
+            button6.BackColor = SystemColors.ControlText;
+            button6.Dock = DockStyle.Left;
             button6.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            button6.ForeColor = SystemColors.ControlLightLight;
             button6.Location = new Point(648, 120);
             button6.Name = "button6";
-            button6.Size = new Size(181, 40);
+            button6.Size = new Size(245, 40);
             button6.TabIndex = 12;
             button6.Text = "Set Date";
-            button6.UseVisualStyleBackColor = true;
+            button6.UseVisualStyleBackColor = false;
             // 
             // button3
             // 
-            button3.Anchor = AnchorStyles.None;
+            button3.BackColor = SystemColors.ControlText;
+            button3.Dock = DockStyle.Fill;
             button3.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            button3.ForeColor = SystemColors.ControlLightLight;
             button3.Location = new Point(400, 120);
             button3.Name = "button3";
             button3.Size = new Size(242, 40);
             button3.TabIndex = 9;
             button3.Text = "Edit Date";
-            button3.UseVisualStyleBackColor = true;
+            button3.UseVisualStyleBackColor = false;
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            label1.Font = new Font("Segoe UI", 13F, FontStyle.Bold | FontStyle.Underline);
             label1.Location = new Point(51, 0);
             label1.Name = "label1";
             label1.Size = new Size(294, 25);
@@ -141,7 +174,7 @@
             panel1.Controls.Add(dateTimePicker1);
             panel1.Location = new Point(3, 28);
             panel1.Name = "panel1";
-            checklisttableLayoutPanel.SetRowSpan(panel1, 4);
+            tableLayoutPanel1.SetRowSpan(panel1, 4);
             panel1.Size = new Size(391, 178);
             panel1.TabIndex = 7;
             // 
@@ -215,6 +248,7 @@
             // dateTimePicker1
             // 
             dateTimePicker1.Checked = false;
+            dateTimePicker1.Enabled = false;
             dateTimePicker1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             dateTimePicker1.Location = new Point(115, 95);
             dateTimePicker1.Name = "dateTimePicker1";
@@ -223,55 +257,206 @@
             // 
             // button1
             // 
-            checklisttableLayoutPanel.SetColumnSpan(button1, 2);
+            button1.BackColor = SystemColors.ControlText;
+            tableLayoutPanel1.SetColumnSpan(button1, 2);
+            button1.Dock = DockStyle.Left;
             button1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            button1.ForeColor = SystemColors.ControlLightLight;
             button1.Location = new Point(400, 28);
             button1.Name = "button1";
-            button1.Size = new Size(429, 40);
+            button1.Size = new Size(493, 40);
             button1.TabIndex = 0;
             button1.Text = "Upload Bus Rates Spreadsheet";
-            button1.UseVisualStyleBackColor = true;
+            button1.UseVisualStyleBackColor = false;
             // 
             // button2
             // 
-            button2.Anchor = AnchorStyles.None;
+            button2.BackColor = SystemColors.ControlText;
+            button2.Dock = DockStyle.Fill;
             button2.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            button2.ForeColor = SystemColors.ControlLightLight;
             button2.Location = new Point(400, 74);
             button2.Name = "button2";
             button2.Size = new Size(242, 40);
             button2.TabIndex = 8;
             button2.Text = "Upload Demand Spreadsheet";
-            button2.UseVisualStyleBackColor = true;
+            button2.UseVisualStyleBackColor = false;
             // 
             // button5
             // 
-            button5.Anchor = AnchorStyles.Left;
+            button5.BackColor = SystemColors.ControlText;
+            button5.Dock = DockStyle.Left;
             button5.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            button5.ForeColor = SystemColors.ControlLightLight;
             button5.Location = new Point(648, 74);
             button5.Name = "button5";
-            button5.Size = new Size(181, 40);
+            button5.Size = new Size(245, 40);
             button5.TabIndex = 11;
             button5.Text = "Check/Edit Demands";
-            button5.UseVisualStyleBackColor = true;
+            button5.UseVisualStyleBackColor = false;
+            // 
+            // dataGridView1
+            // 
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.AllowUserToResizeColumns = false;
+            dataGridView1.AllowUserToResizeRows = false;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            tableLayoutPanel1.SetColumnSpan(dataGridView1, 3);
+            dataGridView1.Dock = DockStyle.Fill;
+            dataGridView1.Location = new Point(3, 237);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.Size = new Size(890, 48);
+            dataGridView1.TabIndex = 14;
+            // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.None;
+            label2.AutoSize = true;
+            tableLayoutPanel1.SetColumnSpan(label2, 3);
+            label2.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            label2.Location = new Point(342, 209);
+            label2.Name = "label2";
+            label2.Size = new Size(211, 25);
+            label2.TabIndex = 15;
+            label2.Text = "Total Rider Information";
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.ColumnCount = 3;
+            tableLayoutPanel1.SetColumnSpan(tableLayoutPanel2, 3);
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.Controls.Add(button8, 0, 0);
+            tableLayoutPanel2.Controls.Add(button9, 1, 0);
+            tableLayoutPanel2.Controls.Add(button10, 2, 0);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Location = new Point(3, 291);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.Size = new Size(890, 44);
+            tableLayoutPanel2.TabIndex = 16;
+            // 
+            // button8
+            // 
+            button8.BackColor = SystemColors.ControlText;
+            button8.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            button8.ForeColor = SystemColors.ControlLightLight;
+            button8.Location = new Point(3, 3);
+            button8.Name = "button8";
+            button8.Size = new Size(202, 40);
+            button8.TabIndex = 0;
+            button8.Text = "Settings";
+            button8.UseVisualStyleBackColor = false;
+            // 
+            // button9
+            // 
+            button9.BackColor = SystemColors.ControlText;
+            button9.Dock = DockStyle.Fill;
+            button9.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            button9.ForeColor = SystemColors.ControlLightLight;
+            button9.Location = new Point(211, 3);
+            button9.Name = "button9";
+            button9.Size = new Size(335, 41);
+            button9.TabIndex = 1;
+            button9.Text = "Generate Demands Spreadsheet";
+            button9.UseVisualStyleBackColor = false;
+            // 
+            // button10
+            // 
+            button10.BackColor = SystemColors.ControlText;
+            button10.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            button10.ForeColor = SystemColors.ControlLightLight;
+            button10.Location = new Point(552, 3);
+            button10.Name = "button10";
+            button10.Size = new Size(335, 41);
+            button10.TabIndex = 2;
+            button10.Text = "Generate Allocations Spreadsheet";
+            button10.UseVisualStyleBackColor = false;
+            // 
+            // panel2
+            // 
+            panel2.BorderStyle = BorderStyle.FixedSingle;
+            tableLayoutPanel1.SetColumnSpan(panel2, 3);
+            panel2.Controls.Add(tableLayoutPanel3);
+            panel2.Location = new Point(3, 341);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(890, 239);
+            panel2.TabIndex = 17;
+            // 
+            // tableLayoutPanel3
+            // 
+            tableLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            tableLayoutPanel3.ColumnCount = 1;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel3.Controls.Add(label3, 0, 0);
+            tableLayoutPanel3.Controls.Add(textBox1, 0, 1);
+            tableLayoutPanel3.Location = new Point(0, 0);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 2;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle());
+            tableLayoutPanel3.RowStyles.Add(new RowStyle());
+            tableLayoutPanel3.Size = new Size(844, 237);
+            tableLayoutPanel3.TabIndex = 0;
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Top;
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 13F, FontStyle.Bold | FontStyle.Underline);
+            label3.Location = new Point(367, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(109, 25);
+            label3.TabIndex = 0;
+            label3.Text = "Output Log";
+            // 
+            // textBox1
+            // 
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            textBox1.Font = new Font("Segoe UI", 10F);
+            textBox1.Location = new Point(3, 28);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(838, 206);
+            textBox1.TabIndex = 1;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
             ClientSize = new Size(1200, 800);
-            Controls.Add(checklisttableLayoutPanel);
+            Controls.Add(tableLayoutPanel1);
             Name = "MainForm";
             Text = "Bus Allocator";
-            checklisttableLayoutPanel.ResumeLayout(false);
-            checklisttableLayoutPanel.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            tableLayoutPanel2.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel3.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private TableLayoutPanel checklisttableLayoutPanel;
+        private TableLayoutPanel tableLayoutPanel1;
         private Button button1;
         private Label label1;
         private Panel panel1;
@@ -287,5 +472,16 @@
         private Button button3;
         private Button button6;
         private Button button7;
+        private DataGridView dataGridView1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private Label label2;
+        private TableLayoutPanel tableLayoutPanel2;
+        private Button button8;
+        private Button button9;
+        private Button button10;
+        private Panel panel2;
+        private TableLayoutPanel tableLayoutPanel3;
+        private Label label3;
+        private TextBox textBox1;
     }
 }
