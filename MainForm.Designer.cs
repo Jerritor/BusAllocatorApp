@@ -28,29 +28,29 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             tableLayoutPanel1 = new TableLayoutPanel();
-            button7 = new Button();
-            button4 = new Button();
-            button6 = new Button();
-            button3 = new Button();
+            setSecondDateButton = new Button();
+            editSecondDateButton = new Button();
+            setFirstDateButton = new Button();
+            editFirstDateButton = new Button();
             label1 = new Label();
             panel1 = new Panel();
-            dateTimePicker2 = new DateTimePicker();
-            checkBox4 = new CheckBox();
-            checkBox3 = new CheckBox();
-            checkBox2 = new CheckBox();
-            checkBox1 = new CheckBox();
-            dateTimePicker1 = new DateTimePicker();
-            button1 = new Button();
-            button2 = new Button();
-            button5 = new Button();
+            secondDatePicker = new DateTimePicker();
+            secondDateCheckBox = new CheckBox();
+            firstDateCheckBox = new CheckBox();
+            deptsCheckBox = new CheckBox();
+            busRateCheckBox = new CheckBox();
+            firstDatePicker = new DateTimePicker();
+            busRateButton = new Button();
+            uploadDemandButton = new Button();
+            checkEditDemandButton = new Button();
             dataGridView1 = new DataGridView();
             tableLayoutPanel2 = new TableLayoutPanel();
-            button8 = new Button();
-            button9 = new Button();
-            button10 = new Button();
-            textBox1 = new TextBox();
+            settingsButton = new Button();
+            generateDemandsButton = new Button();
+            generateAllocationsButton = new Button();
+            outputLog = new TextBox();
             label3 = new Label();
             label2 = new Label();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -67,18 +67,18 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.Controls.Add(button7, 2, 4);
-            tableLayoutPanel1.Controls.Add(button4, 1, 4);
-            tableLayoutPanel1.Controls.Add(button6, 2, 3);
-            tableLayoutPanel1.Controls.Add(button3, 1, 3);
+            tableLayoutPanel1.Controls.Add(setSecondDateButton, 2, 4);
+            tableLayoutPanel1.Controls.Add(editSecondDateButton, 1, 4);
+            tableLayoutPanel1.Controls.Add(setFirstDateButton, 2, 3);
+            tableLayoutPanel1.Controls.Add(editFirstDateButton, 1, 3);
             tableLayoutPanel1.Controls.Add(label1, 0, 0);
             tableLayoutPanel1.Controls.Add(panel1, 0, 1);
-            tableLayoutPanel1.Controls.Add(button1, 1, 1);
-            tableLayoutPanel1.Controls.Add(button2, 1, 2);
-            tableLayoutPanel1.Controls.Add(button5, 2, 2);
+            tableLayoutPanel1.Controls.Add(busRateButton, 1, 1);
+            tableLayoutPanel1.Controls.Add(uploadDemandButton, 1, 2);
+            tableLayoutPanel1.Controls.Add(checkEditDemandButton, 2, 2);
             tableLayoutPanel1.Controls.Add(dataGridView1, 0, 6);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 7);
-            tableLayoutPanel1.Controls.Add(textBox1, 0, 9);
+            tableLayoutPanel1.Controls.Add(outputLog, 0, 9);
             tableLayoutPanel1.Controls.Add(label3, 1, 8);
             tableLayoutPanel1.Controls.Add(label2, 1, 5);
             tableLayoutPanel1.Location = new Point(12, 12);
@@ -98,57 +98,57 @@
             tableLayoutPanel1.Size = new Size(896, 583);
             tableLayoutPanel1.TabIndex = 0;
             // 
-            // button7
+            // setSecondDateButton
             // 
-            button7.BackColor = SystemColors.ActiveCaptionText;
-            button7.Dock = DockStyle.Left;
-            button7.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button7.ForeColor = SystemColors.ControlLightLight;
-            button7.Location = new Point(648, 166);
-            button7.Name = "button7";
-            button7.Size = new Size(245, 40);
-            button7.TabIndex = 13;
-            button7.Text = "Set Date";
-            button7.UseVisualStyleBackColor = false;
+            setSecondDateButton.BackColor = SystemColors.ActiveCaptionText;
+            setSecondDateButton.Dock = DockStyle.Left;
+            setSecondDateButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            setSecondDateButton.ForeColor = SystemColors.ControlLightLight;
+            setSecondDateButton.Location = new Point(648, 166);
+            setSecondDateButton.Name = "setSecondDateButton";
+            setSecondDateButton.Size = new Size(245, 40);
+            setSecondDateButton.TabIndex = 13;
+            setSecondDateButton.Text = "Set Date";
+            setSecondDateButton.UseVisualStyleBackColor = false;
             // 
-            // button4
+            // editSecondDateButton
             // 
-            button4.BackColor = SystemColors.ControlText;
-            button4.Dock = DockStyle.Fill;
-            button4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button4.ForeColor = SystemColors.ControlLightLight;
-            button4.Location = new Point(400, 166);
-            button4.Name = "button4";
-            button4.Size = new Size(242, 40);
-            button4.TabIndex = 10;
-            button4.Text = "Edit Date";
-            button4.UseVisualStyleBackColor = false;
+            editSecondDateButton.BackColor = SystemColors.ControlText;
+            editSecondDateButton.Dock = DockStyle.Fill;
+            editSecondDateButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            editSecondDateButton.ForeColor = SystemColors.ControlLightLight;
+            editSecondDateButton.Location = new Point(400, 166);
+            editSecondDateButton.Name = "editSecondDateButton";
+            editSecondDateButton.Size = new Size(242, 40);
+            editSecondDateButton.TabIndex = 10;
+            editSecondDateButton.Text = "Edit Date";
+            editSecondDateButton.UseVisualStyleBackColor = false;
             // 
-            // button6
+            // setFirstDateButton
             // 
-            button6.BackColor = SystemColors.ControlText;
-            button6.Dock = DockStyle.Left;
-            button6.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button6.ForeColor = SystemColors.ControlLightLight;
-            button6.Location = new Point(648, 120);
-            button6.Name = "button6";
-            button6.Size = new Size(245, 40);
-            button6.TabIndex = 12;
-            button6.Text = "Set Date";
-            button6.UseVisualStyleBackColor = false;
+            setFirstDateButton.BackColor = SystemColors.ControlText;
+            setFirstDateButton.Dock = DockStyle.Left;
+            setFirstDateButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            setFirstDateButton.ForeColor = SystemColors.ControlLightLight;
+            setFirstDateButton.Location = new Point(648, 120);
+            setFirstDateButton.Name = "setFirstDateButton";
+            setFirstDateButton.Size = new Size(245, 40);
+            setFirstDateButton.TabIndex = 12;
+            setFirstDateButton.Text = "Set Date";
+            setFirstDateButton.UseVisualStyleBackColor = false;
             // 
-            // button3
+            // editFirstDateButton
             // 
-            button3.BackColor = SystemColors.ControlText;
-            button3.Dock = DockStyle.Fill;
-            button3.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button3.ForeColor = SystemColors.ControlLightLight;
-            button3.Location = new Point(400, 120);
-            button3.Name = "button3";
-            button3.Size = new Size(242, 40);
-            button3.TabIndex = 9;
-            button3.Text = "Edit Date";
-            button3.UseVisualStyleBackColor = false;
+            editFirstDateButton.BackColor = SystemColors.ControlText;
+            editFirstDateButton.Dock = DockStyle.Fill;
+            editFirstDateButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            editFirstDateButton.ForeColor = SystemColors.ControlLightLight;
+            editFirstDateButton.Location = new Point(400, 120);
+            editFirstDateButton.Name = "editFirstDateButton";
+            editFirstDateButton.Size = new Size(242, 40);
+            editFirstDateButton.TabIndex = 9;
+            editFirstDateButton.Text = "Edit Date";
+            editFirstDateButton.UseVisualStyleBackColor = false;
             // 
             // label1
             // 
@@ -165,134 +165,134 @@
             // panel1
             // 
             panel1.BorderStyle = BorderStyle.FixedSingle;
-            panel1.Controls.Add(dateTimePicker2);
-            panel1.Controls.Add(checkBox4);
-            panel1.Controls.Add(checkBox3);
-            panel1.Controls.Add(checkBox2);
-            panel1.Controls.Add(checkBox1);
-            panel1.Controls.Add(dateTimePicker1);
+            panel1.Controls.Add(secondDatePicker);
+            panel1.Controls.Add(secondDateCheckBox);
+            panel1.Controls.Add(firstDateCheckBox);
+            panel1.Controls.Add(deptsCheckBox);
+            panel1.Controls.Add(busRateCheckBox);
+            panel1.Controls.Add(firstDatePicker);
             panel1.Location = new Point(3, 28);
             panel1.Name = "panel1";
             tableLayoutPanel1.SetRowSpan(panel1, 4);
             panel1.Size = new Size(391, 178);
             panel1.TabIndex = 7;
             // 
-            // dateTimePicker2
+            // secondDatePicker
             // 
-            dateTimePicker2.Checked = false;
-            dateTimePicker2.Enabled = false;
-            dateTimePicker2.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            dateTimePicker2.Location = new Point(115, 141);
-            dateTimePicker2.Name = "dateTimePicker2";
-            dateTimePicker2.Size = new Size(268, 29);
-            dateTimePicker2.TabIndex = 13;
+            secondDatePicker.Checked = false;
+            secondDatePicker.Enabled = false;
+            secondDatePicker.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            secondDatePicker.Location = new Point(115, 145);
+            secondDatePicker.Name = "secondDatePicker";
+            secondDatePicker.Size = new Size(268, 29);
+            secondDatePicker.TabIndex = 13;
             // 
-            // checkBox4
+            // secondDateCheckBox
             // 
-            checkBox4.AutoCheck = false;
-            checkBox4.AutoSize = true;
-            checkBox4.Cursor = Cursors.No;
-            checkBox4.FlatStyle = FlatStyle.Flat;
-            checkBox4.Font = new Font("Segoe UI", 12F);
-            checkBox4.Location = new Point(3, 145);
-            checkBox4.Name = "checkBox4";
-            checkBox4.Size = new Size(116, 25);
-            checkBox4.TabIndex = 3;
-            checkBox4.Text = "Second Date:";
-            checkBox4.UseVisualStyleBackColor = true;
+            secondDateCheckBox.AutoCheck = false;
+            secondDateCheckBox.AutoSize = true;
+            secondDateCheckBox.Cursor = Cursors.No;
+            secondDateCheckBox.FlatStyle = FlatStyle.Flat;
+            secondDateCheckBox.Font = new Font("Segoe UI", 12F);
+            secondDateCheckBox.Location = new Point(2, 145);
+            secondDateCheckBox.Name = "secondDateCheckBox";
+            secondDateCheckBox.Size = new Size(116, 25);
+            secondDateCheckBox.TabIndex = 3;
+            secondDateCheckBox.Text = "Second Date:";
+            secondDateCheckBox.UseVisualStyleBackColor = true;
             // 
-            // checkBox3
+            // firstDateCheckBox
             // 
-            checkBox3.AutoCheck = false;
-            checkBox3.AutoSize = true;
-            checkBox3.Cursor = Cursors.No;
-            checkBox3.FlatStyle = FlatStyle.Flat;
-            checkBox3.Font = new Font("Segoe UI", 12F);
-            checkBox3.Location = new Point(3, 99);
-            checkBox3.Name = "checkBox3";
-            checkBox3.Size = new Size(95, 25);
-            checkBox3.TabIndex = 2;
-            checkBox3.Text = "First Date:";
-            checkBox3.TextAlign = ContentAlignment.MiddleRight;
-            checkBox3.UseVisualStyleBackColor = true;
+            firstDateCheckBox.AutoCheck = false;
+            firstDateCheckBox.AutoSize = true;
+            firstDateCheckBox.Cursor = Cursors.No;
+            firstDateCheckBox.FlatStyle = FlatStyle.Flat;
+            firstDateCheckBox.Font = new Font("Segoe UI", 12F);
+            firstDateCheckBox.Location = new Point(3, 99);
+            firstDateCheckBox.Name = "firstDateCheckBox";
+            firstDateCheckBox.Size = new Size(95, 25);
+            firstDateCheckBox.TabIndex = 2;
+            firstDateCheckBox.Text = "First Date:";
+            firstDateCheckBox.TextAlign = ContentAlignment.MiddleRight;
+            firstDateCheckBox.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // deptsCheckBox
             // 
-            checkBox2.AutoCheck = false;
-            checkBox2.AutoSize = true;
-            checkBox2.Cursor = Cursors.No;
-            checkBox2.FlatStyle = FlatStyle.Flat;
-            checkBox2.Font = new Font("Segoe UI", 12F);
-            checkBox2.Location = new Point(3, 53);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(201, 25);
-            checkBox2.TabIndex = 1;
-            checkBox2.Text = "All Department Demands";
-            checkBox2.UseVisualStyleBackColor = true;
+            deptsCheckBox.AutoCheck = false;
+            deptsCheckBox.AutoSize = true;
+            deptsCheckBox.Cursor = Cursors.No;
+            deptsCheckBox.FlatStyle = FlatStyle.Flat;
+            deptsCheckBox.Font = new Font("Segoe UI", 12F);
+            deptsCheckBox.Location = new Point(3, 53);
+            deptsCheckBox.Name = "deptsCheckBox";
+            deptsCheckBox.Size = new Size(201, 25);
+            deptsCheckBox.TabIndex = 1;
+            deptsCheckBox.Text = "All Department Demands";
+            deptsCheckBox.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // busRateCheckBox
             // 
-            checkBox1.AutoCheck = false;
-            checkBox1.AutoSize = true;
-            checkBox1.Cursor = Cursors.No;
-            checkBox1.FlatStyle = FlatStyle.Flat;
-            checkBox1.Font = new Font("Segoe UI", 12F);
-            checkBox1.Location = new Point(3, 7);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(254, 25);
-            checkBox1.TabIndex = 0;
-            checkBox1.Text = "Bus Rates Spreadsheet Uploaded";
-            checkBox1.UseVisualStyleBackColor = true;
+            busRateCheckBox.AutoCheck = false;
+            busRateCheckBox.AutoSize = true;
+            busRateCheckBox.Cursor = Cursors.No;
+            busRateCheckBox.FlatStyle = FlatStyle.Flat;
+            busRateCheckBox.Font = new Font("Segoe UI", 12F);
+            busRateCheckBox.Location = new Point(3, 7);
+            busRateCheckBox.Name = "busRateCheckBox";
+            busRateCheckBox.Size = new Size(254, 25);
+            busRateCheckBox.TabIndex = 0;
+            busRateCheckBox.Text = "Bus Rates Spreadsheet Uploaded";
+            busRateCheckBox.UseVisualStyleBackColor = true;
             // 
-            // dateTimePicker1
+            // firstDatePicker
             // 
-            dateTimePicker1.Checked = false;
-            dateTimePicker1.Enabled = false;
-            dateTimePicker1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            dateTimePicker1.Location = new Point(115, 95);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(268, 29);
-            dateTimePicker1.TabIndex = 12;
+            firstDatePicker.Checked = false;
+            firstDatePicker.Enabled = false;
+            firstDatePicker.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            firstDatePicker.Location = new Point(115, 95);
+            firstDatePicker.Name = "firstDatePicker";
+            firstDatePicker.Size = new Size(268, 29);
+            firstDatePicker.TabIndex = 12;
             // 
-            // button1
+            // busRateButton
             // 
-            button1.BackColor = SystemColors.ControlText;
-            tableLayoutPanel1.SetColumnSpan(button1, 2);
-            button1.Dock = DockStyle.Left;
-            button1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button1.ForeColor = SystemColors.ControlLightLight;
-            button1.Location = new Point(400, 28);
-            button1.Name = "button1";
-            button1.Size = new Size(493, 40);
-            button1.TabIndex = 0;
-            button1.Text = "Upload Bus Rates Spreadsheet";
-            button1.UseVisualStyleBackColor = false;
+            busRateButton.BackColor = SystemColors.ControlText;
+            tableLayoutPanel1.SetColumnSpan(busRateButton, 2);
+            busRateButton.Dock = DockStyle.Left;
+            busRateButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            busRateButton.ForeColor = SystemColors.ControlLightLight;
+            busRateButton.Location = new Point(400, 28);
+            busRateButton.Name = "busRateButton";
+            busRateButton.Size = new Size(493, 40);
+            busRateButton.TabIndex = 0;
+            busRateButton.Text = "Upload Bus Rates Spreadsheet";
+            busRateButton.UseVisualStyleBackColor = false;
             // 
-            // button2
+            // uploadDemandButton
             // 
-            button2.BackColor = SystemColors.ControlText;
-            button2.Dock = DockStyle.Fill;
-            button2.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button2.ForeColor = SystemColors.ControlLightLight;
-            button2.Location = new Point(400, 74);
-            button2.Name = "button2";
-            button2.Size = new Size(242, 40);
-            button2.TabIndex = 8;
-            button2.Text = "Upload Demand Spreadsheet";
-            button2.UseVisualStyleBackColor = false;
+            uploadDemandButton.BackColor = SystemColors.ControlText;
+            uploadDemandButton.Dock = DockStyle.Fill;
+            uploadDemandButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            uploadDemandButton.ForeColor = SystemColors.ControlLightLight;
+            uploadDemandButton.Location = new Point(400, 74);
+            uploadDemandButton.Name = "uploadDemandButton";
+            uploadDemandButton.Size = new Size(242, 40);
+            uploadDemandButton.TabIndex = 8;
+            uploadDemandButton.Text = "Upload Demand Spreadsheet";
+            uploadDemandButton.UseVisualStyleBackColor = false;
             // 
-            // button5
+            // checkEditDemandButton
             // 
-            button5.BackColor = SystemColors.ControlText;
-            button5.Dock = DockStyle.Left;
-            button5.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button5.ForeColor = SystemColors.ControlLightLight;
-            button5.Location = new Point(648, 74);
-            button5.Name = "button5";
-            button5.Size = new Size(245, 40);
-            button5.TabIndex = 11;
-            button5.Text = "Check/Edit Demands";
-            button5.UseVisualStyleBackColor = false;
+            checkEditDemandButton.BackColor = SystemColors.ControlText;
+            checkEditDemandButton.Dock = DockStyle.Left;
+            checkEditDemandButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            checkEditDemandButton.ForeColor = SystemColors.ControlLightLight;
+            checkEditDemandButton.Location = new Point(648, 74);
+            checkEditDemandButton.Name = "checkEditDemandButton";
+            checkEditDemandButton.Size = new Size(245, 40);
+            checkEditDemandButton.TabIndex = 11;
+            checkEditDemandButton.Text = "Check/Edit Demands";
+            checkEditDemandButton.UseVisualStyleBackColor = false;
             // 
             // dataGridView1
             // 
@@ -302,14 +302,14 @@
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Control;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             tableLayoutPanel1.SetColumnSpan(dataGridView1, 3);
             dataGridView1.Dock = DockStyle.Fill;
@@ -326,9 +326,9 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Controls.Add(button8, 0, 0);
-            tableLayoutPanel2.Controls.Add(button9, 1, 0);
-            tableLayoutPanel2.Controls.Add(button10, 2, 0);
+            tableLayoutPanel2.Controls.Add(settingsButton, 0, 0);
+            tableLayoutPanel2.Controls.Add(generateDemandsButton, 1, 0);
+            tableLayoutPanel2.Controls.Add(generateAllocationsButton, 2, 0);
             tableLayoutPanel2.Dock = DockStyle.Left;
             tableLayoutPanel2.Location = new Point(3, 291);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -337,53 +337,53 @@
             tableLayoutPanel2.Size = new Size(890, 44);
             tableLayoutPanel2.TabIndex = 16;
             // 
-            // button8
+            // settingsButton
             // 
-            button8.BackColor = SystemColors.ControlText;
-            button8.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button8.ForeColor = SystemColors.ControlLightLight;
-            button8.Location = new Point(3, 3);
-            button8.Name = "button8";
-            button8.Size = new Size(202, 40);
-            button8.TabIndex = 0;
-            button8.Text = "Settings";
-            button8.UseVisualStyleBackColor = false;
+            settingsButton.BackColor = SystemColors.ControlText;
+            settingsButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            settingsButton.ForeColor = SystemColors.ControlLightLight;
+            settingsButton.Location = new Point(3, 3);
+            settingsButton.Name = "settingsButton";
+            settingsButton.Size = new Size(202, 40);
+            settingsButton.TabIndex = 0;
+            settingsButton.Text = "Settings";
+            settingsButton.UseVisualStyleBackColor = false;
             // 
-            // button9
+            // generateDemandsButton
             // 
-            button9.BackColor = SystemColors.ControlText;
-            button9.Dock = DockStyle.Fill;
-            button9.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button9.ForeColor = SystemColors.ControlLightLight;
-            button9.Location = new Point(211, 3);
-            button9.Name = "button9";
-            button9.Size = new Size(335, 41);
-            button9.TabIndex = 1;
-            button9.Text = "Generate Demands Spreadsheet";
-            button9.UseVisualStyleBackColor = false;
+            generateDemandsButton.BackColor = SystemColors.ControlText;
+            generateDemandsButton.Dock = DockStyle.Fill;
+            generateDemandsButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            generateDemandsButton.ForeColor = SystemColors.ControlLightLight;
+            generateDemandsButton.Location = new Point(211, 3);
+            generateDemandsButton.Name = "generateDemandsButton";
+            generateDemandsButton.Size = new Size(335, 41);
+            generateDemandsButton.TabIndex = 1;
+            generateDemandsButton.Text = "Generate Demands Spreadsheet";
+            generateDemandsButton.UseVisualStyleBackColor = false;
             // 
-            // button10
+            // generateAllocationsButton
             // 
-            button10.BackColor = SystemColors.ControlText;
-            button10.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button10.ForeColor = SystemColors.ControlLightLight;
-            button10.Location = new Point(552, 3);
-            button10.Name = "button10";
-            button10.Size = new Size(335, 41);
-            button10.TabIndex = 2;
-            button10.Text = "Generate Allocations Spreadsheet";
-            button10.UseVisualStyleBackColor = false;
+            generateAllocationsButton.BackColor = SystemColors.ControlText;
+            generateAllocationsButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            generateAllocationsButton.ForeColor = SystemColors.ControlLightLight;
+            generateAllocationsButton.Location = new Point(552, 3);
+            generateAllocationsButton.Name = "generateAllocationsButton";
+            generateAllocationsButton.Size = new Size(335, 41);
+            generateAllocationsButton.TabIndex = 2;
+            generateAllocationsButton.Text = "Generate Allocations Spreadsheet";
+            generateAllocationsButton.UseVisualStyleBackColor = false;
             // 
-            // textBox1
+            // outputLog
             // 
-            tableLayoutPanel1.SetColumnSpan(textBox1, 3);
-            textBox1.Font = new Font("Segoe UI", 10F);
-            textBox1.Location = new Point(3, 366);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.ScrollBars = ScrollBars.Vertical;
-            textBox1.Size = new Size(887, 200);
-            textBox1.TabIndex = 1;
+            tableLayoutPanel1.SetColumnSpan(outputLog, 3);
+            outputLog.Font = new Font("Segoe UI", 10F);
+            outputLog.Location = new Point(3, 366);
+            outputLog.Multiline = true;
+            outputLog.Name = "outputLog";
+            outputLog.ScrollBars = ScrollBars.Vertical;
+            outputLog.Size = new Size(887, 200);
+            outputLog.TabIndex = 1;
             // 
             // label3
             // 
@@ -414,7 +414,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(1200, 781);
+            ClientSize = new Size(1200, 777);
             Controls.Add(tableLayoutPanel1);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "MainForm";
@@ -431,29 +431,29 @@
         #endregion
 
         private TableLayoutPanel tableLayoutPanel1;
-        private Button button1;
+        private Button busRateButton;
         private Label label1;
         private Panel panel1;
-        private CheckBox checkBox4;
-        private CheckBox checkBox3;
-        private CheckBox checkBox2;
-        private CheckBox checkBox1;
-        private Button button2;
-        private Button button4;
-        private Button button5;
-        private DateTimePicker dateTimePicker2;
-        private DateTimePicker dateTimePicker1;
-        private Button button3;
-        private Button button6;
-        private Button button7;
+        private CheckBox secondDateCheckBox;
+        private CheckBox firstDateCheckBox;
+        private CheckBox deptsCheckBox;
+        private CheckBox busRateCheckBox;
+        private Button uploadDemandButton;
+        private Button editSecondDateButton;
+        private Button checkEditDemandButton;
+        private DateTimePicker secondDatePicker;
+        private DateTimePicker firstDatePicker;
+        private Button editFirstDateButton;
+        private Button setFirstDateButton;
+        private Button setSecondDateButton;
         private DataGridView dataGridView1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private Label label2;
         private TableLayoutPanel tableLayoutPanel2;
-        private Button button8;
-        private Button button9;
-        private Button button10;
+        private Button settingsButton;
+        private Button generateDemandsButton;
+        private Button generateAllocationsButton;
         private Label label3;
-        private TextBox textBox1;
+        private TextBox outputLog;
     }
 }
