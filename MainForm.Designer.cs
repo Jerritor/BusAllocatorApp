@@ -46,22 +46,18 @@
             button2 = new Button();
             button5 = new Button();
             dataGridView1 = new DataGridView();
-            label2 = new Label();
             tableLayoutPanel2 = new TableLayoutPanel();
             button8 = new Button();
             button9 = new Button();
             button10 = new Button();
-            panel2 = new Panel();
-            tableLayoutPanel3 = new TableLayoutPanel();
-            label3 = new Label();
             textBox1 = new TextBox();
+            label3 = new Label();
+            label2 = new Label();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             tableLayoutPanel1.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             tableLayoutPanel2.SuspendLayout();
-            panel2.SuspendLayout();
-            tableLayoutPanel3.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -81,12 +77,13 @@
             tableLayoutPanel1.Controls.Add(button2, 1, 2);
             tableLayoutPanel1.Controls.Add(button5, 2, 2);
             tableLayoutPanel1.Controls.Add(dataGridView1, 0, 6);
-            tableLayoutPanel1.Controls.Add(label2, 0, 5);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 7);
-            tableLayoutPanel1.Controls.Add(panel2, 0, 8);
+            tableLayoutPanel1.Controls.Add(textBox1, 0, 9);
+            tableLayoutPanel1.Controls.Add(label3, 1, 8);
+            tableLayoutPanel1.Controls.Add(label2, 1, 5);
             tableLayoutPanel1.Location = new Point(12, 12);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 9;
+            tableLayoutPanel1.RowCount = 11;
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
@@ -95,7 +92,9 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel1.Size = new Size(896, 583);
             tableLayoutPanel1.TabIndex = 0;
             // 
@@ -317,20 +316,8 @@
             dataGridView1.Location = new Point(3, 237);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(890, 48);
+            dataGridView1.Size = new Size(1529, 48);
             dataGridView1.TabIndex = 14;
-            // 
-            // label2
-            // 
-            label2.Anchor = AnchorStyles.None;
-            label2.AutoSize = true;
-            tableLayoutPanel1.SetColumnSpan(label2, 3);
-            label2.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            label2.Location = new Point(342, 209);
-            label2.Name = "label2";
-            label2.Size = new Size(211, 25);
-            label2.TabIndex = 15;
-            label2.Text = "Total Rider Information";
             // 
             // tableLayoutPanel2
             // 
@@ -342,7 +329,7 @@
             tableLayoutPanel2.Controls.Add(button8, 0, 0);
             tableLayoutPanel2.Controls.Add(button9, 1, 0);
             tableLayoutPanel2.Controls.Add(button10, 2, 0);
-            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Dock = DockStyle.Left;
             tableLayoutPanel2.Location = new Point(3, 291);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
@@ -387,59 +374,49 @@
             button10.Text = "Generate Allocations Spreadsheet";
             button10.UseVisualStyleBackColor = false;
             // 
-            // panel2
+            // textBox1
             // 
-            panel2.BorderStyle = BorderStyle.FixedSingle;
-            tableLayoutPanel1.SetColumnSpan(panel2, 3);
-            panel2.Controls.Add(tableLayoutPanel3);
-            panel2.Location = new Point(3, 341);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(890, 239);
-            panel2.TabIndex = 17;
-            // 
-            // tableLayoutPanel3
-            // 
-            tableLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            tableLayoutPanel3.ColumnCount = 1;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Controls.Add(label3, 0, 0);
-            tableLayoutPanel3.Controls.Add(textBox1, 0, 1);
-            tableLayoutPanel3.Location = new Point(0, 0);
-            tableLayoutPanel3.Name = "tableLayoutPanel3";
-            tableLayoutPanel3.RowCount = 2;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle());
-            tableLayoutPanel3.RowStyles.Add(new RowStyle());
-            tableLayoutPanel3.Size = new Size(844, 237);
-            tableLayoutPanel3.TabIndex = 0;
+            tableLayoutPanel1.SetColumnSpan(textBox1, 3);
+            textBox1.Font = new Font("Segoe UI", 10F);
+            textBox1.Location = new Point(3, 366);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.ScrollBars = ScrollBars.Vertical;
+            textBox1.Size = new Size(887, 200);
+            textBox1.TabIndex = 1;
             // 
             // label3
             // 
             label3.Anchor = AnchorStyles.Top;
             label3.AutoSize = true;
+            tableLayoutPanel1.SetColumnSpan(label3, 3);
             label3.Font = new Font("Segoe UI", 13F, FontStyle.Bold | FontStyle.Underline);
-            label3.Location = new Point(367, 0);
+            label3.Location = new Point(713, 338);
             label3.Name = "label3";
             label3.Size = new Size(109, 25);
             label3.TabIndex = 0;
             label3.Text = "Output Log";
             // 
-            // textBox1
+            // label2
             // 
-            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            textBox1.Font = new Font("Segoe UI", 10F);
-            textBox1.Location = new Point(3, 28);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(838, 206);
-            textBox1.TabIndex = 1;
+            label2.Anchor = AnchorStyles.Top;
+            label2.AutoSize = true;
+            tableLayoutPanel1.SetColumnSpan(label2, 3);
+            label2.Font = new Font("Segoe UI", 13F, FontStyle.Bold | FontStyle.Underline);
+            label2.Location = new Point(662, 209);
+            label2.Name = "label2";
+            label2.Size = new Size(211, 25);
+            label2.TabIndex = 15;
+            label2.Text = "Total Rider Information";
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(1200, 800);
+            ClientSize = new Size(1200, 781);
             Controls.Add(tableLayoutPanel1);
+            FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "MainForm";
             Text = "Bus Allocator";
             tableLayoutPanel1.ResumeLayout(false);
@@ -448,9 +425,6 @@
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             tableLayoutPanel2.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            tableLayoutPanel3.ResumeLayout(false);
-            tableLayoutPanel3.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -479,8 +453,6 @@
         private Button button8;
         private Button button9;
         private Button button10;
-        private Panel panel2;
-        private TableLayoutPanel tableLayoutPanel3;
         private Label label3;
         private TextBox textBox1;
     }
