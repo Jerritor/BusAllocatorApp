@@ -281,6 +281,7 @@
             busRateButton.TabIndex = 0;
             busRateButton.Text = "Upload Bus Rates Spreadsheet";
             busRateButton.UseVisualStyleBackColor = false;
+            busRateButton.Click += busRateButton_Click;
             // 
             // uploadDemandButton
             // 
@@ -454,7 +455,7 @@
         private CheckBox secondDateCheckBox;
         private CheckBox firstDateCheckBox;
         private CheckBox deptsCheckBox;
-        private CheckBox busRateCheckBox;
+        public CheckBox busRateCheckBox;
         private Button uploadDemandButton;
         private Button editSecondDateButton;
         private Button checkEditDemandButton;

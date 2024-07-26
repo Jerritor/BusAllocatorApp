@@ -173,10 +173,11 @@ namespace BusAllocatorApp
             mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
         }
 
-        public void CreateDefaultConfig()
-        {
-            io.CreateDefaultConfig();
-        }
+        #region IO Functions
+        public void CreateDefaultConfig() { io.CreateDefaultConfig(); }
+        public void UploadRatesSheet() { io.UploadRatesSheet(); }
+
+        #endregion
 
     }
 }

@@ -65,6 +65,48 @@ namespace BusAllocatorApp
             }
         }
 
+        public void SetConfigOption(string optionName, string optionData)
+        {
+            try
+            {
+                if (!File.Exists(vars.configFile))
+                {
+                    throw new FileNotFoundException("Configuration file not found.");
+                }
+
+                var lines = File.ReadAllLines(vars.configFile);
+                bool optionFound = false;
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    if (lines[i].StartsWith($"{optionName}=", StringComparison.OrdinalIgnoreCase))
+                    {
+                        lines[i] = $"{optionName}={optionData}";
+                        optionFound = true;
+                        break;
+                    }
+                }
+
+                if (!optionFound)
+                {
+                    using (StreamWriter writer = new StreamWriter(vars.configFile, true))
+                    {
+                        writer.WriteLine($"{optionName}={optionData}");
+                    }
+                }
+                else
+                {
+                    File.WriteAllLines(vars.configFile, lines);
+                }
+
+                Console.WriteLine($"Configuration option '{optionName}' set successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error setting configuration option: {ex.Message}");
+            }
+        }
+
         public void CreateDefaultConfig()
         {
             try
@@ -101,10 +143,35 @@ namespace BusAllocatorApp
         }
         #endregion
 
+        #region FILE UPLOADING
+        public void UploadRatesSheet()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Excel Files|*.xlsx;*.xls";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                vars.ratesPath = openFileDialog.FileName;
+                SetConfigOption("rate_path", vars.ratesPath);
+                mainform.busRateCheckBox.Checked = true;
+
+                //mainform.WriteLine("Rates sheet uploaded succesfully! " + vars.ratesPath);
+
+                
+
+                // Logic to handle the file upload
+                //MessageBox.Show("Rates sheet uploaded successfully!");
+                // Proceed with loading rates
+            }
+        }
+
+        #endregion
+
         #region DATA READING
-        
+
         //Bus Rates Spreadsheet Reader
-        public void ReadRatesSheet(string path)
+
+
+        private void ReadRatesSheet(string path)
         {
             vars.costSmallBus = new Dictionary<string, double>();
             vars.costLargeBus = new Dictionary<string, double>();
@@ -145,7 +212,7 @@ namespace BusAllocatorApp
 
         #endregion
 
-        #region DATA SAVING
+        #region DATA SAVING TO JSON
 
         void ConvertRoutesToJson()
         {

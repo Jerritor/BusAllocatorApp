@@ -271,7 +271,7 @@ namespace BusAllocatorApp
                     MessageBox.Show("Rates path not found in the configuration file or it is empty. Please upload a Bus Rates spreadsheet or manually set the rates in the settings.",
                                     "Rates Path Missing",
                                     MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
+                                    MessageBoxIcon.Information);
                 }
                 else
                 {
@@ -289,22 +289,23 @@ namespace BusAllocatorApp
 
             if (result == DialogResult.Yes)
             {
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "Excel Files|*.xlsx;*.xls";
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    // Logic to handle the file upload
-                    MessageBox.Show("Rates sheet uploaded successfully!");
-                    // Proceed with loading rates
-                }
+                vars.UploadRatesSheet();
             }
             else if (result == DialogResult.No)
             {
                 MessageBox.Show("Rates confirmed. Proceeding with loading rates.");
+                busRateCheckBox.Checked = true;
                 // Proceed with loading rates
             }
         }
 
+        #endregion
+
+        #region BUS RATES
+        private void busRateButton_Click(object sender, EventArgs e)
+        {
+            vars.UploadRatesSheet();
+        }
         #endregion
     }
 }
