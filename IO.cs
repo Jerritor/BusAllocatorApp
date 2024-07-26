@@ -26,12 +26,12 @@ namespace BusAllocatorApp
     internal class IO
     {
         private Vars vars;
-        private MainForm form;
+        private MainForm mainform;
 
         public IO(Vars v, MainForm f)
         {
             vars = v;
-            form = f;
+            mainform = f;
         }
 
         public void GenerateJSONFiles()
@@ -55,7 +55,7 @@ namespace BusAllocatorApp
             string json = JsonSerializer.Serialize(routesData, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText("data/routes.json", json);
 
-            form.WriteLine("Converted Routes to JSON.");
+            mainform.WriteLine("Converted Routes to JSON.");
         }
 
         // Convert List of Dictionaries of Time Sets to JSON
@@ -64,7 +64,7 @@ namespace BusAllocatorApp
             string json = JsonSerializer.Serialize(vars.timeSets, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText("data/time_sets.json", json);
 
-            form.WriteLine("Converted Time Sets to JSON.");
+            mainform.WriteLine("Converted Time Sets to JSON.");
         }
 
         // Convert List of Departments to JSON
@@ -73,7 +73,7 @@ namespace BusAllocatorApp
             string json = JsonSerializer.Serialize(vars.departments, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText("data/depts.json", json);
 
-            form.WriteLine("Converted Departments to JSON.");
+            mainform.WriteLine("Converted Departments to JSON.");
         }
 
         // Convert Dictionary of Rates to JSON
@@ -96,7 +96,7 @@ namespace BusAllocatorApp
             string json = JsonSerializer.Serialize(ratesData, options);
             File.WriteAllText("data/rates.json", json);
 
-            form.WriteLine("Converted Bus Rates to JSON.");
+            mainform.WriteLine("Converted Bus Rates to JSON.");
         }
 
         private class RatesData
@@ -148,7 +148,7 @@ namespace BusAllocatorApp
             string json = JsonSerializer.Serialize(buffersData, options);
             File.WriteAllText("data/buffers.json", json);
 
-            form.WriteLine("Converted Buffer Capacities to JSON.");
+            mainform.WriteLine("Converted Buffer Capacities to JSON.");
         }
 
         private class BuffersData
@@ -199,7 +199,7 @@ namespace BusAllocatorApp
             string json = JsonSerializer.Serialize(capacitiesData, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText("data/bus_capacities.json", json);
 
-            form.WriteLine("Converted Bus Capacities to JSON.");
+            mainform.WriteLine("Converted Bus Capacities to JSON.");
         }
     }
 }

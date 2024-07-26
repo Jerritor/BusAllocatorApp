@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             tableLayoutPanel1 = new TableLayoutPanel();
             setSecondDateButton = new Button();
             editSecondDateButton = new Button();
@@ -103,6 +103,7 @@
             // 
             setSecondDateButton.BackColor = SystemColors.ActiveCaptionText;
             setSecondDateButton.Dock = DockStyle.Left;
+            setSecondDateButton.Enabled = false;
             setSecondDateButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             setSecondDateButton.ForeColor = SystemColors.ControlLightLight;
             setSecondDateButton.Location = new Point(648, 166);
@@ -111,11 +112,14 @@
             setSecondDateButton.TabIndex = 13;
             setSecondDateButton.Text = "Set Date";
             setSecondDateButton.UseVisualStyleBackColor = false;
+            setSecondDateButton.Visible = false;
+            setSecondDateButton.Click += setSecondDateButton_Click;
             // 
             // editSecondDateButton
             // 
             editSecondDateButton.BackColor = SystemColors.ControlText;
             editSecondDateButton.Dock = DockStyle.Fill;
+            editSecondDateButton.Enabled = false;
             editSecondDateButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             editSecondDateButton.ForeColor = SystemColors.ControlLightLight;
             editSecondDateButton.Location = new Point(400, 166);
@@ -124,11 +128,14 @@
             editSecondDateButton.TabIndex = 10;
             editSecondDateButton.Text = "Edit Date";
             editSecondDateButton.UseVisualStyleBackColor = false;
+            editSecondDateButton.Visible = false;
+            editSecondDateButton.Click += editSecondDateButton_Click;
             // 
             // setFirstDateButton
             // 
             setFirstDateButton.BackColor = SystemColors.ControlText;
             setFirstDateButton.Dock = DockStyle.Left;
+            setFirstDateButton.Enabled = false;
             setFirstDateButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             setFirstDateButton.ForeColor = SystemColors.ControlLightLight;
             setFirstDateButton.Location = new Point(648, 120);
@@ -137,6 +144,8 @@
             setFirstDateButton.TabIndex = 12;
             setFirstDateButton.Text = "Set Date";
             setFirstDateButton.UseVisualStyleBackColor = false;
+            setFirstDateButton.Visible = false;
+            setFirstDateButton.Click += setFirstDateButton_Click;
             // 
             // editFirstDateButton
             // 
@@ -150,6 +159,7 @@
             editFirstDateButton.TabIndex = 9;
             editFirstDateButton.Text = "Edit Date";
             editFirstDateButton.UseVisualStyleBackColor = false;
+            editFirstDateButton.Click += editFirstDateButton_Click;
             // 
             // label1
             // 
@@ -181,12 +191,14 @@
             // secondDatePicker
             // 
             secondDatePicker.Checked = false;
+            secondDatePicker.CustomFormat = "";
             secondDatePicker.Enabled = false;
             secondDatePicker.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             secondDatePicker.Location = new Point(115, 145);
             secondDatePicker.Name = "secondDatePicker";
             secondDatePicker.Size = new Size(268, 29);
             secondDatePicker.TabIndex = 13;
+            secondDatePicker.ValueChanged += secondDatePicker_ValueChanged;
             // 
             // secondDateCheckBox
             // 
@@ -248,6 +260,7 @@
             // firstDatePicker
             // 
             firstDatePicker.Checked = false;
+            firstDatePicker.CustomFormat = "";
             firstDatePicker.Enabled = false;
             firstDatePicker.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             firstDatePicker.Location = new Point(115, 95);
@@ -303,14 +316,14 @@
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             tableLayoutPanel1.SetColumnSpan(dataGridView1, 3);
             dataGridView1.Dock = DockStyle.Fill;
