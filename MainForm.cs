@@ -7,6 +7,8 @@ namespace BusAllocatorApp
     {
         private Vars vars;
 
+        private bool isSecondDateSet = false;
+
         public MainForm()
         {
             InitializeComponent();
@@ -113,10 +115,11 @@ namespace BusAllocatorApp
                 outputLog.AppendText(message + Environment.NewLine);
 
                 //Scroll to bottom code
+                /**
                 outputLog.SelectionStart = outputLog.Text.Length;
                 outputLog.SelectionLength = 0;
                 outputLog.ScrollToCaret();
-                outputLog.Refresh();
+                outputLog.Refresh(); **/
             }
         }
 
@@ -128,12 +131,21 @@ namespace BusAllocatorApp
             editFirstDateButton.Enabled = false;
             editFirstDateButton.Visible = false;
 
+            editSecondDateButton.Enabled = false;
+            editSecondDateButton.Visible = false;
+
             setFirstDateButton.Visible = true;
             setFirstDateButton.Enabled = true;
         }
 
         private void setFirstDateButton_Click(object sender, EventArgs e)
         {
+            if (isSecondDateSet && !CheckFirstDate()) { return; }
+
+            firstDatePicker.Enabled = false;
+            setFirstDateButton.Enabled = false;
+            editFirstDateButton.Enabled = true;
+            editSecondDateButton.Enabled = true;
             firstDatePicker.Enabled = false;
 
             setFirstDateButton.Enabled = false;
@@ -150,12 +162,15 @@ namespace BusAllocatorApp
             vars.firstDay = firstDatePicker.Value.Date;
             string formattedDate = firstDatePicker.Value.ToLongDateString();
             WriteLine("First date selected: " + formattedDate);
-            WriteLine(vars.firstDay.Value.ToString());
+            //WriteLine(vars.firstDay.Value.ToString());
         }
 
         private void editSecondDateButton_Click(object sender, EventArgs e)
         {
             secondDatePicker.Enabled = true;
+
+            editFirstDateButton.Enabled = false;
+            editFirstDateButton.Visible = false;
 
             editSecondDateButton.Enabled = false;
             editSecondDateButton.Visible = false;
@@ -164,10 +179,28 @@ namespace BusAllocatorApp
             setSecondDateButton.Visible = true;
         }
 
+        private bool CheckFirstDate()
+        {
+            if (isSecondDateSet && (secondDatePicker.Value.Date <= firstDatePicker.Value.Date))
+            {
+                firstDateCheckBox.Checked = false;
+
+                MessageBox.Show("The first date must be before the second date.",
+                    "Invalid First Date",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
+            else { return true; }
+        }
+
         private bool CheckSecondDate()
         {
             if (secondDatePicker.Value.Date <= firstDatePicker.Value.Date)
             {
+                secondDateCheckBox.Checked = false;
+
                 MessageBox.Show("The second date must be after the first date.",
                     "Invalid Second Date",
                     MessageBoxButtons.OK,
@@ -188,6 +221,9 @@ namespace BusAllocatorApp
             if (CheckSecondDate() )
             {
                 secondDatePicker.Enabled = false;
+
+                editFirstDateButton.Enabled = true;
+                editFirstDateButton.Visible = true;
                 
                 setSecondDateButton.Enabled = false;
                 setSecondDateButton.Visible = false;
@@ -196,11 +232,13 @@ namespace BusAllocatorApp
                 editSecondDateButton.Visible = true;
 
                 secondDateCheckBox.Checked = true;
+
+                isSecondDateSet = true;
                 
                 vars.secondDay = secondDatePicker.Value.Date;
                 string formattedDate = secondDatePicker.Value.ToLongDateString();
                 WriteLine("Second date selected: " + formattedDate);
-                WriteLine(vars.secondDay.Value.ToString());
+                //WriteLine(vars.secondDay.Value.ToString());
             }
         }
     }
