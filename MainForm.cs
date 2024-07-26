@@ -5,7 +5,7 @@ namespace BusAllocatorApp
 {
     public partial class MainForm : Form
     {
-        private Vars vars;
+        Vars vars;
 
         private bool isSecondDateSet = false;
 
@@ -13,14 +13,22 @@ namespace BusAllocatorApp
         {
             InitializeComponent();
 
-            //
-            LoadData();
-            ResizeFormToFitTableLayoutPanel();
-
             vars = new Vars(this);
+
+            SetupTemplateGrid();
+            //EVERYTHING AFTER HERE IS ON FORM LOAD
+
         }
 
-        private void LoadData()
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            CheckRatesPath();
+        }
+
+
+
+        #region Total Riders Data Grid
+        private void SetupTemplateGrid()
         {
             // Create a DataTable
             DataTable table = new DataTable();
@@ -65,8 +73,8 @@ namespace BusAllocatorApp
 
             ResizeDataGridView();
             FormatDataGridView();
+            ResizeFormToFitTableLayoutPanel();
         }
-
         private void ResizeDataGridView()
         {
             // Calculate the required size
@@ -122,8 +130,9 @@ namespace BusAllocatorApp
                 outputLog.Refresh(); **/
             }
         }
+        #endregion
 
-        //DATE PICKERS CODE
+        #region DATE PICKERS
         private void editFirstDateButton_Click(object sender, EventArgs e)
         {
             firstDatePicker.Enabled = true;
@@ -218,13 +227,13 @@ namespace BusAllocatorApp
 
         private void setSecondDateButton_Click(object sender, EventArgs e)
         {
-            if (CheckSecondDate() )
+            if (CheckSecondDate())
             {
                 secondDatePicker.Enabled = false;
 
                 editFirstDateButton.Enabled = true;
                 editFirstDateButton.Visible = true;
-                
+
                 setSecondDateButton.Enabled = false;
                 setSecondDateButton.Visible = false;
 
@@ -234,12 +243,68 @@ namespace BusAllocatorApp
                 secondDateCheckBox.Checked = true;
 
                 isSecondDateSet = true;
-                
+
                 vars.secondDay = secondDatePicker.Value.Date;
                 string formattedDate = secondDatePicker.Value.ToLongDateString();
                 WriteLine("Second date selected: " + formattedDate);
                 //WriteLine(vars.secondDay.Value.ToString());
             }
         }
+        #endregion
+
+        #region Bus Rate Spreadsheet Popup
+        private void CheckRatesPath()
+        {
+            if (!File.Exists(vars.configFile))
+            {
+                MessageBox.Show("Configuration file not found. A new 'config.cfg' will be created in the application directory.",
+                                "Configuration File Missing",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+
+                vars.CreateDefaultConfig();
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(vars.ratesPath))
+                {
+                    MessageBox.Show("Rates path not found in the configuration file or it is empty. Please upload a Bus Rates spreadsheet or manually set the rates in the settings.",
+                                    "Rates Path Missing",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+                }
+                else
+                {
+                    ShowReminderPopup();
+                }
+            }
+        }
+
+        private void ShowReminderPopup()
+        {
+            DialogResult result = MessageBox.Show("Have the bus rates changed since your last update?\n\nClick 'Yes' to upload new rates.\nClick 'No' if the rates are up-to-date.",
+                                                  "Check Rates",
+                                                  MessageBoxButtons.YesNo,
+                                                  MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Excel Files|*.xlsx;*.xls";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Logic to handle the file upload
+                    MessageBox.Show("Rates sheet uploaded successfully!");
+                    // Proceed with loading rates
+                }
+            }
+            else if (result == DialogResult.No)
+            {
+                MessageBox.Show("Rates confirmed. Proceeding with loading rates.");
+                // Proceed with loading rates
+            }
+        }
+
+        #endregion
     }
 }

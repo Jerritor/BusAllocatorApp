@@ -17,9 +17,15 @@ namespace BusAllocatorApp
             mainForm = form;
             io = new IO(this, mainForm);
 
+            io.LoadConfig();
             InstantiateVars();
-            io.GenerateJSONFiles();
+            
+            //io.GenerateJSONFiles();
         }
+
+        //CONFIG INFO
+        public string configFile = "config.cfg";
+        public string ratesPath { get; set; }
 
         //--Empty object instantiation--
         //List of Routes
@@ -94,6 +100,7 @@ namespace BusAllocatorApp
             };
             mainForm.WriteLine("Instantiated timeSets.");
 
+            /**
             costSmallBus = new Dictionary<string, double>
             {
                 { "ALABANG", 1423.5 },
@@ -130,6 +137,8 @@ namespace BusAllocatorApp
                 { ("CALAMBA", "CABUYAO"), 2625 }
             };
             mainForm.WriteLine("Instantiated costLargeHybridRoute.");
+            **/
+            //Reading Bus Rates
 
             bufferCurrentSmall = new Dictionary<object, int>
             {
@@ -164,11 +173,10 @@ namespace BusAllocatorApp
             mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
         }
 
-        /**
-        void mainformWriteLine(string msg)
+        public void CreateDefaultConfig()
         {
-            mainForm.WriteLine(msg);
+            io.CreateDefaultConfig();
         }
-        */
+
     }
 }

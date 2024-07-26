@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Data;
+using System.IO;
+
+using ExcelDataReader;
 
 namespace BusAllocatorApp
 {
@@ -43,6 +47,105 @@ namespace BusAllocatorApp
             ConvertTimeSetsToJson();
             ConvertRoutesToJson();
         }
+
+        #region CONFIG FILE
+        public void LoadConfig()
+        {
+            if (File.Exists(vars.configFile))
+            {
+                var lines = File.ReadAllLines(vars.configFile);
+                foreach (var line in lines)
+                {
+                    if (line.StartsWith("rate_path=", StringComparison.OrdinalIgnoreCase))
+                    {
+                        vars.ratesPath = line.Substring("rate_path=".Length).Trim();
+                    }
+                    // Add additional config options here as needed
+                }
+            }
+        }
+
+        public void CreateDefaultConfig()
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(vars.configFile))
+                {
+                    writer.WriteLine("rate_path=");
+                    // Add additional default config options here as needed
+                    //writer.WriteLine("another_option=");
+                    //writer.WriteLine("yet_another_option=");
+                }
+
+                Console.WriteLine("Default configuration file created successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating default configuration file: {ex.Message}");
+            }
+        }
+
+        #endregion
+
+        #region DATA STRUCTURES
+        private class RatesData
+        {
+            public required Dictionary<string, double> costSmallBus { get; set; }
+            public required Dictionary<string, double> costLargeBus { get; set; }
+
+            [JsonConverter(typeof(DictionaryTupleDoubleConverter))]
+            public required Dictionary<(string, string), double> costSmallHybridRoute { get; set; }
+
+            [JsonConverter(typeof(DictionaryTupleDoubleConverter))]
+            public required Dictionary<(string, string), double> costLargeHybridRoute { get; set; }
+        }
+        #endregion
+
+        #region DATA READING
+        
+        //Bus Rates Spreadsheet Reader
+        public void ReadRatesSheet(string path)
+        {
+            vars.costSmallBus = new Dictionary<string, double>();
+            vars.costLargeBus = new Dictionary<string, double>();
+            vars.costSmallHybridRoute = new Dictionary<(string, string), double>();
+            vars.costLargeHybridRoute = new Dictionary<(string, string), double>();
+
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    var result = reader.AsDataSet();
+                    DataTable costTable = result.Tables[0];
+
+                    foreach (DataRow row in costTable.Rows)
+                    {
+                        string route = row["ROUTE"].ToString();
+                        double totalLarge = Convert.ToDouble(row["TOTAL"]);
+                        double totalSmall = Convert.ToDouble(row["TOTAL.1"]);
+
+                        if (route.Contains("VIA"))
+                        {
+                            var routeParts = route.Split(new string[] { " VIA " }, StringSplitOptions.None);
+                            var routeTuple = (routeParts[1], routeParts[0]);
+                            vars.costLargeHybridRoute[routeTuple] = totalLarge;
+                            vars.costSmallHybridRoute[routeTuple] = totalSmall;
+                        }
+                        else
+                        {
+                            vars.costLargeBus[route] = totalLarge;
+                            vars.costSmallBus[route] = totalSmall;
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region DATA SAVING
 
         void ConvertRoutesToJson()
         {
@@ -99,17 +202,6 @@ namespace BusAllocatorApp
             mainform.WriteLine("Converted Bus Rates to JSON.");
         }
 
-        private class RatesData
-        {
-            public required Dictionary<string, double> costSmallBus { get; set; }
-            public required Dictionary<string, double> costLargeBus { get; set; }
-
-            [JsonConverter(typeof(DictionaryTupleDoubleConverter))]
-            public required Dictionary<(string, string), double> costSmallHybridRoute { get; set; }
-
-            [JsonConverter(typeof(DictionaryTupleDoubleConverter))]
-            public required Dictionary<(string, string), double> costLargeHybridRoute { get; set; }
-        }
 
         private class DictionaryTupleDoubleConverter : JsonConverter<Dictionary<(string, string), double>>
         {
@@ -201,5 +293,7 @@ namespace BusAllocatorApp
 
             mainform.WriteLine("Converted Bus Capacities to JSON.");
         }
+
+        #endregion
     }
 }

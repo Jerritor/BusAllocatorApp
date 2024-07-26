@@ -387,6 +387,7 @@
             generateAllocationsButton.TabIndex = 2;
             generateAllocationsButton.Text = "Generate Allocations Spreadsheet";
             generateAllocationsButton.UseVisualStyleBackColor = false;
+            generateAllocationsButton.Visible = false;
             // 
             // outputLog
             // 
@@ -434,6 +435,7 @@
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "MainForm";
             Text = "Bus Allocator";
+            Load += MainForm_Load;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             panel1.ResumeLayout(false);
