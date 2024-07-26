@@ -5,14 +5,17 @@ namespace BusAllocatorApp
 {
     public partial class MainForm : Form
     {
+        private Vars vars;
+
         public MainForm()
         {
             InitializeComponent();
 
             //
             LoadData();
-
             ResizeFormToFitTableLayoutPanel();
+
+            vars = new Vars(this);
         }
 
         private void LoadData()
@@ -97,6 +100,18 @@ namespace BusAllocatorApp
 
             // Set the size of the form to fit the TableLayoutPanel
             this.ClientSize = new Size(preferredSize.Width, preferredSize.Height);
+        }
+
+        public void WriteLine(string message)
+        {
+            if (outputLog.InvokeRequired)
+            {
+                outputLog.Invoke(new Action(() => WriteLine(message)));
+            }
+            else
+            {
+                outputLog.AppendText(message + Environment.NewLine);
+            }
         }
     }
 }
