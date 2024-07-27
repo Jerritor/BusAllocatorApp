@@ -125,6 +125,20 @@ namespace BusAllocatorApp
             {
                 Console.WriteLine($"Error creating default configuration file: {ex.Message}");
             }
+
+            if (!Directory.Exists("data"))
+            {
+                try
+                {
+                    // Check if the 'data' folder exists, and create it if it doesn't
+                    Directory.CreateDirectory("data");
+                    Console.WriteLine("Data folder created successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error creating data folder: {ex.Message}");
+                }
+            }
         }
 
         #endregion

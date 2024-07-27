@@ -23,6 +23,9 @@ namespace BusAllocatorApp
         private void MainForm_Load(object sender, EventArgs e)
         {
             CheckRatesPath();
+            
+            //Enable below to create JSON files
+            //vars.GenerateJSONFiles();
         }
 
 
@@ -268,7 +271,7 @@ namespace BusAllocatorApp
             {
                 if (string.IsNullOrWhiteSpace(vars.ratesPath))
                 {
-                    MessageBox.Show("Rates path not found in the configuration file or it is empty. Please upload a Bus Rates spreadsheet or manually set the rates in the settings.",
+                    MessageBox.Show("Rates file not found in the configuration file or it is empty. Please upload a Bus Rates spreadsheet or manually set the rates in the settings.",
                                     "Rates Path Missing",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Information);

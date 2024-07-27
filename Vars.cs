@@ -19,8 +19,6 @@ namespace BusAllocatorApp
 
             io.LoadConfig();
             InstantiateVars();
-            
-            //io.GenerateJSONFiles();
         }
 
         //CONFIG INFO
@@ -176,6 +174,8 @@ namespace BusAllocatorApp
         #region IO Functions
         public void CreateDefaultConfig() { io.CreateDefaultConfig(); }
         public void UploadRatesSheet() { io.UploadRatesSheet(); }
+
+        public void GenerateJSONFiles() { io.GenerateJSONFiles(); }
 
         #endregion
 
