@@ -315,7 +315,8 @@ namespace BusAllocatorApp
         #region DEMANDS BUTTONS
         private void checkEditDemandButton_Click(object sender, EventArgs e)
         {
-
+            DeptsCheckForm deptsCheckForm = new DeptsCheckForm(vars.departments);
+            deptsCheckForm.Show();
         }
         #endregion
     }

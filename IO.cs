@@ -10,6 +10,7 @@ using System.Data;
 using System.IO;
 
 using ExcelDataReader;
+using System.Net.Http.Json;
 
 namespace BusAllocatorApp
 {
@@ -32,20 +33,36 @@ namespace BusAllocatorApp
         private Vars vars;
         private MainForm mainform;
 
+        private readonly string dataFolder = "data";
+
+        private readonly string deptsFileName = "depts.json";
+        private readonly string routesFileName = "routes.json";
+        private readonly string timeSetsFileName = "time_sets.json";
+        private readonly string ratesFileName = "rates.json";
+        private readonly string buffersFileName = "buffers.json";
+        private readonly string busCapacitiesFileName = "bus_capacities.json";
+
+        //Constructor
         public IO(Vars v, MainForm f)
         {
             vars = v;
             mainform = f;
         }
 
+        //Utility Methods
         public void GenerateJSONFiles()
         {
-            ConvertBusCapacitiesToJson();
-            ConvertBuffersToJson();
-            ConvertRatesToJson();
-            ConvertDeptsToJson();
-            ConvertTimeSetsToJson();
-            ConvertRoutesToJson();
+            //SaveBusCapacities();
+            //SaveBuffers();
+            //SaveRates();
+            //SaveDepartmentNames();
+            //SaveTimeSets();
+            //SaveRoutes();
+        }
+
+        string GetPathInDataFolder(string file_name)
+        {
+            return Path.Combine(dataFolder, file_name);
         }
 
         #region CONFIG FILE
@@ -180,11 +197,9 @@ namespace BusAllocatorApp
 
         #endregion
 
-        #region DATA READING
+        #region DATA LOADING FROM JSON
 
         //Bus Rates Spreadsheet Reader
-
-
         private void ReadRatesSheet(string path)
         {
             vars.costSmallBus = new Dictionary<string, double>();
@@ -224,12 +239,88 @@ namespace BusAllocatorApp
             }
         }
 
+        public List<string> LoadDeptNames()
+        {
+            string deptsPath = GetPathInDataFolder(deptsFileName);
+            if (!File.Exists(deptsPath))
+            {
+                mainform.WriteLine($"{deptsPath} does not exist.");
+                return new List<string>();
+            }
+            else
+            {
+                string json = File.ReadAllText(deptsPath);
+                //mainform.WriteLine($"{deptsPath} loaded from json file.");
+                return JsonSerializer.Deserialize<List<string>>(json);
+            }
+        }
+
+        public (List<string> soloRoutes, List<Tuple<string, string>> hybridRoutes) LoadRoutes()
+        {
+            string routesFilePath = GetPathInDataFolder(routesFileName);
+
+            if (!File.Exists(routesFilePath))
+            {
+                return (new List<string>(), new List<Tuple<string, string>>());
+            }
+
+            string json = File.ReadAllText(routesFilePath);
+            using (JsonDocument document = JsonDocument.Parse(json))
+            {
+                JsonElement root = document.RootElement;
+
+                var soloRoutes = JsonSerializer.Deserialize<List<string>>(root.GetProperty("solo_routes").GetRawText());
+
+                var hybridRoutes = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(root.GetProperty("hybrid_routes").GetRawText())
+                                   .Select(item => Tuple.Create(item["Item1"], item["Item2"])).ToList();
+
+                return (soloRoutes, hybridRoutes);
+            }
+        }
+        
+        //Load Time Sets
+        public List<TimeSet> LoadTimeSets()
+        {
+            string timeSetsFilePath = GetPathInDataFolder(timeSetsFileName);
+            if (!File.Exists(timeSetsFilePath))
+            {
+                return new List<TimeSet>();
+            }
+
+            string json = File.ReadAllText(timeSetsFilePath);
+            var timeSetDTOs = JsonSerializer.Deserialize<List<TimeSetDTO>>(json);
+
+            var timeSets = timeSetDTOs.Select(dto => new TimeSet
+            {
+                IsOutgoing = dto.IsOutgoing,
+                Time = TimeSet.ParseTimeFromAMPM(dto.Time.ToString()),
+                IsFirstDay = dto.IsFirstDay,
+                IsOutModel = dto.IsOutModel
+            }).ToList();
+
+            return timeSets;
+        }
+
+
+        /**
+        public List<Dictionary<string, object>> LoadTimeSets()
+        {
+            string timeSetsFilePath = GetPathInDataFolder(timeSetsFileName);
+            if (!File.Exists(timeSetsFilePath))
+            {
+                return new List<Dictionary<string, object>>();
+            }
+
+            string json = File.ReadAllText(timeSetsFilePath);
+            return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(json);
+        }**/
+
         #endregion
 
         #region DATA SAVING TO JSON
 
         //Convert List of Routes to JSON
-        void ConvertRoutesToJson()
+        public void SaveRoutes()
         {
             var routesData = new
             {
@@ -238,31 +329,53 @@ namespace BusAllocatorApp
             };
 
             string json = JsonSerializer.Serialize(routesData, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText("data/routes.json", json);
+            File.WriteAllText(GetPathInDataFolder(routesFileName), json);
 
             mainform.WriteLine("Converted Routes to JSON.");
         }
 
         // Convert List of Dictionaries of Time Sets to JSON
-        void ConvertTimeSetsToJson()
+        public void SaveTimeSets()
         {
-            string json = JsonSerializer.Serialize(vars.timeSets, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText("data/time_sets.json", json);
+            var timeSetDTOs = vars.timeSets.Select(ts => new
+            {
+                IsOutgoing = ts.IsOutgoing,
+                Time = ts.GetFormattedTime(),
+                IsFirstDay = ts.IsFirstDay,
+                IsOutModel = ts.IsOutModel
+            }).ToList();
+
+            string json = JsonSerializer.Serialize(timeSetDTOs, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(GetPathInDataFolder(timeSetsFileName), json);
 
             mainform.WriteLine("Converted Time Sets to JSON.");
+
+            /** OLD WAY
+            string json = JsonSerializer.Serialize(vars.timeSets, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(GetPathInDataFolder(timeSetsFileName), json);
+
+            mainform.WriteLine("Converted Time Sets to JSON."); **/
         }
 
         // Convert List of Departments to JSON
-        void ConvertDeptsToJson()
+        public void SaveDepartmentNames()
         {
             string json = JsonSerializer.Serialize(vars.deptNames, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText("data/depts.json", json);
+            File.WriteAllText(GetPathInDataFolder(deptsFileName), json);
+
+            mainform.WriteLine("Converted Departments to JSON.");
+        }
+
+        public void SaveDepartmentNames(List<string> deptnames)
+        {
+            string json = JsonSerializer.Serialize(deptnames, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(GetPathInDataFolder(deptsFileName), json);
 
             mainform.WriteLine("Converted Departments to JSON.");
         }
 
         // Convert Dictionary of Rates to JSON
-        void ConvertRatesToJson()
+        public void SaveRates()
         {
             var ratesData = new RatesData
             {
@@ -279,7 +392,7 @@ namespace BusAllocatorApp
             };
 
             string json = JsonSerializer.Serialize(ratesData, options);
-            File.WriteAllText("data/rates.json", json);
+            File.WriteAllText(GetPathInDataFolder(ratesFileName), json);
 
             mainform.WriteLine("Converted Bus Rates to JSON.");
         }
@@ -305,7 +418,7 @@ namespace BusAllocatorApp
         }
 
         // Convert Dictionary of Buffer Capacities to JSON
-        void ConvertBuffersToJson()
+        public void SaveBuffers()
         {
             var buffersData = new BuffersData
             {
@@ -320,7 +433,7 @@ namespace BusAllocatorApp
             };
 
             string json = JsonSerializer.Serialize(buffersData, options);
-            File.WriteAllText("data/buffers.json", json);
+            File.WriteAllText(GetPathInDataFolder(buffersFileName), json);
 
             mainform.WriteLine("Converted Buffer Capacities to JSON.");
         }
@@ -362,7 +475,7 @@ namespace BusAllocatorApp
         }
 
         // Convert Bus Max Capacities to JSON
-        void ConvertBusCapacitiesToJson()
+        public void SaveBusCapacities()
         {
             var capacitiesData = new
             {
@@ -371,7 +484,7 @@ namespace BusAllocatorApp
             };
 
             string json = JsonSerializer.Serialize(capacitiesData, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText("data/bus_capacities.json", json);
+            File.WriteAllText(GetPathInDataFolder(busCapacitiesFileName), json);
 
             mainform.WriteLine("Converted Bus Capacities to JSON.");
         }

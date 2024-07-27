@@ -6,29 +6,48 @@ using System.Threading.Tasks;
 
 namespace BusAllocatorApp
 {
-    internal class Department
+    public class Department
     {
-        public string name { get; set; }
-        public bool isDataFilled { get; set; }
-        public Dictionary<string, Dictionary<string, int>> demandData { get; set; } //time set 1:{route 1:demand 1, route 2: demand 2, etc.}, timeset 2:{route1,demand1...}, etc. 
+        public string Name { get; set; }
+        public bool IsDataFilled { get; set; }
+        public Dictionary<string, Dictionary<string, int>> DemandData { get; set; } //time set 1:{route 1:demand 1, route 2: demand 2, etc.}, timeset 2:{route1,demand1...}, etc. 
 
-        Department(string name)
+        public Department(string name)
         {
-            this.name = name;
-            isDataFilled = false;
+            this.Name = name;
+            IsDataFilled = false;
             InstantiateEmptyDemandData();
         }
 
-        Department(string name, bool isDataFilled)
+        public Department(string name, bool isDataFilled)
         {
-            this.name = name;
-            this.isDataFilled = isDataFilled;
+            this.Name = name;
+            this.IsDataFilled = isDataFilled;
             InstantiateEmptyDemandData();
         }
 
         private void InstantiateEmptyDemandData()
         {
-            demandData = new Dictionary<string, Dictionary<string, int> >();
+            DemandData = new Dictionary<string, Dictionary<string, int> >();
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Department Name: {Name}");
+            sb.AppendLine($"Is Data Filled: {IsDataFilled}");
+            sb.AppendLine("Demand Data:");
+
+            foreach (var timeSet in DemandData)
+            {
+                sb.AppendLine($"  Time Set: {timeSet.Key}");
+                foreach (var route in timeSet.Value)
+                {
+                    sb.AppendLine($"    Route: {route.Key}, Demand: {route.Value}");
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }

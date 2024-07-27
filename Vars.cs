@@ -18,7 +18,16 @@ namespace BusAllocatorApp
             io = new IO(this, mainForm);
 
             io.LoadConfig();
+
             InstantiateVars();
+
+            //Generate JSON Files -- comment out after testing
+            GenerateJSONFiles();
+
+            //Load vars from JSON
+            LoadRoutes();
+            LoadTimeSets();
+            LoadDepartments();
         }
 
         //CONFIG INFO
@@ -38,7 +47,8 @@ namespace BusAllocatorApp
         public DateTime? secondDay { get; set; }
 
         //List of Dictionaries of Time Sets
-        public List<Dictionary<string, object>>? timeSets { get; set; }
+        public List<TimeSet>? timeSets { get; set; }
+        //public List<Dictionary<string, object>>? timeSets { get; set; }
 
         //Dictionary of Rates
         public Dictionary<string, double>? costSmallBus { get; set; }
@@ -54,7 +64,22 @@ namespace BusAllocatorApp
         public int capacitySmallBus { get; set; }
         public int capacityLargeBus { get; set; }
 
+        //Departments List and Demands Memory
+        public List<Department> departments { get; private set; }
+
         private void InstantiateVars()
+        {
+            //InstantiateSoloRoutes();
+            //InstantiateHybridRoutes();
+            //InstantiateDeptNames();
+            //InstantiateDates();
+            //InstantiateTimeSets();
+            //InstantiateRates();
+            //InstantiateBuffers();
+            //InstantiateBusCapacities();
+        }
+
+        private void InstantiateSoloRoutes()
         {
             // Instantiate solo_routes list
             solo_routes = new List<string>
@@ -62,7 +87,10 @@ namespace BusAllocatorApp
                 "ALABANG", "BINAN", "BALIBAGO", "CARMONA", "CABUYAO", "CALAMBA"
             };
             mainForm.WriteLine("Instantiated solo_routes.");
+        }
 
+        private void InstantiateHybridRoutes()
+        {
             // Instantiate hybrid_routes list
             hybrid_routes = new List<Tuple<string, string>>
             {
@@ -71,7 +99,10 @@ namespace BusAllocatorApp
                 Tuple.Create("CALAMBA", "CABUYAO")
             };
             mainForm.WriteLine("Instantiated hybrid_routes.");
+        }
 
+        private void InstantiateDeptNames()
+        {
             deptNames = new List<string>
             {
                 "3M", "ASTI", "IE", "ICTC", "JCM", "VISHAY", "OKURA", "NIDEC", "R&D / NPI", "TIP", "SUMITRONICS",
@@ -80,11 +111,18 @@ namespace BusAllocatorApp
                 "OFFISTE", "ERTI", "CREOTEC", "ESPI", "Sales and Marketing"
             };
             mainForm.WriteLine("Instantiated departments.");
+        }
 
+        private void InstantiateDates()
+        {
             firstDay = new DateTime(2024, 2, 26); // Monday, Feb 26
             secondDay = new DateTime(2024, 2, 27); // Tuesday, Feb 27
             mainForm.WriteLine("Instantiated firstDay & secondDay.");
+        }
 
+        private void InstantiateTimeSets()
+        {
+            /** OLD WAY
             timeSets = new List<Dictionary<string, object>>
             {
                 new Dictionary<string, object> { { "id", 1 }, { "isOutgoing", true }, { "Time", "4:00PM" }, { "isFirstDay", true }, { "isOutModel", true } },
@@ -95,10 +133,25 @@ namespace BusAllocatorApp
                 new Dictionary<string, object> { { "id", 6 }, { "isOutgoing", true }, { "Time", "4:00AM" }, { "isFirstDay", false }, { "isOutModel", true } },
                 new Dictionary<string, object> { { "id", 7 }, { "isOutgoing", true }, { "Time", "7:00AM" }, { "isFirstDay", false }, { "isOutModel", true } },
                 new Dictionary<string, object> { { "id", 8 }, { "isOutgoing", false }, { "Time", "7:00AM" }, { "isFirstDay", false }, { "isOutModel", false } }
-            };
-            mainForm.WriteLine("Instantiated timeSets.");
+            };**/
 
-            /**
+            timeSets = new List<TimeSet>
+            {
+                new TimeSet(true, "4:00PM", true),
+                new TimeSet(true, "6:00PM",true),
+                new TimeSet(true, "7:00PM",true),
+                new TimeSet(false, "7:00PM",true),
+                new TimeSet(false, "10:00PM",true),
+                new TimeSet(true, "4:00AM",false),
+                new TimeSet(true, "7:00AM",false),
+                new TimeSet(false, "7:00AM",false)
+            };
+
+            mainForm.WriteLine("Instantiated timeSets.");
+        }
+
+        private void InstantiateRates()
+        {
             costSmallBus = new Dictionary<string, double>
             {
                 { "ALABANG", 1423.5 },
@@ -135,9 +188,10 @@ namespace BusAllocatorApp
                 { ("CALAMBA", "CABUYAO"), 2625 }
             };
             mainForm.WriteLine("Instantiated costLargeHybridRoute.");
-            **/
-            //Reading Bus Rates
+        }
 
+        private void InstantiateBuffers()
+        {
             bufferCurrentSmall = new Dictionary<object, int>
             {
                 { "ALABANG", 0 },
@@ -165,11 +219,51 @@ namespace BusAllocatorApp
                 { ("CALAMBA", "CABUYAO"), 3 }
             };
             mainForm.WriteLine("Instantiated bufferCurrentLarge.");
+        }
 
+        private void InstantiateBusCapacities()
+        {
             capacitySmallBus = 18;
             capacityLargeBus = 56;
             mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
         }
+
+
+
+        #region To_String Functions
+        string StringListToString(List<string> s)
+        {
+            return String.Join(",", s);
+        }
+
+        string StringListOfTuplesToString(List<Tuple<string, string>>? tuplelist)
+        {
+            return String.Join(",", tuplelist.Select(pair => $"{pair.Item1}:{pair.Item2}"));
+        }
+
+        public void PrintAllTimeSets()
+        {
+            for (int i = 0; i < timeSets.Count; i++)
+            {
+                mainForm.WriteLine($"{i+1}: {timeSets[i]}");
+            }
+
+            /**
+            foreach (var ts in timeSets)
+            {
+                mainForm.WriteLine(ts.ToString());
+            }**/
+        }
+
+        public void PrintAllDepartmentsInfo()
+        {
+            foreach (var department in departments)
+            {
+                mainForm.WriteLine(department.ToString());
+            }
+        }
+
+        #endregion
 
         #region IO Functions
         public void CreateDefaultConfig() { io.CreateDefaultConfig(); }
@@ -177,7 +271,105 @@ namespace BusAllocatorApp
 
         public void GenerateJSONFiles() { io.GenerateJSONFiles(); }
 
+        private void LoadRoutes()
+        {
+            (solo_routes, hybrid_routes) = io.LoadRoutes();
+
+            //printing
+            mainForm.WriteLine(StringListToString(solo_routes));
+            mainForm.WriteLine(StringListOfTuplesToString(hybrid_routes));
+
+
+        }
+
+        private void LoadTimeSets()
+        {
+            timeSets = io.LoadTimeSets();
+
+            PrintAllTimeSets();
+            //mainForm.WriteLine(StringListToString(timeSets));
+        }
+
+        private void LoadDepartments()
+        {
+            deptNames = io.LoadDeptNames();
+
+            //initialize the departments
+            departments = deptNames.Select(deptname => new Department(deptname)).ToList();
+
+            //printing
+            mainForm.WriteLine(StringListToString(deptNames));
+
+            PrintAllDepartmentsInfo();
+
+        }
+
+        public void SaveDepartments()
+        {
+            io.SaveDepartmentNames(departments.Select(d => d.Name).ToList());
+        }
+
         #endregion
 
+        #region Demands Saving
+        // Update demand for a specific time set and route
+        public void UpdateDepartmentDemand(string departmentName, string timeSet, string route, int demand)
+        {
+            var department = departments.FirstOrDefault(d => d.Name == departmentName);
+            if (department != null)
+            {
+                if (!department.DemandData.ContainsKey(timeSet))
+                {
+                    department.DemandData[timeSet] = new Dictionary<string, int>();
+                }
+                department.DemandData[timeSet][route] = demand;
+                department.IsDataFilled = true;
+            }
+        }
+
+        // Overload to update a full time set of demands
+        public void UpdateDepartmentDemand(string departmentName, string timeSet, Dictionary<string, int> demands)
+        {
+            var department = departments.FirstOrDefault(d => d.Name == departmentName);
+            if (department != null)
+            {
+                if (!department.DemandData.ContainsKey(timeSet))
+                {
+                    department.DemandData[timeSet] = new Dictionary<string, int>();
+                }
+
+                foreach (var demand in demands)
+                {
+                    department.DemandData[timeSet][demand.Key] = demand.Value;
+                }
+
+                department.IsDataFilled = true;
+            }
+        }
+
+        // Overload to update all time sets of demands
+        public void UpdateDepartmentDemand(string departmentName, Dictionary<string, Dictionary<string, int>> allDemands)
+        {
+            var department = departments.FirstOrDefault(d => d.Name == departmentName);
+            if (department != null)
+            {
+                foreach (var timeSet in allDemands)
+                {
+                    if (!department.DemandData.ContainsKey(timeSet.Key))
+                    {
+                        department.DemandData[timeSet.Key] = new Dictionary<string, int>();
+                    }
+
+                    foreach (var demand in timeSet.Value)
+                    {
+                        department.DemandData[timeSet.Key][demand.Key] = demand.Value;
+                    }
+                }
+
+                department.IsDataFilled = true;
+            }
+        }
+
+        #endregion
     }
 }
