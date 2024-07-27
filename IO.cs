@@ -228,6 +228,7 @@ namespace BusAllocatorApp
 
         #region DATA SAVING TO JSON
 
+        //Convert List of Routes to JSON
         void ConvertRoutesToJson()
         {
             var routesData = new
@@ -254,7 +255,7 @@ namespace BusAllocatorApp
         // Convert List of Departments to JSON
         void ConvertDeptsToJson()
         {
-            string json = JsonSerializer.Serialize(vars.departments, new JsonSerializerOptions { WriteIndented = true });
+            string json = JsonSerializer.Serialize(vars.deptNames, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText("data/depts.json", json);
 
             mainform.WriteLine("Converted Departments to JSON.");

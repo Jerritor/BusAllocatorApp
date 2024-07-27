@@ -308,6 +308,7 @@
             checkEditDemandButton.TabIndex = 11;
             checkEditDemandButton.Text = "Check/Edit Demands";
             checkEditDemandButton.UseVisualStyleBackColor = false;
+            checkEditDemandButton.Click += checkEditDemandButton_Click;
             // 
             // dataGridView1
             // 

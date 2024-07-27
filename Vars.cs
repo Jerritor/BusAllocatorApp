@@ -31,7 +31,7 @@ namespace BusAllocatorApp
         public List<Tuple<string, string>>? hybrid_routes { get; set; }
 
         //List of Departments
-        public List<string>? departments { get; set; }
+        public List<string>? deptNames { get; set; }
 
         //First Day and Second Day
         public DateTime? firstDay { get; set; }
@@ -72,7 +72,7 @@ namespace BusAllocatorApp
             };
             mainForm.WriteLine("Instantiated hybrid_routes.");
 
-            departments = new List<string>
+            deptNames = new List<string>
             {
                 "3M", "ASTI", "IE", "ICTC", "JCM", "VISHAY", "OKURA", "NIDEC", "R&D / NPI", "TIP", "SUMITRONICS",
                 "MERCHANT", "GLOBAL SKYWARE", "GLOBAL INVACOM", "ANALOG", "ENGG", "QA", "PCMC/SCM", "WAREHOUSE",

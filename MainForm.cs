@@ -23,7 +23,7 @@ namespace BusAllocatorApp
         private void MainForm_Load(object sender, EventArgs e)
         {
             CheckRatesPath();
-            
+
             //Enable below to create JSON files
             //vars.GenerateJSONFiles();
         }
@@ -308,6 +308,14 @@ namespace BusAllocatorApp
         private void busRateButton_Click(object sender, EventArgs e)
         {
             vars.UploadRatesSheet();
+        }
+        #endregion
+
+
+        #region DEMANDS BUTTONS
+        private void checkEditDemandButton_Click(object sender, EventArgs e)
+        {
+
         }
         #endregion
     }
