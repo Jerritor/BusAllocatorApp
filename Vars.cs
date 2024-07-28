@@ -270,6 +270,9 @@ namespace BusAllocatorApp
 
         public void GenerateJSONFiles() { io.GenerateJSONFiles(); }
 
+        #endregion
+
+        #region IO Loading JSON Files
         private void LoadRoutes()
         {
             (solo_routes, hybrid_routes) = io.LoadRoutes();
@@ -294,37 +297,37 @@ namespace BusAllocatorApp
             deptNames = io.LoadDeptNames();
         }
 
-        private void LoadDepartments()
+        private void LoadDepartments(bool isInitialLoad = false)
         {
-            LoadDepartmentNames();
-
             //initialize the departments
             departments = deptNames.Select(deptname => new Department(deptname)).ToList();
 
             //initialize the department demands
-            UpdateDepartmentsWithRoutesAndTimeSets(true);
+            UpdateDepartmentsWithRoutesAndTimeSets(isInitialLoad);
 
             //printing department names
             mainForm.WriteLine(StringListToString(deptNames));
             //printing departments object list
             PrintAllDepartments();
-
         }
 
         private void FirstLoadRoutesTimeSetsDepartments()
         {
             LoadRoutes();
             LoadTimeSets();
-            LoadDepartments(); //this also calls LoadDepartmentNames()
+            LoadDepartmentNames();
+            LoadDepartments(true); //this also calls LoadDepartmentNames()
         }
         #endregion
 
-        #region Department List & Department Object Updating
+        #region IO Saving to JSON
         public void SaveDepartments()
         {
             io.SaveDepartmentNames(departments.Select(d => d.Name).ToList()); //Save Departments to JSON
         }
+        #endregion
 
+        #region Department List & Department Object Updating
         //Initialize the department demands
         private void InitializeDepartmentsDemands()
         {
@@ -424,15 +427,8 @@ namespace BusAllocatorApp
 
 
         //Used to Update Departments list, specifically based on the routes and time sets lists
-        
-        //This one is for updating and not initializing
-        private void UpdateDepartmentsWithRoutesAndTimeSets()
-        {
-            UpdateDepartmentsWithRoutesAndTimeSets(false);
-        }
-
         //if initializeDemands is true, all demands will be set to -1
-        private void UpdateDepartmentsWithRoutesAndTimeSets(bool initializeDemands)
+        private void UpdateDepartmentsWithRoutesAndTimeSets(bool initializeDemands = false)
         {
             foreach(var dept in departments)
             {
