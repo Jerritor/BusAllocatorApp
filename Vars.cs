@@ -299,6 +299,8 @@ namespace BusAllocatorApp
 
         private void LoadDepartments(bool isInitialLoad = false)
         {
+            LoadDepartmentNames();
+
             //initialize the departments
             departments = deptNames.Select(deptname => new Department(deptname)).ToList();
 
@@ -315,7 +317,6 @@ namespace BusAllocatorApp
         {
             LoadRoutes();
             LoadTimeSets();
-            LoadDepartmentNames();
             LoadDepartments(true); //this also calls LoadDepartmentNames()
         }
         #endregion

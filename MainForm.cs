@@ -223,6 +223,11 @@ namespace BusAllocatorApp
             else { return true; }
         }
 
+        private void firstDatePicker_ValueChanged(object sender, EventArgs e)
+        {
+            CheckFirstDate();
+        }
+
         private void secondDatePicker_ValueChanged(object sender, EventArgs e)
         {
             CheckSecondDate();
