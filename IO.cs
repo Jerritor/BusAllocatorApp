@@ -239,22 +239,7 @@ namespace BusAllocatorApp
             }
         }
 
-        public List<string> LoadDeptNames()
-        {
-            string deptsPath = GetPathInDataFolder(deptsFileName);
-            if (!File.Exists(deptsPath))
-            {
-                mainform.WriteLine($"{deptsPath} does not exist.");
-                return new List<string>();
-            }
-            else
-            {
-                string json = File.ReadAllText(deptsPath);
-                //mainform.WriteLine($"{deptsPath} loaded from json file.");
-                return JsonSerializer.Deserialize<List<string>>(json);
-            }
-        }
-
+        //Load Routes
         public (List<string> soloRoutes, List<Tuple<string, string>> hybridRoutes) LoadRoutes()
         {
             string routesFilePath = GetPathInDataFolder(routesFileName);
@@ -281,6 +266,7 @@ namespace BusAllocatorApp
         //Load Time Sets
         public List<TimeSet> LoadTimeSets()
         {
+            //Loading TimeSets from JSON
             string timeSetsFilePath = GetPathInDataFolder(timeSetsFileName);
             if (!File.Exists(timeSetsFilePath))
             {
@@ -300,8 +286,6 @@ namespace BusAllocatorApp
 
             return timeSets;
         }
-
-
         /**
         public List<Dictionary<string, object>> LoadTimeSets()
         {
@@ -314,6 +298,24 @@ namespace BusAllocatorApp
             string json = File.ReadAllText(timeSetsFilePath);
             return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(json);
         }**/
+
+        //Load Departments
+        public List<string> LoadDeptNames()
+        {
+            //Loading Dept names from JSON
+            string deptsPath = GetPathInDataFolder(deptsFileName);
+            if (!File.Exists(deptsPath))
+            {
+                mainform.WriteLine($"{deptsPath} does not exist.");
+                return new List<string>();
+            }
+            else
+            {
+                string json = File.ReadAllText(deptsPath);
+                //mainform.WriteLine($"{deptsPath} loaded from json file.");
+                return JsonSerializer.Deserialize<List<string>>(json);
+            }
+        }
 
         #endregion
 
@@ -360,13 +362,15 @@ namespace BusAllocatorApp
         // Convert List of Departments to JSON
         public void SaveDepartmentNames()
         {
-            string json = JsonSerializer.Serialize(vars.deptNames, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(GetPathInDataFolder(deptsFileName), json);
-
-            mainform.WriteLine("Converted Departments to JSON.");
+            SaveDeptNamesPrivate(vars.deptNames);
         }
 
         public void SaveDepartmentNames(List<string> deptnames)
+        {
+            SaveDeptNamesPrivate(deptnames);
+        }
+
+        private void SaveDeptNamesPrivate(List<string> deptnames)
         {
             string json = JsonSerializer.Serialize(deptnames, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(GetPathInDataFolder(deptsFileName), json);

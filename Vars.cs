@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,9 +26,7 @@ namespace BusAllocatorApp
             GenerateJSONFiles();
 
             //Load vars from JSON
-            LoadRoutes();
-            LoadTimeSets();
-            LoadDepartments();
+            FirstLoadRoutesTimeSetsDepartments();
         }
 
         //CONFIG INFO
@@ -255,7 +254,7 @@ namespace BusAllocatorApp
             }**/
         }
 
-        public void PrintAllDepartmentsInfo()
+        public void PrintAllDepartments()
         {
             foreach (var department in departments)
             {
@@ -290,28 +289,81 @@ namespace BusAllocatorApp
             //mainForm.WriteLine(StringListToString(timeSets));
         }
 
-        private void LoadDepartments()
+        private void LoadDepartmentNames()
         {
             deptNames = io.LoadDeptNames();
+        }
+
+        private void LoadDepartments()
+        {
+            LoadDepartmentNames();
 
             //initialize the departments
             departments = deptNames.Select(deptname => new Department(deptname)).ToList();
 
-            //printing
+            //initialize the department demands
+            UpdateDepartmentsWithRoutesAndTimeSets(true);
+
+            //printing department names
             mainForm.WriteLine(StringListToString(deptNames));
-
-            PrintAllDepartmentsInfo();
+            //printing departments object list
+            PrintAllDepartments();
 
         }
 
-        public void SaveDepartments()
+        private void FirstLoadRoutesTimeSetsDepartments()
         {
-            io.SaveDepartmentNames(departments.Select(d => d.Name).ToList());
+            LoadRoutes();
+            LoadTimeSets();
+            LoadDepartments(); //this also calls LoadDepartmentNames()
         }
-
         #endregion
 
-        #region Demands Saving
+        #region Department List & Department Object Updating
+        public void SaveDepartments()
+        {
+            io.SaveDepartmentNames(departments.Select(d => d.Name).ToList()); //Save Departments to JSON
+        }
+
+        //Initialize the department demands
+        private void InitializeDepartmentsDemands()
+        {
+            foreach (var department in departments)
+            {
+                InitializeDepartmentDemands(department);
+            }
+        }
+        private void InitializeDepartmentDemands(Department department)
+        {
+            foreach (var timeSet in timeSets)
+            {
+                string timeSetKey = timeSet.Time.ToString();
+                if (!department.DemandData.ContainsKey(timeSetKey))
+                {
+                    department.DemandData[timeSetKey] = new Dictionary<string, int>();
+                }
+
+                foreach (var route in solo_routes)
+                {
+                    if (!department.DemandData[timeSetKey].ContainsKey(route))
+                    {
+                        department.DemandData[timeSetKey][route] = -1; // Initialize with -1 demand
+                    }
+                }
+
+                foreach (var hybridRoute in hybrid_routes)
+                {
+                    string hybridRouteKey = $"{hybridRoute.Item1}-{hybridRoute.Item2}";
+                    if (!department.DemandData[timeSetKey].ContainsKey(hybridRouteKey))
+                    {
+                        department.DemandData[timeSetKey][hybridRouteKey] = -1; // Initialize with -1 demand
+                    }
+                }
+            }
+        }
+
+
+
         // Update demand for a specific time set and route
         public void UpdateDepartmentDemand(string departmentName, string timeSet, string route, int demand)
         {
@@ -370,6 +422,79 @@ namespace BusAllocatorApp
             }
         }
 
+
+        //Used to Update Departments list, specifically based on the routes and time sets lists
+        
+        //This one is for updating and not initializing
+        private void UpdateDepartmentsWithRoutesAndTimeSets()
+        {
+            UpdateDepartmentsWithRoutesAndTimeSets(false);
+        }
+
+        //if initializeDemands is true, all demands will be set to -1
+        private void UpdateDepartmentsWithRoutesAndTimeSets(bool initializeDemands)
+        {
+            foreach(var dept in departments)
+            {
+                UpdateDepartmentWithRoutesAndTimeSets(dept, initializeDemands);
+            }
+        }
+
+        private void UpdateDepartmentWithRoutesAndTimeSets(Department department, bool initializeDemands)
+        {
+            var updatedDemandData = new Dictionary<string, Dictionary<string, int>>();
+
+            //Iterate over TimeSets in order
+            foreach (var timeSet in timeSets)
+            {
+                string timeSetKey = timeSet.Time.ToString();
+                if (!updatedDemandData.ContainsKey(timeSetKey))
+                {
+                    updatedDemandData[timeSetKey] = new Dictionary<string, int>();
+                }
+                //Update demands for solo routes
+                foreach (var route in solo_routes)
+                {
+                    if (!updatedDemandData[timeSetKey].ContainsKey(route))
+                    {
+                        int initialDemand = initializeDemands ? -1 : (department.DemandData.ContainsKey(timeSetKey) && department.DemandData[timeSetKey].ContainsKey(route) ? department.DemandData[timeSetKey][route] : 0);
+                        updatedDemandData[timeSetKey][route] = initialDemand;
+                    }
+                }
+                //Update demands for hybrid routes
+                foreach (var hybridRoute in hybrid_routes)
+                {
+                    string hybridRouteKey = $"{hybridRoute.Item1}-{hybridRoute.Item2}";
+                    if (!updatedDemandData[timeSetKey].ContainsKey(hybridRouteKey))
+                    {
+                        int initialDemand = initializeDemands ? -1 : (department.DemandData.ContainsKey(timeSetKey) && department.DemandData[timeSetKey].ContainsKey(hybridRouteKey) ? department.DemandData[timeSetKey][hybridRouteKey] : 0);
+                        updatedDemandData[timeSetKey][hybridRouteKey] = initialDemand;
+                    }
+                }
+            }
+            department.DemandData = updatedDemandData;
+        }
+
+        #endregion
+
+        #region Updating Non-Department Lists
+        public void UpdateRoutes(List<string> newRoutes)
+        {
+            solo_routes = newRoutes;
+            UpdateDepartmentsWithRoutesAndTimeSets(false);
+        }
+
+        public void UpdateHybridRoutes(List<Tuple<string, string>> newHybridRoutes)
+        {
+            hybrid_routes = newHybridRoutes;
+            UpdateDepartmentsWithRoutesAndTimeSets(false);
+        }
+
+        public void UpdateTimeSets(List<TimeSet> newTimeSets)
+        {
+            timeSets = newTimeSets;
+            UpdateDepartmentsWithRoutesAndTimeSets(false);
+        }
         #endregion
     }
 }
