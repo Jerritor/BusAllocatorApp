@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             tableLayoutPanel1 = new TableLayoutPanel();
-            button1 = new Button();
+            closeButton = new Button();
             flowLayoutPanel1 = new FlowLayoutPanel();
             tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
@@ -38,7 +38,7 @@
             // 
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(button1, 0, 1);
+            tableLayoutPanel1.Controls.Add(closeButton, 0, 1);
             tableLayoutPanel1.Controls.Add(flowLayoutPanel1, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
@@ -49,18 +49,19 @@
             tableLayoutPanel1.Size = new Size(384, 561);
             tableLayoutPanel1.TabIndex = 0;
             // 
-            // button1
+            // closeButton
             // 
-            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            button1.BackColor = SystemColors.ActiveCaptionText;
-            button1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            button1.ForeColor = SystemColors.ControlLightLight;
-            button1.Location = new Point(3, 518);
-            button1.Name = "button1";
-            button1.Size = new Size(378, 40);
-            button1.TabIndex = 0;
-            button1.Text = "Close Window";
-            button1.UseVisualStyleBackColor = false;
+            closeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            closeButton.BackColor = SystemColors.ActiveCaptionText;
+            closeButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            closeButton.ForeColor = SystemColors.ControlLightLight;
+            closeButton.Location = new Point(3, 518);
+            closeButton.Name = "closeButton";
+            closeButton.Size = new Size(378, 40);
+            closeButton.TabIndex = 0;
+            closeButton.Text = "Close Window";
+            closeButton.UseVisualStyleBackColor = false;
+            closeButton.Click += closeButton_Click;
             // 
             // flowLayoutPanel1
             // 
@@ -83,7 +84,8 @@
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             Name = "DeptsCheckForm";
-            Text = "DeptsCheckForm";
+            Text = "Departments Check";
+            FormClosing += DeptsCheckForm_FormClosing;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             ResumeLayout(false);
@@ -92,7 +94,7 @@
         #endregion
 
         private TableLayoutPanel tableLayoutPanel1;
-        private Button button1;
+        private Button closeButton;
         private FlowLayoutPanel flowLayoutPanel1;
     }
 }

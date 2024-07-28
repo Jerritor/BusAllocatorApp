@@ -317,7 +317,7 @@ namespace BusAllocatorApp
         {
             LoadRoutes();
             LoadTimeSets();
-            LoadDepartments(true); //this also calls LoadDepartmentNames()
+            LoadDepartments(true); //this also calls LoadDepartmentNames(), true means set all demand values to null
         }
         #endregion
 
@@ -330,6 +330,7 @@ namespace BusAllocatorApp
 
         #region Department List & Department Object Updating
         //Initialize the department demands
+        /**
         private void InitializeDepartmentsDemands()
         {
             foreach (var department in departments)
@@ -365,6 +366,7 @@ namespace BusAllocatorApp
                 }
             }
         }
+        **/
 
 
 
@@ -376,7 +378,7 @@ namespace BusAllocatorApp
             {
                 if (!department.DemandData.ContainsKey(timeSet))
                 {
-                    department.DemandData[timeSet] = new Dictionary<string, int>();
+                    department.DemandData[timeSet] = new Dictionary<string, int?>();
                 }
                 department.DemandData[timeSet][route] = demand;
                 department.IsDataFilled = true;
@@ -391,7 +393,7 @@ namespace BusAllocatorApp
             {
                 if (!department.DemandData.ContainsKey(timeSet))
                 {
-                    department.DemandData[timeSet] = new Dictionary<string, int>();
+                    department.DemandData[timeSet] = new Dictionary<string, int?>();
                 }
 
                 foreach (var demand in demands)
@@ -413,7 +415,7 @@ namespace BusAllocatorApp
                 {
                     if (!department.DemandData.ContainsKey(timeSet.Key))
                     {
-                        department.DemandData[timeSet.Key] = new Dictionary<string, int>();
+                        department.DemandData[timeSet.Key] = new Dictionary<string, int?>();
                     }
 
                     foreach (var demand in timeSet.Value)
@@ -439,7 +441,7 @@ namespace BusAllocatorApp
 
         private void UpdateDepartmentWithRoutesAndTimeSets(Department department, bool initializeDemands)
         {
-            var updatedDemandData = new Dictionary<string, Dictionary<string, int>>();
+            var updatedDemandData = new Dictionary<string, Dictionary<string, int?>>();
 
             //Iterate over TimeSets in order
             foreach (var timeSet in timeSets)
@@ -447,14 +449,14 @@ namespace BusAllocatorApp
                 string timeSetKey = timeSet.Time.ToString();
                 if (!updatedDemandData.ContainsKey(timeSetKey))
                 {
-                    updatedDemandData[timeSetKey] = new Dictionary<string, int>();
+                    updatedDemandData[timeSetKey] = new Dictionary<string, int?>();
                 }
                 //Update demands for solo routes
                 foreach (var route in solo_routes)
                 {
                     if (!updatedDemandData[timeSetKey].ContainsKey(route))
                     {
-                        int initialDemand = initializeDemands ? -1 : (department.DemandData.ContainsKey(timeSetKey) && department.DemandData[timeSetKey].ContainsKey(route) ? department.DemandData[timeSetKey][route] : 0);
+                        int? initialDemand = initializeDemands ? null : (department.DemandData.ContainsKey(timeSetKey) && department.DemandData[timeSetKey].ContainsKey(route) ? department.DemandData[timeSetKey][route] : 0);
                         updatedDemandData[timeSetKey][route] = initialDemand;
                     }
                 }
@@ -464,7 +466,7 @@ namespace BusAllocatorApp
                     string hybridRouteKey = $"{hybridRoute.Item1}-{hybridRoute.Item2}";
                     if (!updatedDemandData[timeSetKey].ContainsKey(hybridRouteKey))
                     {
-                        int initialDemand = initializeDemands ? -1 : (department.DemandData.ContainsKey(timeSetKey) && department.DemandData[timeSetKey].ContainsKey(hybridRouteKey) ? department.DemandData[timeSetKey][hybridRouteKey] : 0);
+                        int? initialDemand = initializeDemands ? null : (department.DemandData.ContainsKey(timeSetKey) && department.DemandData[timeSetKey].ContainsKey(hybridRouteKey) ? department.DemandData[timeSetKey][hybridRouteKey] : 0);
                         updatedDemandData[timeSetKey][hybridRouteKey] = initialDemand;
                     }
                 }
