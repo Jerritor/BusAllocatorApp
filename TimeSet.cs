@@ -23,7 +23,6 @@ namespace BusAllocatorApp
         public bool IsOutModel { get; set; }
 
         //Constructors
-
         public TimeSet(bool isOutgoing, string time, bool isfirstday)
         {
             IsOutgoing = isOutgoing;
@@ -91,6 +90,18 @@ namespace BusAllocatorApp
         public string GetFormattedTime()
         {
             return ConvertTimeSpanToAMPM(Time);
+        }
+
+        public string GetFormattedTimeINOUT()
+        {
+            string inOut = IsOutgoing ? "OUT" : "IN";
+            return $"{inOut} {ConvertTimeSpanToAMPM()}";
+            
+
+            /**
+            string period = IsOutgoing ? "OUT" : "IN";
+            string timeString = DateTime.Today.Add(Time).ToString("h:mmtt", CultureInfo.InvariantCulture).ToUpperInvariant();
+            return $"{period} {timeString}";**/
         }
     }
 }

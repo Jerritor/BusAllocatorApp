@@ -12,14 +12,20 @@ namespace BusAllocatorApp
 {
     public partial class DeptsCheckForm : Form
     {
+        private Vars vars;
         private List<Department> departments;
+        private List<TimeSet> timeSets;
 
-        public DeptsCheckForm(List<Department> depts)
+        public DeptsCheckForm(Vars vars)
         {
             InitializeComponent();
-            this.departments = depts;
+            this.vars = vars;
+            this.departments = vars.departments;
+            this.timeSets = vars.timeSets;
+
 
             CreateDepartmentList();
+            
 
             //Form Closing Event
             //this.FormClosing += DeptsCheckForm_FormClosing;
@@ -45,57 +51,20 @@ namespace BusAllocatorApp
 
         private void EditDepartment(Department department)
         {
+            var editForm = new EditDemandsForm(department, timeSets);
+            if (editForm.ShowDialog() == DialogResult.OK)
+            {
+                // Handle any updates if needed, e.g., refreshing the list
+                CreateDepartmentList();
+            }
+
             // Open edit form or handle editing logic here
-            MessageBox.Show($"Editing department: {department.Name}");
+            //MessageBox.Show($"Editing department: {department.Name}");
         }
 
         private void CreateDepartmentList()
         {
             flowLayoutPanel1.Controls.Clear();
-
-            /**
-            foreach (var department in departments)
-            {
-                Panel departmentPanel = new Panel
-                {
-                    Width = flowLayoutPanel1.ClientSize.Width - 20,
-                    Height = 30,
-                    Margin = new Padding(5)
-                };
-
-                CheckBox checkBox = new CheckBox
-                {
-                    Checked = department.IsDataFilled,
-                    AutoCheck = false,
-                    Location = new Point(10, 5),
-                    Width = 20
-                };
-                
-                Button editButton = new Button
-                {
-                    Text = "Edit",
-                    //Location = new Point(flowLayoutPanel1.ClientSize.Width - 80, 0), //new Point(350, 0),
-                    Width = 50,
-                    Anchor = AnchorStyles.Right
-                };
-
-                Label label = new Label
-                {
-                    Text = $"{department.Name} - Total Demand: {GetTotalDemand(department)}",
-                    Location = new Point(40, 5),
-                    Width = 300,
-                    AutoSize = true
-                };
-
-                
-                editButton.Click += (sender, e) => EditDepartment(department);
-
-                departmentPanel.Controls.Add(checkBox);
-                departmentPanel.Controls.Add(label);
-                departmentPanel.Controls.Add(editButton);
-
-                flowLayoutPanel1.Controls.Add(departmentPanel);
-            }**/
             foreach (var department in departments)
             {
                 Panel departmentPanel = new Panel
@@ -116,14 +85,7 @@ namespace BusAllocatorApp
                     Location = new Point(10, 10),
                     AutoSize = true,
                     AutoCheck = false
-                };       
-                /**
-                Label label = new Label
-                {
-                    Text = $"{department.Name} - Total Demand: {GetTotalDemand(department)}",
-                    Location = new Point(40, 10),
-                    AutoSize = true
-                };**/
+                };
                 Button editButton = new Button
                 {
                     Text = "Edit",
