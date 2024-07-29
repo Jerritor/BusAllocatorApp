@@ -23,7 +23,7 @@ namespace BusAllocatorApp
         private void MainForm_Load(object sender, EventArgs e)
         {
             CheckRatesPath();
-            
+
             //Enable below to create JSON files
             //vars.GenerateJSONFiles();
         }
@@ -223,6 +223,11 @@ namespace BusAllocatorApp
             else { return true; }
         }
 
+        private void firstDatePicker_ValueChanged(object sender, EventArgs e)
+        {
+            CheckFirstDate();
+        }
+
         private void secondDatePicker_ValueChanged(object sender, EventArgs e)
         {
             CheckSecondDate();
@@ -308,6 +313,15 @@ namespace BusAllocatorApp
         private void busRateButton_Click(object sender, EventArgs e)
         {
             vars.UploadRatesSheet();
+        }
+        #endregion
+
+
+        #region DEMANDS BUTTONS
+        private void checkEditDemandButton_Click(object sender, EventArgs e)
+        {
+            DeptsCheckForm deptsCheckForm = new DeptsCheckForm(vars);
+            deptsCheckForm.Show();
         }
         #endregion
     }
