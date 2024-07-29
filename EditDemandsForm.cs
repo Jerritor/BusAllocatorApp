@@ -289,5 +289,43 @@ namespace BusAllocatorApp
             }
             return false;
         }
+
+        //paste excel data functionality
+        private void PasteClipboardData()
+        {
+            if (Clipboard.ContainsText())
+            {
+                string clipboardText = Clipboard.GetText();
+                string[] lines = clipboardText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                int rowIndex = dataGridViewDemands.CurrentCell.RowIndex;
+                int colIndex = dataGridViewDemands.CurrentCell.ColumnIndex;
+
+                foreach (var line in lines)
+                {
+                    if (rowIndex >= dataGridViewDemands.RowCount || colIndex >= dataGridViewDemands.ColumnCount)
+                        break;
+
+                    string[] cells = line.Split('\t');
+                    for (int i = 0; i < cells.Length; i++)
+                    {
+                        if (colIndex + i < dataGridViewDemands.ColumnCount)
+                        {
+                            dataGridViewDemands[colIndex + i, rowIndex].Value = cells[i];
+                        }
+                    }
+                    rowIndex++;
+                }
+            }
+        }
+
+        private void dataGridViewDemands_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.V)
+            {
+                PasteClipboardData();
+                e.Handled = true;
+            }
+        }
     }
 }

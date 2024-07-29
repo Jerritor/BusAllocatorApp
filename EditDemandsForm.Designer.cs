@@ -98,6 +98,7 @@
             dataGridViewDemands.Size = new Size(794, 277);
             dataGridViewDemands.TabIndex = 2;
             dataGridViewDemands.CellValidating += dataGridViewDemands_CellValidating;
+            dataGridViewDemands.KeyDown += dataGridViewDemands_KeyDown;
             // 
             // tableLayoutPanel1
             // 
