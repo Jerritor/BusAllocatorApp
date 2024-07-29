@@ -368,8 +368,6 @@ namespace BusAllocatorApp
         }
         **/
 
-
-
         // Update demand for a specific time set and route
         public void UpdateDepartmentDemand(string departmentName, string timeSet, string route, int demand)
         {
@@ -427,7 +425,6 @@ namespace BusAllocatorApp
                 department.IsDataFilled = true;
             }
         }
-
 
         //Used to Update Departments list, specifically based on the routes and time sets lists
         //if initializeDemands is true, all demands will be set to -1

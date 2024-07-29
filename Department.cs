@@ -43,7 +43,7 @@ namespace BusAllocatorApp
                 sb.AppendLine($"  Time Set: {timeSet.Key}");
                 foreach (var route in timeSet.Value)
                 {
-                    sb.AppendLine($"    Route: {route.Key}, Demand: {route.Value}");
+                    sb.AppendLine($"    Route: {route.Key}, Demand: {route.Value?.ToString() ?? "N/A"}");
                 }
             }
 
