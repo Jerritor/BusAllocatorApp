@@ -265,8 +265,6 @@ namespace BusAllocatorApp
             //printing
             mainForm.WriteLine(StringListToString(solo_routes));
             mainForm.WriteLine(StringListOfTuplesToString(hybrid_routes));
-
-
         }
 
         private void LoadTimeSets()
@@ -298,19 +296,11 @@ namespace BusAllocatorApp
             PrintAllDepartments();
         }
 
-        private void FirstLoadRoutesTimeSetsDepartments()
+        public void LoadJSONFiles()
         {
             LoadRoutes();
             LoadTimeSets();
             LoadDepartments(true); //this also calls LoadDepartmentNames(), true means set all demand values to null
-        }
-
-        public void EnsureDeptNamesLoaded()
-        {
-            if (deptNames == null || deptNames.Count == 0)
-            {
-                LoadDepartments();
-            }
         }
         #endregion
 

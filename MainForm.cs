@@ -15,6 +15,10 @@ namespace BusAllocatorApp
 
             vars = new Vars(this);
 
+            //File validation
+            CheckConfigFileAndRatesPath();
+            vars.io.CheckAndCreateVarsFolderAndFiles();
+
             SetupTemplateGrid();
             //EVERYTHING AFTER HERE IS ON FORM LOAD
 
@@ -22,10 +26,7 @@ namespace BusAllocatorApp
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            CheckConfigFileAndRatesPath();
-
-            vars.io.CreateVarsFolderAndFiles();
-
+            //
             if (vars.departments == null || vars.departments.Count == 0)
             {
                 vars.LoadDepartments(true);
@@ -299,7 +300,6 @@ namespace BusAllocatorApp
                                                   "Check Rates",
                                                   MessageBoxButtons.YesNo,
                                                   MessageBoxIcon.Question);
-
             if (result == DialogResult.Yes)
             {
                 vars.io.UploadRatesSheet();

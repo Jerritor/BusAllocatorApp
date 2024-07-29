@@ -144,7 +144,7 @@ namespace BusAllocatorApp
             }
         }
 
-        public void CreateVarsFolderAndFiles()
+        public void CheckAndCreateVarsFolderAndFiles()
         {
             if (!Directory.Exists(dataFolder))
             {
@@ -199,6 +199,10 @@ namespace BusAllocatorApp
                     {
                         Console.WriteLine($"Error generating default files: {e.Message}.");
                     }
+                }
+                else //If data folder has json files, load them.
+                {
+                    vars.LoadJSONFiles();
                 }
             }
         }
