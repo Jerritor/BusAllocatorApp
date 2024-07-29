@@ -46,7 +46,7 @@
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Size = new Size(384, 561);
+            tableLayoutPanel1.Size = new Size(432, 561);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // closeButton
@@ -57,7 +57,7 @@
             closeButton.ForeColor = SystemColors.ControlLightLight;
             closeButton.Location = new Point(3, 518);
             closeButton.Name = "closeButton";
-            closeButton.Size = new Size(378, 40);
+            closeButton.Size = new Size(426, 40);
             closeButton.TabIndex = 0;
             closeButton.Text = "Close Window";
             closeButton.UseVisualStyleBackColor = false;
@@ -71,7 +71,7 @@
             flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
             flowLayoutPanel1.Location = new Point(3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(378, 509);
+            flowLayoutPanel1.Size = new Size(426, 509);
             flowLayoutPanel1.TabIndex = 1;
             flowLayoutPanel1.WrapContents = false;
             // 
@@ -79,7 +79,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(384, 561);
+            ClientSize = new Size(432, 561);
             Controls.Add(tableLayoutPanel1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;

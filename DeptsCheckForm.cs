@@ -31,22 +31,24 @@ namespace BusAllocatorApp
             //this.FormClosing += DeptsCheckForm_FormClosing;
         }
 
-        private int? GetTotalDemand(Department department)
+        //Also checks/unchecks the boxG
+        private int? GetTotalDemandAndCheckboxes(Department department)
         {
-            int? totalDemand = 0;
-            foreach (var timeSet in department.DemandData)
+            int total = 0;
+
+            foreach (var timeSetKey in department.DemandData.Keys)
             {
-                foreach (var route in timeSet.Value)
+                foreach (var route in department.DemandData[timeSetKey].Keys)
                 {
-                    //returns null if any demand value is null
-                    if (!route.Value.HasValue)
+                    var demand = department.DemandData[timeSetKey][route];
+                    if (!demand.HasValue)
                     {
                         return null;
                     }
-                    totalDemand += route.Value;
+                    total += demand.Value;
                 }
             }
-            return totalDemand;
+            return total;
         }
 
         private void EditDepartment(Department department)
@@ -67,6 +69,9 @@ namespace BusAllocatorApp
             flowLayoutPanel1.Controls.Clear();
             foreach (var department in departments)
             {
+                int? totalDemand = GetTotalDemandAndCheckboxes(department);
+                department.IsDataFilled = totalDemand.HasValue;
+                
                 Panel departmentPanel = new Panel
                 {
                     Width = flowLayoutPanel1.ClientSize.Width - 20,
@@ -74,8 +79,6 @@ namespace BusAllocatorApp
                     Margin = new Padding(5),
                     AutoSize = true
                 };
-
-                int? totalDemand = GetTotalDemand(department);
                 string demandText = totalDemand.HasValue ? totalDemand.Value.ToString() : "Incomplete";
 
                 CheckBox checkBox = new CheckBox

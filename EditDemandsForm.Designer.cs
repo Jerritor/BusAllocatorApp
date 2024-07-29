@@ -72,6 +72,9 @@
             // 
             // dataGridViewDemands
             // 
+            dataGridViewDemands.AllowDrop = true;
+            dataGridViewDemands.AllowUserToAddRows = false;
+            dataGridViewDemands.AllowUserToDeleteRows = false;
             dataGridViewDemands.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.Control;
