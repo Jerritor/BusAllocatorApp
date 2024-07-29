@@ -94,6 +94,7 @@
             dataGridViewDemands.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dataGridViewDemands.Size = new Size(794, 277);
             dataGridViewDemands.TabIndex = 2;
+            dataGridViewDemands.CellValidating += dataGridViewDemands_CellValidating;
             // 
             // tableLayoutPanel1
             // 
@@ -180,7 +181,7 @@
             ClientSize = new Size(800, 383);
             Controls.Add(tableLayoutPanel1);
             Name = "EditDemandsForm";
-            Text = "EditDemandsForm";
+            Text = "Editing Demands";
             ((System.ComponentModel.ISupportInitialize)dataGridViewDemands).EndInit();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
