@@ -10,7 +10,7 @@ namespace BusAllocatorApp
     public class Vars
     {
         private MainForm mainForm;
-        IO io;
+        public IO io;
 
         //Constructor
         public Vars(MainForm form)
@@ -20,13 +20,8 @@ namespace BusAllocatorApp
 
             io.LoadConfig();
 
-            InstantiateVars();
-
-            //Generate JSON Files -- comment out after testing
-            GenerateJSONFiles();
-
             //Load vars from JSON
-            FirstLoadRoutesTimeSetsDepartments();
+            //FirstLoadRoutesTimeSetsDepartments();
         }
 
         //CONFIG INFO
@@ -66,16 +61,16 @@ namespace BusAllocatorApp
         //Departments List and Demands Memory
         public List<Department> departments { get; private set; }
 
-        private void InstantiateVars()
+        public void InstantiateVars()
         {
-            //InstantiateSoloRoutes();
-            //InstantiateHybridRoutes();
-            //InstantiateDeptNames();
-            //InstantiateDates();
-            //InstantiateTimeSets();
-            //InstantiateRates();
-            //InstantiateBuffers();
-            //InstantiateBusCapacities();
+            InstantiateSoloRoutes();
+            InstantiateHybridRoutes();
+            InstantiateDeptNames();
+            InstantiateDates();
+            InstantiateTimeSets();
+            InstantiateRates();
+            InstantiateBuffers();
+            InstantiateBusCapacities();
         }
 
         private void InstantiateSoloRoutes()
@@ -227,8 +222,6 @@ namespace BusAllocatorApp
             mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
         }
 
-
-
         #region To_String Functions
         string StringListToString(List<string> s)
         {
@@ -264,14 +257,6 @@ namespace BusAllocatorApp
 
         #endregion
 
-        #region IO Functions
-        public void CreateDefaultConfig() { io.CreateDefaultConfig(); }
-        public void UploadRatesSheet() { io.UploadRatesSheet(); }
-
-        public void GenerateJSONFiles() { io.GenerateJSONFiles(); }
-
-        #endregion
-
         #region IO Loading JSON Files
         private void LoadRoutes()
         {
@@ -297,7 +282,7 @@ namespace BusAllocatorApp
             deptNames = io.LoadDeptNames();
         }
 
-        private void LoadDepartments(bool isInitialLoad = false)
+        public void LoadDepartments(bool isInitialLoad = false)
         {
             LoadDepartmentNames();
 
@@ -318,6 +303,14 @@ namespace BusAllocatorApp
             LoadRoutes();
             LoadTimeSets();
             LoadDepartments(true); //this also calls LoadDepartmentNames(), true means set all demand values to null
+        }
+
+        public void EnsureDeptNamesLoaded()
+        {
+            if (deptNames == null || deptNames.Count == 0)
+            {
+                LoadDepartments();
+            }
         }
         #endregion
 
