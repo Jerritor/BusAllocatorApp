@@ -27,7 +27,7 @@ namespace BusAllocatorApp
         private void MainForm_Load(object sender, EventArgs e)
         {
             //
-            if (vars.departments == null || vars.departments.Count == 0)
+            if (vars.deptsAndDemands == null || vars.deptsAndDemands.Count == 0)
             {
                 vars.LoadDepartments(true);
             }

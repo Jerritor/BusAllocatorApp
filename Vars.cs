@@ -33,7 +33,7 @@ namespace BusAllocatorApp
         public List<string>? solo_routes { get; set; }
         public List<Tuple<string, string>>? hybrid_routes { get; set; }
 
-        //List of Departments
+        //List of Department Names
         public List<string>? deptNames { get; set; }
 
         //First Day and Second Day
@@ -61,7 +61,7 @@ namespace BusAllocatorApp
 
         //
         //Departments List and Demands Memory
-        public List<Department> departments { get; private set; }
+        public List<Department> deptsAndDemands { get; private set; }
 
         public void InstantiateVars()
         {
@@ -251,7 +251,7 @@ namespace BusAllocatorApp
 
         public void PrintAllDepartments()
         {
-            foreach (var department in departments)
+            foreach (var department in deptsAndDemands)
             {
                 mainForm.WriteLine(department.ToString());
             }
@@ -287,7 +287,7 @@ namespace BusAllocatorApp
             LoadDepartmentNames();
 
             //initialize the departments
-            departments = deptNames.Select(deptname => new Department(deptname)).ToList();
+            deptsAndDemands = deptNames.Select(deptname => new Department(deptname)).ToList();
 
             //initialize the department demands
             UpdateDepartmentsWithRoutesAndTimeSets(isInitialLoad);
@@ -309,7 +309,7 @@ namespace BusAllocatorApp
         #region IO Saving to JSON
         public void SaveDepartments()
         {
-            io.SaveDepartmentNames(departments.Select(d => d.Name).ToList()); //Save Departments to JSON
+            io.SaveDepartmentNames(deptsAndDemands.Select(d => d.Name).ToList()); //Save Departments to JSON
         }
         #endregion
 
@@ -356,7 +356,7 @@ namespace BusAllocatorApp
         // Update demand for a specific time set and route
         public void UpdateDepartmentDemand(string departmentName, string timeSet, string route, int demand)
         {
-            var department = departments.FirstOrDefault(d => d.Name == departmentName);
+            var department = deptsAndDemands.FirstOrDefault(d => d.Name == departmentName);
             if (department != null)
             {
                 if (!department.DemandData.ContainsKey(timeSet))
@@ -371,7 +371,7 @@ namespace BusAllocatorApp
         // Overload to update a full time set of demands
         public void UpdateDepartmentDemand(string departmentName, string timeSet, Dictionary<string, int> demands)
         {
-            var department = departments.FirstOrDefault(d => d.Name == departmentName);
+            var department = deptsAndDemands.FirstOrDefault(d => d.Name == departmentName);
             if (department != null)
             {
                 if (!department.DemandData.ContainsKey(timeSet))
@@ -391,7 +391,7 @@ namespace BusAllocatorApp
         // Overload to update all time sets of demands
         public void UpdateDepartmentDemand(string departmentName, Dictionary<string, Dictionary<string, int>> allDemands)
         {
-            var department = departments.FirstOrDefault(d => d.Name == departmentName);
+            var department = deptsAndDemands.FirstOrDefault(d => d.Name == departmentName);
             if (department != null)
             {
                 foreach (var timeSet in allDemands)
@@ -415,7 +415,7 @@ namespace BusAllocatorApp
         //if initializeDemands is true, all demands will be set to -1
         private void UpdateDepartmentsWithRoutesAndTimeSets(bool initializeDemands = false)
         {
-            foreach(var dept in departments)
+            foreach(var dept in deptsAndDemands)
             {
                 UpdateDepartmentWithRoutesAndTimeSets(dept, initializeDemands);
             }
