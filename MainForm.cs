@@ -15,6 +15,10 @@ namespace BusAllocatorApp
 
             vars = new Vars(this);
 
+            //File validation
+            CheckConfigFileAndRatesPath();
+            vars.io.CheckAndCreateVarsFolderAndFiles();
+
             SetupTemplateGrid();
             //EVERYTHING AFTER HERE IS ON FORM LOAD
 
@@ -22,13 +26,15 @@ namespace BusAllocatorApp
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            CheckRatesPath();
+            //
+            if (vars.departments == null || vars.departments.Count == 0)
+            {
+                vars.LoadDepartments(true);
+            }
 
             //Enable below to create JSON files
             //vars.GenerateJSONFiles();
         }
-
-
 
         #region Total Riders Data Grid
         private void SetupTemplateGrid()
@@ -261,7 +267,7 @@ namespace BusAllocatorApp
         #endregion
 
         #region Bus Rate Spreadsheet Popup
-        private void CheckRatesPath()
+        private void CheckConfigFileAndRatesPath()
         {
             if (!File.Exists(vars.configFile))
             {
@@ -270,11 +276,11 @@ namespace BusAllocatorApp
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Information);
 
-                vars.CreateDefaultConfig();
+                vars.io.CreateConfigFile();
             }
-            else
+            else //if config file doesnt exist
             {
-                if (string.IsNullOrWhiteSpace(vars.ratesPath))
+                if (string.IsNullOrWhiteSpace(vars.ratesPath)) //if rates file name doesnt exist in the config
                 {
                     MessageBox.Show("Rates file not found in the configuration file or it is empty. Please upload a Bus Rates spreadsheet or manually set the rates in the settings.",
                                     "Rates Path Missing",
@@ -283,21 +289,20 @@ namespace BusAllocatorApp
                 }
                 else
                 {
-                    ShowReminderPopup();
+                    ShowRatesChangedPopup();
                 }
             }
         }
 
-        private void ShowReminderPopup()
+        private void ShowRatesChangedPopup()
         {
             DialogResult result = MessageBox.Show("Have the bus rates changed since your last update?\n\nClick 'Yes' to upload new rates.\nClick 'No' if the rates are up-to-date.",
                                                   "Check Rates",
                                                   MessageBoxButtons.YesNo,
                                                   MessageBoxIcon.Question);
-
             if (result == DialogResult.Yes)
             {
-                vars.UploadRatesSheet();
+                vars.io.UploadRatesSheet();
             }
             else if (result == DialogResult.No)
             {
@@ -312,10 +317,9 @@ namespace BusAllocatorApp
         #region BUS RATES
         private void busRateButton_Click(object sender, EventArgs e)
         {
-            vars.UploadRatesSheet();
+            vars.io.UploadRatesSheet();
         }
         #endregion
-
 
         #region DEMANDS BUTTONS
         private void checkEditDemandButton_Click(object sender, EventArgs e)

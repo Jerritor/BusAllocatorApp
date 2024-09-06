@@ -28,7 +28,7 @@ namespace BusAllocatorApp
             writer.WriteStringValue($"{value.Item1}-{value.Item2}");
         }
     }
-    internal class IO
+    public class IO
     {
         private Vars vars;
         private MainForm mainform;
@@ -52,12 +52,12 @@ namespace BusAllocatorApp
         //Utility Methods
         public void GenerateJSONFiles()
         {
-            //SaveBusCapacities();
-            //SaveBuffers();
-            //SaveRates();
-            //SaveDepartmentNames();
-            //SaveTimeSets();
-            //SaveRoutes();
+            SaveBusCapacities();
+            SaveBuffers();
+            SaveRates();
+            SaveDepartmentNames();
+            SaveTimeSets();
+            SaveRoutes();
         }
 
         string GetPathInDataFolder(string file_name)
@@ -124,7 +124,7 @@ namespace BusAllocatorApp
             }
         }
 
-        public void CreateDefaultConfig()
+        public void CreateConfigFile()
         {
             try
             {
@@ -142,36 +142,71 @@ namespace BusAllocatorApp
             {
                 Console.WriteLine($"Error creating default configuration file: {ex.Message}");
             }
+        }
 
-            if (!Directory.Exists("data"))
+        public void CheckAndCreateVarsFolderAndFiles()
+        {
+            if (!Directory.Exists(dataFolder))
             {
                 try
                 {
                     // Check if the 'data' folder exists, and create it if it doesn't
-                    Directory.CreateDirectory("data");
+                    Directory.CreateDirectory(dataFolder);
                     Console.WriteLine("Data folder created successfully.");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error creating data folder: {ex.Message}");
+                    Console.WriteLine($"Error creating data folder: {ex.Message}.\nTry creating the data folder yourself in the project directory.");
+                    MessageBox.Show($"Error creating data folder: {ex.Message}. Try creating the data folder yourself in the project directory or contact IM.",
+                                    "Cannot create data folder.",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+                }
+            }
+
+            if (Directory.Exists(dataFolder))
+            {
+                bool isEmpty = Directory.GetFiles(dataFolder).Length == 0 &&
+                               Directory.GetDirectories(dataFolder).Length == 0;
+
+                if (isEmpty)
+                {
+                    //Ask if user wants to make dummy JSON Files
+                    try
+                    {
+                        DialogResult result = MessageBox.Show("Do you want to use default data? You can edit all data later in the settings.\n" +
+                                "If you are not sure, click 'Yes'.\n\n" +
+                                "Click 'Yes' to use default data.\n" +
+                                "Click 'No' if you want to manually set all data in the settings yourself.",
+                            "Check Rates",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            //Set system vars to dummy values
+                            vars.InstantiateVars();
+                            //Generate JSON Files -- comment out after testing
+                            GenerateJSONFiles();
+                            MessageBox.Show($"Default data used and saved into the '{dataFolder}' folder.");
+                        }
+                        else if (result == DialogResult.No)
+                        {
+                            MessageBox.Show("No default data was generated. Modify all settings manually.");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Error generating default files: {e.Message}.");
+                    }
+                }
+                else //If data folder has json files, load them.
+                {
+                    vars.LoadJSONFiles();
                 }
             }
         }
 
-        #endregion
-
-        #region DATA STRUCTURES
-        private class RatesData
-        {
-            public required Dictionary<string, double> costSmallBus { get; set; }
-            public required Dictionary<string, double> costLargeBus { get; set; }
-
-            [JsonConverter(typeof(DictionaryTupleDoubleConverter))]
-            public required Dictionary<(string, string), double> costSmallHybridRoute { get; set; }
-
-            [JsonConverter(typeof(DictionaryTupleDoubleConverter))]
-            public required Dictionary<(string, string), double> costLargeHybridRoute { get; set; }
-        }
         #endregion
 
         #region FILE UPLOADING
@@ -381,7 +416,7 @@ namespace BusAllocatorApp
         // Convert Dictionary of Rates to JSON
         public void SaveRates()
         {
-            var ratesData = new RatesData
+            RatesData ratesData = new RatesData
             {
                 costSmallBus = vars.costSmallBus,
                 costLargeBus = vars.costLargeBus,
@@ -401,6 +436,17 @@ namespace BusAllocatorApp
             mainform.WriteLine("Converted Bus Rates to JSON.");
         }
 
+        private class RatesData
+        {
+            public required Dictionary<string, double> costSmallBus { get; set; }
+            public required Dictionary<string, double> costLargeBus { get; set; }
+
+            [JsonConverter(typeof(DictionaryTupleDoubleConverter))]
+            public required Dictionary<(string, string), double> costSmallHybridRoute { get; set; }
+
+            [JsonConverter(typeof(DictionaryTupleDoubleConverter))]
+            public required Dictionary<(string, string), double> costLargeHybridRoute { get; set; }
+        }
 
         private class DictionaryTupleDoubleConverter : JsonConverter<Dictionary<(string, string), double>>
         {
