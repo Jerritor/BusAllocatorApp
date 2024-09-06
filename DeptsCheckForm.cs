@@ -79,7 +79,7 @@ namespace BusAllocatorApp
                     Margin = new Padding(5),
                     AutoSize = true
                 };
-                string demandText = totalDemand.HasValue ? totalDemand.Value.ToString() : "Incomplete";
+                string demandText = totalDemand.HasValue ? totalDemand.Value.ToString() : "INCOMPLETE";
 
                 CheckBox checkBox = new CheckBox
                 {

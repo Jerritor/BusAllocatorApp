@@ -50,6 +50,8 @@ namespace BusAllocatorApp
                 ts => ts.GetFormattedTimeINOUT());
 
             var formattedTimeSetKeys = timeSetKeyMap.Values.ToList();
+            
+            //Get list of routes
             var routes = department.DemandData.Values.SelectMany(d => d.Keys).Distinct().ToList();
 
             // Debug: Check the retrieved time sets and routes
