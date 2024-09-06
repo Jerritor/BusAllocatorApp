@@ -59,7 +59,6 @@ namespace BusAllocatorApp
         public int capacityLargeBus { get; set; }
 
 
-        //
         //Departments List and Demands Memory
         public List<Department> deptsAndDemands { get; private set; }
 
@@ -442,6 +441,7 @@ namespace BusAllocatorApp
                         updatedDemandData[timeSetKey][route] = initialDemand;
                     }
                 }
+                /** Removed because hybrid routes shouldnt be per department
                 //Update demands for hybrid routes
                 foreach (var hybridRoute in hybrid_routes)
                 {
@@ -452,6 +452,7 @@ namespace BusAllocatorApp
                         updatedDemandData[timeSetKey][hybridRouteKey] = initialDemand;
                     }
                 }
+                **/
             }
             department.DemandData = updatedDemandData;
         }
