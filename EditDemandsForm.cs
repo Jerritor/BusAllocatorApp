@@ -214,14 +214,22 @@ namespace BusAllocatorApp
                     // Debug: Check if originalKey is found
                     Debug.WriteLine($"FormattedTimeSetKey: {formattedTimeSetKey}, OriginalKey: {originalKey}");
 
+                    /**
+                     * original key is formatted as '24hrtime'_IsOutModel'
+                     * ie. 16:00:00_True for OUT 4PM
+                    **/
                     if (!string.IsNullOrEmpty(originalKey))
                     {
+                        //if DemandData doesnt contain originalKey
                         if (!department.DemandData.ContainsKey(originalKey))
                         {
+                            //instantiate a new dict for that originalKey
                             department.DemandData[originalKey] = new Dictionary<string, int?>();
                         }
 
                         var cellValue = row.Cells[i].Value?.ToString();
+                        
+                        //try to save demand per cell -- saves null otherwise
                         if (int.TryParse(cellValue, out int demand))
                         {
                             department.DemandData[originalKey][route] = demand;
