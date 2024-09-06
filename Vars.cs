@@ -40,7 +40,7 @@ namespace BusAllocatorApp
         public DateTime? firstDay { get; set; }
         public DateTime? secondDay { get; set; }
 
-        //List of Dictionaries of Time Sets
+        //List of of Time Sets
         public List<TimeSet>? timeSets { get; set; }
         //public List<Dictionary<string, object>>? timeSets { get; set; }
 
@@ -58,6 +58,8 @@ namespace BusAllocatorApp
         public int capacitySmallBus { get; set; }
         public int capacityLargeBus { get; set; }
 
+
+        //
         //Departments List and Demands Memory
         public List<Department> departments { get; private set; }
 
