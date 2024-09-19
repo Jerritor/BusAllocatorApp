@@ -296,6 +296,7 @@
             uploadDemandButton.TabIndex = 8;
             uploadDemandButton.Text = "Upload Demand Spreadsheet";
             uploadDemandButton.UseVisualStyleBackColor = false;
+            uploadDemandButton.Click += uploadDemandButton_Click;
             // 
             // checkEditDemandButton
             // 
@@ -433,7 +434,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(1200, 777);
+            ClientSize = new Size(1200, 697);
             Controls.Add(tableLayoutPanel1);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "MainForm";

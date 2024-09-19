@@ -82,6 +82,7 @@ namespace BusAllocatorApp
             }
         }
 
+        //sets the config option named 'optionName' to the data 'optionData'
         public void SetConfigOption(string optionName, string optionData)
         {
             try
@@ -227,6 +228,16 @@ namespace BusAllocatorApp
                 // Logic to handle the file upload
                 //MessageBox.Show("Rates sheet uploaded successfully!");
                 // Proceed with loading rates
+            }
+        }
+
+        public void UploadTotalDemandSheet()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Excel Files|*.xlsx;*.xls";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                vars.totalDemandFilePath = openFileDialog.FileName;
             }
         }
 

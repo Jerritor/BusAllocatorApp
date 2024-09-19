@@ -266,7 +266,7 @@ namespace BusAllocatorApp
         }
         #endregion
 
-        #region Bus Rate Spreadsheet Popup
+        #region Bus Rate Spreadsheet On Start Popup
         private void CheckConfigFileAndRatesPath()
         {
             if (!File.Exists(vars.configFile))
@@ -314,19 +314,26 @@ namespace BusAllocatorApp
 
         #endregion
 
-        #region BUS RATES
+        #region BUS RATES BUTTON AND CODE
         private void busRateButton_Click(object sender, EventArgs e)
         {
             vars.io.UploadRatesSheet();
         }
         #endregion
 
-        #region DEMANDS BUTTONS
+        #region DEMANDS BUTTONS AND CODE
         private void checkEditDemandButton_Click(object sender, EventArgs e)
         {
             DeptsCheckForm deptsCheckForm = new DeptsCheckForm(vars);
             deptsCheckForm.Show();
         }
         #endregion
+
+        private void uploadDemandButton_Click(object sender, EventArgs e)
+        {
+            vars.io.UploadTotalDemandSheet();
+
+            //vars
+        }
     }
 }

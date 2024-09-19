@@ -28,6 +28,9 @@ namespace BusAllocatorApp
         public string configFile = "config.cfg";
         public string ratesPath { get; set; }
 
+        public string totalDemandFilePath {  get; set; }
+
+
         //--Empty object instantiation--
         //List of Routes
         public List<string>? solo_routes { get; set; }
@@ -477,6 +480,23 @@ namespace BusAllocatorApp
             timeSets = newTimeSets;
             UpdateDepartmentsWithRoutesAndTimeSets(false);
         }
+        #endregion
+
+        #region Total Department Demand Spreadsheet Processing
+        public void ProcessTotalDemandSpreadsheet()
+        {
+            try
+            {
+                //FILL IN CODE HERE
+
+                MessageBox.Show("Total demand sheet uploaded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error reading the Excel file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         #endregion
     }
 }
