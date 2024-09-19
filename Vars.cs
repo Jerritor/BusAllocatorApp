@@ -69,7 +69,12 @@ namespace BusAllocatorApp
 
 
         //Departments List and Demands Memory
-        public List<Department> deptsAndDemands { get; private set; }
+        //this one is used if the setting is individual departments and demands
+        public List<Department>? deptsAndDemands { get; private set; }
+        //this one is used if the setting is total demands
+        public Department? totalDemands { get; private set; }
+
+
 
         public void InstantiateVars()
         {

@@ -8,13 +8,16 @@ namespace BusAllocatorApp
 {
     public class Department
     {
+        #region Fields
         public string Name { get; set; }
         public bool IsDataFilled { get; set; }
 
         //[time set n: [route n: demand n, ... ], ...]
         //ie. time set 1:{route 1:demand 1, route 2: demand 2, etc.}, timeset 2:{route1,demand1...}, etc.
-        public Dictionary<string, Dictionary<string, int?>> DemandData { get; set; }  
+        public Dictionary<string, Dictionary<string, int?>> DemandData { get; set; }
+        #endregion
 
+        //CONSTRUCTORS
         public Department(string name)
         {
             this.Name = name;
@@ -28,6 +31,7 @@ namespace BusAllocatorApp
             this.IsDataFilled = isDataFilled;
             InstantiateEmptyDemandData();
         }
+
 
         private void InstantiateEmptyDemandData()
         {
