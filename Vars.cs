@@ -711,7 +711,33 @@ namespace BusAllocatorApp
             }
         }
 
+        public void ClearAllDemandsInDataGridView()
+        {
+            /**
+            // Ensure the DataGridView has data
+            if (mainForm.dataGridView1.DataSource == null)
+            {
+                MessageBox.Show("There is no data to clear.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }**/
 
+            // Loop through each row in the DataGridView
+            foreach (DataGridViewRow row in mainForm.dataGridView1.Rows)
+            {
+                // Skip the "Location" column (index 0), which contains route names
+                for (int col = 1; col < mainForm.dataGridView1.Columns.Count; col++)
+                {
+                    // Set all demand cells (columns from index 1 onward) to empty
+                    row.Cells[col].Value = DBNull.Value; // Sets the cell to empty
+                }
+            }
+
+            // Optionally, refresh the DataGridView to reflect the changes immediately
+            mainForm.dataGridView1.Refresh();
+        }
+
+
+        #endregion
         //Debug Parser Function
         public void OutputDemandsToDebugConsole()
         {
@@ -735,8 +761,6 @@ namespace BusAllocatorApp
                 }
             }
         }
-
-        #endregion
 
     }
 }

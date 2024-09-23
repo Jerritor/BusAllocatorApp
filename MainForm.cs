@@ -19,8 +19,10 @@ namespace BusAllocatorApp
             vars = new Vars(this);
             settings = new Settings(vars);
 
+            //Initialize empty demands table
             table = new DataTable();
             dataGridView1.DataSource = table;
+            vars.ClearAllDemandsInDataGridView();
 
             //File validation
             CheckConfigFileAndRatesPath();
@@ -369,5 +371,10 @@ namespace BusAllocatorApp
             vars.OutputDemandsToDebugConsole();
         }
         #endregion
+
+        private void settingsButton_Click(object sender, EventArgs e)
+        {
+            vars.ClearAllDemandsInDataGridView();
+        }
     }
 }
