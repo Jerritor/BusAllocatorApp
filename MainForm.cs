@@ -8,7 +8,7 @@ namespace BusAllocatorApp
         Vars vars;
         Settings settings;
 
-        private DataTable table;
+        public DataTable table;
 
         private bool isSecondDateSet = false;
 
@@ -19,28 +19,29 @@ namespace BusAllocatorApp
             vars = new Vars(this);
             settings = new Settings(vars);
 
-            //Initialize empty demands table
-            table = new DataTable();
-            dataGridView1.DataSource = table;
-            vars.ClearAllDemandsInDataGridView();
-
             //File validation
             CheckConfigFileAndRatesPath();
             vars.io.CheckAndCreateVarsFolderAndFiles();
 
             //UpdateDataGrid();
+
+            if (vars.deptsAndDemands == null || vars.deptsAndDemands.Count == 0)
+            {
+                vars.LoadDepartments(true);
+            }
+
+            //Initialize empty demands table
+            table = new DataTable();
+            dataGridView1.DataSource = table;
+            vars.InitializeEmptyDataGridView();
+
+
             //EVERYTHING AFTER HERE IS ON FORM LOAD
 
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            //
-            if (vars.deptsAndDemands == null || vars.deptsAndDemands.Count == 0)
-            {
-                vars.LoadDepartments(true);
-            }
-
             //Enable below to create JSON files
             //vars.GenerateJSONFiles();
         }
@@ -55,7 +56,7 @@ namespace BusAllocatorApp
             FormatDataGridView();
             ResizeFormToFitTableLayoutPanel();
         }
-        private void ResizeDataGridView()
+        public void ResizeDataGridView()
         {
             // Calculate the required size
             int totalWidth = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible);
@@ -65,7 +66,7 @@ namespace BusAllocatorApp
             dataGridView1.ClientSize = new Size(totalWidth, totalHeight);
         }
 
-        private void FormatDataGridView()
+        public void FormatDataGridView()
         {
             // Disable sorting on all columns
             dataGridView1.ColumnAdded += (sender, e) =>
@@ -83,7 +84,7 @@ namespace BusAllocatorApp
             };
         }
 
-        private void ResizeFormToFitTableLayoutPanel()
+        public void ResizeFormToFitTableLayoutPanel()
         {
             // Calculate the preferred size of the TableLayoutPanel
             Size preferredSize = tableLayoutPanel1.PreferredSize;
@@ -101,16 +102,21 @@ namespace BusAllocatorApp
             }
 
             // Add "Location" column
-            table.Columns.Add("Location", typeof(string));
+            //table.Columns.Add("Location", typeof(string));
 
             // Get all unique shifts from DemandData and order them as desired
             var shifts = vars.totalDemands.DemandData.Keys.OrderBy(s => s).ToList();
 
             // Add a column for each shift
+            /**
             foreach (var shift in shifts)
             {
                 table.Columns.Add(shift, typeof(int));
             }
+            **/
+
+            //clear current rows
+            table.Rows.Clear();
 
             // Populate the DataTable with solo_routes
             foreach (var route in vars.solo_routes)

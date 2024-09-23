@@ -736,6 +736,64 @@ namespace BusAllocatorApp
             mainForm.dataGridView1.Refresh();
         }
 
+        public void InitializeEmptyDataGridView()
+        {
+            DataTable table = mainForm.table;
+            DataGridView dataGridView1 = mainForm.dataGridView1;
+
+            // Add the "Location" column
+            table.Columns.Add("Location", typeof(string));
+
+            // Extract unique shift names from timeSets using GetFormattedTimeINOUT()
+            var shifts = timeSets
+                            .Select(ts => ts.GetFormattedTimeINOUT())
+                            .Distinct()
+                            .OrderBy(s => s)
+                            .ToList();
+
+            // Add a column for each shift
+            foreach (var shift in shifts)
+            {
+                table.Columns.Add(shift, typeof(int));
+            }
+
+            // Add a row for each route with empty demand values
+            foreach (var route in solo_routes)
+            {
+                DataRow newRow = table.NewRow();
+                newRow["Location"] = route;
+
+                // Initialize all shift demand values to DBNull (empty)
+                foreach (var shift in shifts)
+                {
+                    newRow[shift] = DBNull.Value; // Sets the cell to empty
+                                                  // Alternatively, use 0 if you prefer zero instead of empty:
+                                                  // newRow[shift] = 0;
+                }
+
+                table.Rows.Add(newRow);
+            }
+
+            // Set the DataSource of the DataGridView
+            dataGridView1.DataSource = table;
+
+            // Optionally, adjust column headers for better readability
+            dataGridView1.Columns["Location"].HeaderText = "Location";
+
+            // Optional: Adjust column widths for better visibility
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            // Format the DataGridView (optional)
+            mainForm.ResizeDataGridView();
+            mainForm.FormatDataGridView();
+            mainForm.ResizeFormToFitTableLayoutPanel();
+        }
+
+
+
 
         #endregion
         //Debug Parser Function
