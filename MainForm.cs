@@ -8,6 +8,8 @@ namespace BusAllocatorApp
         Vars vars;
         Settings settings;
 
+        private DataTable table;
+
         private bool isSecondDateSet = false;
 
         public MainForm()
@@ -17,11 +19,14 @@ namespace BusAllocatorApp
             vars = new Vars(this);
             settings = new Settings(vars);
 
+            table = new DataTable();
+            dataGridView1.DataSource = table;
+
             //File validation
             CheckConfigFileAndRatesPath();
             vars.io.CheckAndCreateVarsFolderAndFiles();
 
-            SetupTemplateGrid();
+            //UpdateDataGrid();
             //EVERYTHING AFTER HERE IS ON FORM LOAD
 
         }
@@ -39,49 +44,11 @@ namespace BusAllocatorApp
         }
 
         #region Total Riders Data Grid
-        private void SetupTemplateGrid()
+        public void UpdateDataGrid()
         {
-            // Create a DataTable
-            DataTable table = new DataTable();
+            UpdateTotalDemandDisplay();
 
-            // Add columns to the DataTable
-            table.Columns.Add("Location", typeof(string));
-            table.Columns.Add("OUT 4:00PM", typeof(int));
-            table.Columns.Add("OUT 6:00PM", typeof(int));
-            table.Columns.Add("OUT 7:00PM", typeof(int));
-            table.Columns.Add("IN 7:00PM", typeof(int));
-            table.Columns.Add("IN 10:00PM", typeof(int));
-            table.Columns.Add("OUT 4:00AM", typeof(int));
-            table.Columns.Add("OUT 7:00AM", typeof(int));
-            table.Columns.Add("IN 7:00AM", typeof(int));
-
-            // Add rows to the DataTable
-            table.Rows.Add("Alabang", 3, 12, 8, 6, 0, 0, 6, 27);
-            table.Rows.Add("Balibago", 85, 45, 135, 83, 0, 0, 83, 306);
-            table.Rows.Add("Binan", 22, 2, 40, 23, 0, 0, 23, 88);
-            table.Rows.Add("Carmona", 6, 7, 20, 6, 0, 0, 6, 40);
-            table.Rows.Add("Cabuyao", 19, 15, 23, 13, 0, 0, 13, 69);
-            table.Rows.Add("Calamba", 17, 46, 35, 25, 0, 0, 25, 110);
-
-
-            // Set the DataSource of the DataGridView
-            dataGridView1.DataSource = table;
-
-            // Alternatively, you can create DataGridView columns and bind them to DataTable columns
-            // This step is optional if you already set AutoGenerateColumns to true
-            /**
-            foreach (DataColumn column in table.Columns)
-            {
-                DataGridViewTextBoxColumn dgvColumn = new DataGridViewTextBoxColumn
-                {
-                    DataPropertyName = column.ColumnName,
-                    Name = column.ColumnName,
-                    HeaderText = column.ColumnName
-                };
-                dataGridView1.Columns.Add(dgvColumn);
-            }
-            **/
-
+            //Formatting
             ResizeDataGridView();
             FormatDataGridView();
             ResizeFormToFitTableLayoutPanel();
@@ -123,6 +90,51 @@ namespace BusAllocatorApp
             this.ClientSize = new Size(preferredSize.Width, preferredSize.Height);
         }
 
+        public void UpdateTotalDemandDisplay()
+        {
+            if (vars.totalDemands == null || vars.totalDemands.DemandData == null)
+            {
+                MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Add "Location" column
+            table.Columns.Add("Location", typeof(string));
+
+            // Get all unique shifts from DemandData and order them as desired
+            var shifts = vars.totalDemands.DemandData.Keys.OrderBy(s => s).ToList();
+
+            // Add a column for each shift
+            foreach (var shift in shifts)
+            {
+                table.Columns.Add(shift, typeof(int));
+            }
+
+            // Populate the DataTable with solo_routes
+            foreach (var route in vars.solo_routes)
+            {
+                DataRow newRow = table.NewRow();
+                newRow["Location"] = route;
+
+                foreach (var shift in shifts)
+                {
+                    if (vars.totalDemands.DemandData[shift].ContainsKey(route))
+                    {
+                        newRow[shift] = vars.totalDemands.DemandData[shift][route];
+                    }
+                    else
+                    {
+                        // If for some reason the route is missing, default to 0
+                        newRow[shift] = 0;
+                    }
+                }
+
+                table.Rows.Add(newRow);
+            }
+        }
+
+
+        #endregion
         public void WriteLine(string message)
         {
             if (outputLog.InvokeRequired)
@@ -141,7 +153,6 @@ namespace BusAllocatorApp
                 outputLog.Refresh(); **/
             }
         }
-        #endregion
 
         #region DATE PICKERS
         private void editFirstDateButton_Click(object sender, EventArgs e)
@@ -343,6 +354,7 @@ namespace BusAllocatorApp
                 if (vars.totalDemands.IsDataFilled)
                 {
                     MessageBox.Show("Demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    UpdateDataGrid();
                 }
                 else
                 {

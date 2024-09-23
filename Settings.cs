@@ -14,5 +14,20 @@ namespace BusAllocatorApp
         {
             this.v = v;
         }
+
+        #region Toggle Demand Mode
+
+        //Sets the other completion flag state to Uninitialized and clears data
+        void ToggleDemandMode()
+        {
+            //will be implemented
+        }
+
+        void SetDemandModeToComplete()
+        {
+            
+        }
+
+        #endregion
     }
 }

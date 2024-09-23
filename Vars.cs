@@ -268,7 +268,7 @@ namespace BusAllocatorApp
         {
             for (int i = 0; i < timeSets.Count; i++)
             {
-                mainForm.WriteLine($"{i+1}: {timeSets[i]}");
+                mainForm.WriteLine($"{i + 1}: {timeSets[i]}");
             }
 
             /**
@@ -444,7 +444,7 @@ namespace BusAllocatorApp
         //if initializeDemands is true, all demands will be set to -1
         private void UpdateDepartmentsWithRoutesAndTimeSets(bool initializeDemands = false)
         {
-            foreach(var dept in deptsAndDemands)
+            foreach (var dept in deptsAndDemands)
             {
                 UpdateDepartmentWithRoutesAndTimeSets(dept, initializeDemands);
             }
@@ -520,6 +520,7 @@ namespace BusAllocatorApp
                     return;
                 }
 
+                // Register the code page provider for ExcelDataReader
                 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
                 using (var stream = File.Open(totalDemandFilePath, FileMode.Open, FileAccess.Read))
@@ -528,7 +529,7 @@ namespace BusAllocatorApp
                     {
                         var result = reader.AsDataSet();
 
-                        // Check if the spreadsheet has multiple sheets
+                        // Ensure there's exactly one sheet in the Excel file
                         if (result.Tables.Count != 1)
                         {
                             throw new Exception("The spreadsheet can only have one sheet.");
@@ -537,11 +538,11 @@ namespace BusAllocatorApp
                         var table = result.Tables[0];
                         string sheetName = table.TableName;
 
-                        // Find the 'TOTAL' column index
+                        // Find the 'TOTAL' column index (assuming header is at the 7th row, index 6)
                         int totalColumnIndex = -1;
                         for (int i = 0; i < table.Columns.Count; i++)
                         {
-                            var columnName = table.Rows[6][i]?.ToString().Trim(); // Header row is at index 6 (7th row)
+                            var columnName = table.Rows[6][i]?.ToString().Trim();
                             if (columnName != null && columnName.Equals("TOTAL", StringComparison.OrdinalIgnoreCase))
                             {
                                 totalColumnIndex = i;
@@ -555,33 +556,31 @@ namespace BusAllocatorApp
                         }
 
                         // Define the shifts and their corresponding starting row numbers (1-based indexing)
+                        // Adjust these row numbers based on your actual spreadsheet structure
                         Dictionary<string, int> shiftStartRows = new Dictionary<string, int>
                         {
-                            { "OUT 4AM", 8 },   // Starting at Excel row 9
-                            { "IN 7AM", 18 },   // Starting at Excel row 19
-                            { "OUT 7AM", 28 },  // Starting at Excel row 29
-                            { "OUT 4PM", 38 },  // Starting at Excel row 39
-                            { "OUT 6PM", 48 },  // Starting at Excel row 49
-                            { "IN 7PM", 58 },   // Starting at Excel row 59
-                            { "OUT 7PM", 68 },  // Starting at Excel row 69
-                            { "IN 10PM", 78 }   // Starting at Excel row 79
+                            { "OUT 4:00AM", 9 },    // Excel row 10
+                            { "IN 7:00AM", 19 },    // Excel row 20
+                            { "OUT 7:00AM", 29 },   // Excel row 30
+                            { "OUT 4:00PM", 39 },   // Excel row 40
+                            { "OUT 6:00PM", 49 },   // Excel row 50
+                            { "IN 7:00PM", 59 },    // Excel row 60
+                            { "OUT 7:00PM", 69 },   // Excel row 70
+                            { "IN 10:00PM", 79 }    // Excel row 80
                         };
 
                         // Map TimeSet shifts to the shift names in the Excel file
                         Dictionary<string, string> timeSetShiftMap = new Dictionary<string, string>();
-
                         foreach (var timeSet in timeSets)
                         {
-                            string shiftName = timeSet.GetFormattedTimeINOUT();
-                            // Check if the shiftName exists in the shiftStartRows
+                            string shiftName = timeSet.GetFormattedTimeINOUT(); // e.g., "OUT 4:00AM"
                             if (shiftStartRows.ContainsKey(shiftName))
                             {
                                 timeSetShiftMap[shiftName] = shiftName;
                             }
                             else
                             {
-                                // Handle cases where the TimeSet shift does not match exactly
-                                // For example, map "OUT 4:00AM" to "OUT 4AM"
+                                // Handle exact match failures by removing ":00" if necessary
                                 string shiftKey = shiftName.Replace(":00", "");
                                 if (shiftStartRows.ContainsKey(shiftKey))
                                 {
@@ -589,7 +588,7 @@ namespace BusAllocatorApp
                                 }
                                 else
                                 {
-                                    // Shift not found in shiftStartRows, skip this shift
+                                    // Shift not found, notify the user and skip
                                     MessageBox.Show($"Shift '{shiftName}' not found in the predefined shifts.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                     continue;
                                 }
@@ -604,7 +603,7 @@ namespace BusAllocatorApp
                         // Iterate through each TimeSet that matches shifts in the Excel file
                         foreach (var timeSet in timeSets)
                         {
-                            string shiftName = timeSet.GetFormattedTimeINOUT();
+                            string shiftName = timeSet.GetFormattedTimeINOUT(); // e.g., "IN 7:00AM"
 
                             if (!timeSetShiftMap.TryGetValue(shiftName, out string excelShiftName))
                             {
@@ -635,6 +634,13 @@ namespace BusAllocatorApp
                                 if (string.IsNullOrEmpty(routeName) || routeName.Equals("TOTAL", StringComparison.OrdinalIgnoreCase))
                                 {
                                     break;
+                                }
+
+                                // If the route is not in solo_routes, skip it (ignore deprecated routes)
+                                if (!solo_routes.Contains(routeName, StringComparer.OrdinalIgnoreCase))
+                                {
+                                    currentRowIndex++;
+                                    continue;
                                 }
 
                                 // Map the route name to the row index
@@ -674,13 +680,15 @@ namespace BusAllocatorApp
                                 else
                                 {
                                     // Route not found in the shift, demand remains zero
-                                    // Optionally, you can log this information for debugging
-                                    // Debug.WriteLine($"Route '{route}' not found in shift '{shiftName}'.");
+                                    // This is expected for deprecated or missing routes
                                 }
 
                                 // Assign the demand value
                                 totalDemands.DemandData[shiftName][route] = demand;
                             }
+
+                            // Optionally, handle 'TOTAL' row if needed
+                            // If you have a separate 'TOTAL' row per shift, implement here
                         }
 
                         // Determine if all data fields are filled without errors
@@ -727,8 +735,6 @@ namespace BusAllocatorApp
                 }
             }
         }
-
-
 
         #endregion
 
