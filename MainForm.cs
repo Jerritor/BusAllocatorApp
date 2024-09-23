@@ -6,6 +6,7 @@ namespace BusAllocatorApp
     public partial class MainForm : Form
     {
         Vars vars;
+        Settings settings;
 
         private bool isSecondDateSet = false;
 
@@ -14,6 +15,7 @@ namespace BusAllocatorApp
             InitializeComponent();
 
             vars = new Vars(this);
+            settings = new Settings(vars);
 
             //File validation
             CheckConfigFileAndRatesPath();
@@ -327,7 +329,6 @@ namespace BusAllocatorApp
             DeptsCheckForm deptsCheckForm = new DeptsCheckForm(vars);
             deptsCheckForm.Show();
         }
-        #endregion
 
         private void uploadDemandButton_Click(object sender, EventArgs e)
         {
@@ -355,5 +356,6 @@ namespace BusAllocatorApp
 
             vars.OutputDemandsToDebugConsole();
         }
+        #endregion
     }
 }

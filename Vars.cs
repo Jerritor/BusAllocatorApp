@@ -35,7 +35,7 @@ namespace BusAllocatorApp
         public string configFile = "config.cfg";
         public string ratesPath { get; set; }
 
-        public string totalDemandFilePath {  get; set; }
+        public string totalDemandFilePath { get; set; }
 
 
         //--Empty object instantiation--
@@ -76,7 +76,21 @@ namespace BusAllocatorApp
         public Department? totalDemands { get; private set; }
 
 
+        //Demands Completion Flags - 1 if the demands are ready for generating spreadsheets.
+        public enum CompletionState
+        {
+            Uninitialized,
+            Incompleted, //initialized but not filled
+            Completed //filled
+        }
+        //tracks deptsAndDemands state
+        //is initially on by default as default mode is individual dept demand mode
+        CompletionState IsDeptsAndDemandsCompleted { get; set; } = CompletionState.Incompleted;
+        //tracks totalDemands state
+        //is initially off by default as default mode is not all dept demand mode
+        CompletionState IsTotalDemandsCompleted { get; set; } = CompletionState.Uninitialized;
 
+        #region Variable Instantiation
         public void InstantiateVars()
         {
             InstantiateSoloRoutes();
@@ -237,6 +251,7 @@ namespace BusAllocatorApp
             capacityLargeBus = 56;
             mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
         }
+        #endregion
 
         #region To_String Functions
         string StringListToString(List<string> s)
@@ -541,16 +556,16 @@ namespace BusAllocatorApp
 
                         // Define the shifts and their corresponding starting row numbers (1-based indexing)
                         Dictionary<string, int> shiftStartRows = new Dictionary<string, int>
-                {
-                    { "OUT 4AM", 8 },   // Starting at Excel row 9
-                    { "IN 7AM", 18 },   // Starting at Excel row 19
-                    { "OUT 7AM", 28 },  // Starting at Excel row 29
-                    { "OUT 4PM", 38 },  // Starting at Excel row 39
-                    { "OUT 6PM", 48 },  // Starting at Excel row 49
-                    { "IN 7PM", 58 },   // Starting at Excel row 59
-                    { "OUT 7PM", 68 },  // Starting at Excel row 69
-                    { "IN 10PM", 78 }   // Starting at Excel row 79
-                };
+                        {
+                            { "OUT 4AM", 8 },   // Starting at Excel row 9
+                            { "IN 7AM", 18 },   // Starting at Excel row 19
+                            { "OUT 7AM", 28 },  // Starting at Excel row 29
+                            { "OUT 4PM", 38 },  // Starting at Excel row 39
+                            { "OUT 6PM", 48 },  // Starting at Excel row 49
+                            { "IN 7PM", 58 },   // Starting at Excel row 59
+                            { "OUT 7PM", 68 },  // Starting at Excel row 69
+                            { "IN 10PM", 78 }   // Starting at Excel row 79
+                        };
 
                         // Map TimeSet shifts to the shift names in the Excel file
                         Dictionary<string, string> timeSetShiftMap = new Dictionary<string, string>();
@@ -716,5 +731,6 @@ namespace BusAllocatorApp
 
 
         #endregion
+
     }
 }
