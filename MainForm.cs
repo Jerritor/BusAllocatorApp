@@ -333,7 +333,27 @@ namespace BusAllocatorApp
         {
             vars.io.UploadTotalDemandSheet();
 
-            //vars
+            if (!string.IsNullOrEmpty(vars.totalDemandFilePath))
+            {
+                // Process the total demand spreadsheet
+                vars.ProcessTotalDemandSpreadsheet();
+
+                // Check if the total demands data was filled successfully
+                if (vars.totalDemands.IsDataFilled)
+                {
+                    MessageBox.Show("Demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            vars.OutputDemandsToDebugConsole();
         }
     }
 }

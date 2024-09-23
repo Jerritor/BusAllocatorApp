@@ -9,6 +9,7 @@ using System.IO;
 using System.Windows.Forms;
 using ExcelDataReader;
 using System.Data;
+using System.Diagnostics;
 
 
 namespace BusAllocatorApp
@@ -498,15 +499,221 @@ namespace BusAllocatorApp
         {
             try
             {
-                //FILL IN CODE HERE
+                if (!File.Exists(totalDemandFilePath))
+                {
+                    MessageBox.Show($"The file '{totalDemandFilePath}' does not exist.", "File Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-                MessageBox.Show("Total demand sheet uploaded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+                using (var stream = File.Open(totalDemandFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                        var result = reader.AsDataSet();
+
+                        // Check if the spreadsheet has multiple sheets
+                        if (result.Tables.Count != 1)
+                        {
+                            throw new Exception("The spreadsheet can only have one sheet.");
+                        }
+
+                        var table = result.Tables[0];
+                        string sheetName = table.TableName;
+
+                        // Find the 'TOTAL' column index
+                        int totalColumnIndex = -1;
+                        for (int i = 0; i < table.Columns.Count; i++)
+                        {
+                            var columnName = table.Rows[6][i]?.ToString().Trim(); // Header row is at index 6 (7th row)
+                            if (columnName != null && columnName.Equals("TOTAL", StringComparison.OrdinalIgnoreCase))
+                            {
+                                totalColumnIndex = i;
+                                break;
+                            }
+                        }
+
+                        if (totalColumnIndex == -1)
+                        {
+                            throw new Exception($"No 'TOTAL' column found in the sheet '{sheetName}'.");
+                        }
+
+                        // Define the shifts and their corresponding starting row numbers (1-based indexing)
+                        Dictionary<string, int> shiftStartRows = new Dictionary<string, int>
+                {
+                    { "OUT 4AM", 8 },   // Starting at Excel row 9
+                    { "IN 7AM", 18 },   // Starting at Excel row 19
+                    { "OUT 7AM", 28 },  // Starting at Excel row 29
+                    { "OUT 4PM", 38 },  // Starting at Excel row 39
+                    { "OUT 6PM", 48 },  // Starting at Excel row 49
+                    { "IN 7PM", 58 },   // Starting at Excel row 59
+                    { "OUT 7PM", 68 },  // Starting at Excel row 69
+                    { "IN 10PM", 78 }   // Starting at Excel row 79
+                };
+
+                        // Map TimeSet shifts to the shift names in the Excel file
+                        Dictionary<string, string> timeSetShiftMap = new Dictionary<string, string>();
+
+                        foreach (var timeSet in timeSets)
+                        {
+                            string shiftName = timeSet.GetFormattedTimeINOUT();
+                            // Check if the shiftName exists in the shiftStartRows
+                            if (shiftStartRows.ContainsKey(shiftName))
+                            {
+                                timeSetShiftMap[shiftName] = shiftName;
+                            }
+                            else
+                            {
+                                // Handle cases where the TimeSet shift does not match exactly
+                                // For example, map "OUT 4:00AM" to "OUT 4AM"
+                                string shiftKey = shiftName.Replace(":00", "");
+                                if (shiftStartRows.ContainsKey(shiftKey))
+                                {
+                                    timeSetShiftMap[shiftName] = shiftKey;
+                                }
+                                else
+                                {
+                                    // Shift not found in shiftStartRows, skip this shift
+                                    MessageBox.Show($"Shift '{shiftName}' not found in the predefined shifts.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // Instantiate the Department object with Name set to "Total"
+                        totalDemands = new Department("Total");
+
+                        bool hasErrors = false; // Flag to track actual data reading errors
+
+                        // Iterate through each TimeSet that matches shifts in the Excel file
+                        foreach (var timeSet in timeSets)
+                        {
+                            string shiftName = timeSet.GetFormattedTimeINOUT();
+
+                            if (!timeSetShiftMap.TryGetValue(shiftName, out string excelShiftName))
+                            {
+                                // Shift not found, skip processing
+                                continue;
+                            }
+
+                            int shiftStartRow = shiftStartRows[excelShiftName]; // Excel row number (1-based)
+                            int dataRowIndex = shiftStartRow - 1; // Convert to 0-based index
+
+                            // Initialize the dictionary for this shift if not already present
+                            if (!totalDemands.DemandData.ContainsKey(shiftName))
+                            {
+                                totalDemands.DemandData[shiftName] = new Dictionary<string, int?>();
+                            }
+
+                            // Build a route-to-row index mapping for this shift
+                            Dictionary<string, int> routeRowMapping = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+                            // Read routes and their corresponding rows
+                            int currentRowIndex = dataRowIndex;
+                            while (currentRowIndex < table.Rows.Count)
+                            {
+                                var routeCell = table.Rows[currentRowIndex][1]; // Assuming route names are in the second column (index 1)
+                                string routeName = routeCell?.ToString().Trim();
+
+                                // Check for empty route name or end of shift section
+                                if (string.IsNullOrEmpty(routeName) || routeName.Equals("TOTAL", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    break;
+                                }
+
+                                // Map the route name to the row index
+                                routeRowMapping[routeName] = currentRowIndex;
+
+                                currentRowIndex++;
+                            }
+
+                            // For each route in solo_routes, get the demand value if present
+                            foreach (var route in solo_routes)
+                            {
+                                int demand = 0; // Default to zero demand
+
+                                if (routeRowMapping.TryGetValue(route, out int routeRowIndex))
+                                {
+                                    // Get the 'TOTAL' value from the corresponding row
+                                    var row = table.Rows[routeRowIndex];
+                                    object totalValue = row[totalColumnIndex];
+
+                                    if (totalValue == null || string.IsNullOrWhiteSpace(totalValue.ToString()))
+                                    {
+                                        // Empty cell, treat as zero demand
+                                        demand = 0;
+                                    }
+                                    else if (int.TryParse(totalValue.ToString(), out int parsedTotal))
+                                    {
+                                        // Successfully parsed the total value
+                                        demand = parsedTotal;
+                                    }
+                                    else
+                                    {
+                                        // Parsing failed, this is an error
+                                        demand = 0;
+                                        hasErrors = true;
+                                    }
+                                }
+                                else
+                                {
+                                    // Route not found in the shift, demand remains zero
+                                    // Optionally, you can log this information for debugging
+                                    // Debug.WriteLine($"Route '{route}' not found in shift '{shiftName}'.");
+                                }
+
+                                // Assign the demand value
+                                totalDemands.DemandData[shiftName][route] = demand;
+                            }
+                        }
+
+                        // Determine if all data fields are filled without errors
+                        if (!hasErrors)
+                        {
+                            totalDemands.IsDataFilled = true;
+                            MessageBox.Show("Total demand sheet processed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("There were some errors reading the data. Please check the Excel file for invalid entries.", "Data Read Errors", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            totalDemands.IsDataFilled = false;
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error reading the Excel file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
+        //Debug Parser Function
+        public void OutputDemandsToDebugConsole()
+        {
+            if (totalDemands == null || totalDemands.DemandData == null)
+            {
+                Debug.WriteLine("No demand data available.");
+                return;
+            }
+
+            foreach (var shiftEntry in totalDemands.DemandData)
+            {
+                string shiftName = shiftEntry.Key;
+                var routeDemands = shiftEntry.Value;
+
+                Debug.WriteLine($"Shift: {shiftName}");
+                foreach (var routeEntry in routeDemands)
+                {
+                    string routeName = routeEntry.Key;
+                    int? demand = routeEntry.Value;
+                    Debug.WriteLine($"  Route: {routeName}, Demand: {demand}");
+                }
+            }
+        }
+
+
 
         #endregion
     }
