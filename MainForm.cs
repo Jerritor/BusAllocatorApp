@@ -378,9 +378,10 @@ namespace BusAllocatorApp
         }
         #endregion
 
+        #region Settings Button
         private void settingsButton_Click(object sender, EventArgs e)
         {
-            vars.ClearAllDemandsInDataGridView();
         }
+        #endregion
     }
 }
