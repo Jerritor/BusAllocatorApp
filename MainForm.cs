@@ -381,6 +381,7 @@ namespace BusAllocatorApp
         #region Settings Button
         private void settingsButton_Click(object sender, EventArgs e)
         {
+            settings.ClearDemandData();
         }
         #endregion
     }

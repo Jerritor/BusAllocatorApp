@@ -80,15 +80,15 @@ namespace BusAllocatorApp
         public enum CompletionState
         {
             Uninitialized,
-            Incompleted, //initialized but not filled
-            Completed //filled
+            Initialized, //initialized but not demand data not completed
+            Completed //demands filled
         }
         //tracks deptsAndDemands state
         //is initially on by default as default mode is individual dept demand mode
-        CompletionState IsDeptsAndDemandsCompleted { get; set; } = CompletionState.Incompleted;
+        public CompletionState IsDeptsAndDemandsCompleted { get; set; } = CompletionState.Initialized;
         //tracks totalDemands state
         //is initially off by default as default mode is not all dept demand mode
-        CompletionState IsTotalDemandsCompleted { get; set; } = CompletionState.Uninitialized;
+        public CompletionState IsTotalDemandsCompleted { get; set; } = CompletionState.Uninitialized;
 
         #region Variable Instantiation
         public void InstantiateVars()
@@ -711,6 +711,25 @@ namespace BusAllocatorApp
             }
         }
 
+        public void ClearTotalDemandsData()
+        {
+            totalDemands.ClearDemandData();
+        }
+
+        #endregion
+
+        #region Individual Department Demand Spreadsheet Processing
+        public void ClearDeptsAndDemandsData()
+        {
+            foreach (Department dept in deptsAndDemands)
+            {
+                dept.ClearDemandData();
+            }
+        }
+        #endregion
+
+        #region DataGridView Handling
+
         public void ClearAllDemandsInDataGridView()
         {
             /**
@@ -721,6 +740,7 @@ namespace BusAllocatorApp
                 return;
             }**/
 
+            /**
             // Loop through each row in the DataGridView
             foreach (DataGridViewRow row in mainForm.dataGridView1.Rows)
             {
@@ -731,6 +751,20 @@ namespace BusAllocatorApp
                     row.Cells[col].Value = DBNull.Value; // Sets the cell to empty
                 }
             }
+            **/
+
+            //mainForm.table.Clear();
+
+            foreach (DataRow row in mainForm.table.Rows)
+            {
+                // Skip the first column (routes) and clear only the demand columns
+                for (int col = 1; col < mainForm.table.Columns.Count; col++)
+                {
+                    // Clear the demand data (set to DBNull)
+                    row[col] = DBNull.Value;
+                }
+            }
+
 
             // Optionally, refresh the DataGridView to reflect the changes immediately
             mainForm.dataGridView1.Refresh();
@@ -796,6 +830,7 @@ namespace BusAllocatorApp
 
 
         #endregion
+
         //Debug Parser Function
         public void OutputDemandsToDebugConsole()
         {

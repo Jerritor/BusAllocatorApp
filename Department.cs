@@ -38,6 +38,12 @@ namespace BusAllocatorApp
             DemandData = new Dictionary<string, Dictionary<string, int?> >();
         }
 
+        public void ClearDemandData()
+        { 
+            DemandData.Clear();
+            IsDataFilled = false;
+        }
+
         public override string ToString()
         {
             var sb = new StringBuilder();
