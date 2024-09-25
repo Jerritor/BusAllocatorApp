@@ -386,5 +386,12 @@ namespace BusAllocatorApp
             settingsForm.ShowDialog();
         }
         #endregion
+
+        #region Clear Demand Data Button
+        private void clearDemandDataButton_Click(object sender, EventArgs e)
+        {
+            settings.ClearDemandData();
+        }
+        #endregion
     }
 }

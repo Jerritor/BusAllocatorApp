@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             tableLayoutPanel1 = new TableLayoutPanel();
             setSecondDateButton = new Button();
             editSecondDateButton = new Button();
@@ -48,7 +48,7 @@
             dataGridView1 = new DataGridView();
             tableLayoutPanel2 = new TableLayoutPanel();
             settingsButton = new Button();
-            clearDemandInfoButton = new Button();
+            clearDemandDataButton = new Button();
             generateAllocationsButton = new Button();
             outputLog = new TextBox();
             label3 = new Label();
@@ -320,14 +320,14 @@
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Control;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             tableLayoutPanel1.SetColumnSpan(dataGridView1, 3);
             dataGridView1.Dock = DockStyle.Fill;
@@ -345,7 +345,7 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel2.Controls.Add(settingsButton, 0, 0);
-            tableLayoutPanel2.Controls.Add(clearDemandInfoButton, 1, 0);
+            tableLayoutPanel2.Controls.Add(clearDemandDataButton, 1, 0);
             tableLayoutPanel2.Controls.Add(generateAllocationsButton, 2, 0);
             tableLayoutPanel2.Dock = DockStyle.Left;
             tableLayoutPanel2.Location = new Point(3, 291);
@@ -368,18 +368,19 @@
             settingsButton.UseVisualStyleBackColor = false;
             settingsButton.Click += settingsButton_Click;
             // 
-            // clearDemandInfoButton
+            // clearDemandDataButton
             // 
-            clearDemandInfoButton.BackColor = SystemColors.ControlText;
-            clearDemandInfoButton.Dock = DockStyle.Fill;
-            clearDemandInfoButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            clearDemandInfoButton.ForeColor = SystemColors.ControlLightLight;
-            clearDemandInfoButton.Location = new Point(103, 3);
-            clearDemandInfoButton.Name = "clearDemandInfoButton";
-            clearDemandInfoButton.Size = new Size(194, 41);
-            clearDemandInfoButton.TabIndex = 1;
-            clearDemandInfoButton.Text = "Clear All Demand Data";
-            clearDemandInfoButton.UseVisualStyleBackColor = false;
+            clearDemandDataButton.BackColor = SystemColors.ControlText;
+            clearDemandDataButton.Dock = DockStyle.Fill;
+            clearDemandDataButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            clearDemandDataButton.ForeColor = SystemColors.ControlLightLight;
+            clearDemandDataButton.Location = new Point(103, 3);
+            clearDemandDataButton.Name = "clearDemandDataButton";
+            clearDemandDataButton.Size = new Size(194, 41);
+            clearDemandDataButton.TabIndex = 1;
+            clearDemandDataButton.Text = "Clear All Demand Data";
+            clearDemandDataButton.UseVisualStyleBackColor = false;
+            clearDemandDataButton.Click += clearDemandDataButton_Click;
             // 
             // generateAllocationsButton
             // 
@@ -476,7 +477,7 @@
         private Label label2;
         private TableLayoutPanel tableLayoutPanel2;
         private Button settingsButton;
-        private Button clearDemandInfoButton;
+        private Button clearDemandDataButton;
         private Button generateAllocationsButton;
         private Label label3;
         private TextBox outputLog;
