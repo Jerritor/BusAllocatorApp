@@ -12,9 +12,12 @@ namespace BusAllocatorApp
 {
     public partial class SettingsForm : Form
     {
-        public SettingsForm()
+        Settings settings;
+
+        public SettingsForm(Settings settings)
         {
             InitializeComponent();
+            this.settings = settings;
         }
     }
 }
