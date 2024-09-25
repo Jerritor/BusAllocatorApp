@@ -346,7 +346,7 @@ namespace BusAllocatorApp
         private void checkEditDemandButton_Click(object sender, EventArgs e)
         {
             DeptsCheckForm deptsCheckForm = new DeptsCheckForm(vars);
-            deptsCheckForm.Show();
+            deptsCheckForm.ShowDialog();
         }
 
         private void uploadDemandButton_Click(object sender, EventArgs e)
