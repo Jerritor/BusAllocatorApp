@@ -717,6 +717,7 @@ namespace BusAllocatorApp
             {
                 totalDemands.ClearDemandData();
             }
+            mainForm.WriteLine("Cleared all demand data from Total Demand Mode.");
         }
 
         #endregion
@@ -724,10 +725,14 @@ namespace BusAllocatorApp
         #region Individual Department Demand Spreadsheet Processing
         public void ClearDeptsAndDemandsData()
         {
-            foreach (Department dept in deptsAndDemands)
+            if (deptsAndDemands != null)
             {
-                dept.ClearDemandData();
+                foreach (Department dept in deptsAndDemands)
+                {
+                    dept.ClearDemandData();
+                }
             }
+            mainForm.WriteLine("Cleared all demand data from Individual Departments Mode.");
         }
         #endregion
 

@@ -37,5 +37,10 @@ namespace BusAllocatorApp
                 settings.ToggleDemandMode(2);
             }
         }
+
+        private void closeWindowButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

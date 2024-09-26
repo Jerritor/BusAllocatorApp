@@ -134,6 +134,7 @@
             closeWindowButton.TabIndex = 1;
             closeWindowButton.Text = "Close Window";
             closeWindowButton.UseVisualStyleBackColor = true;
+            closeWindowButton.Click += closeWindowButton_Click;
             // 
             // SettingsForm
             // 
