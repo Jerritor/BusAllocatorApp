@@ -31,9 +31,9 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
             label1 = new Label();
-            radioButton1 = new RadioButton();
-            radioButton2 = new RadioButton();
             modeDescriptionLabel = new Label();
+            deptsModeRadioButton = new RadioButton();
+            totalModeRadioButton = new RadioButton();
             closeWindowButton = new Button();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -64,8 +64,8 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel2.Controls.Add(label1, 0, 0);
             tableLayoutPanel2.Controls.Add(modeDescriptionLabel, 1, 1);
-            tableLayoutPanel2.Controls.Add(radioButton1, 0, 1);
-            tableLayoutPanel2.Controls.Add(radioButton2, 0, 2);
+            tableLayoutPanel2.Controls.Add(deptsModeRadioButton, 0, 1);
+            tableLayoutPanel2.Controls.Add(totalModeRadioButton, 0, 2);
             tableLayoutPanel2.Location = new Point(3, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 3;
@@ -87,30 +87,6 @@
             label1.TabIndex = 1;
             label1.Text = "Spreadsheet Import Mode";
             // 
-            // radioButton1
-            // 
-            radioButton1.AutoSize = true;
-            radioButton1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            radioButton1.Location = new Point(3, 33);
-            radioButton1.Name = "radioButton1";
-            radioButton1.Size = new Size(246, 25);
-            radioButton1.TabIndex = 1;
-            radioButton1.TabStop = true;
-            radioButton1.Text = "Individual Departments Mode";
-            radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            radioButton2.AutoSize = true;
-            radioButton2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            radioButton2.Location = new Point(3, 64);
-            radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(176, 25);
-            radioButton2.TabIndex = 3;
-            radioButton2.TabStop = true;
-            radioButton2.Text = "Total Demand Mode";
-            radioButton2.UseVisualStyleBackColor = true;
-            // 
             // modeDescriptionLabel
             // 
             modeDescriptionLabel.AutoSize = true;
@@ -121,6 +97,32 @@
             modeDescriptionLabel.Size = new Size(43, 17);
             modeDescriptionLabel.TabIndex = 2;
             modeDescriptionLabel.Text = "label2";
+            // 
+            // deptsModeRadioButton
+            // 
+            deptsModeRadioButton.AutoSize = true;
+            deptsModeRadioButton.Checked = true;
+            deptsModeRadioButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            deptsModeRadioButton.Location = new Point(3, 33);
+            deptsModeRadioButton.Name = "deptsModeRadioButton";
+            deptsModeRadioButton.Size = new Size(246, 25);
+            deptsModeRadioButton.TabIndex = 1;
+            deptsModeRadioButton.TabStop = true;
+            deptsModeRadioButton.Text = "Individual Departments Mode";
+            deptsModeRadioButton.UseVisualStyleBackColor = true;
+            deptsModeRadioButton.CheckedChanged += radioButton1_CheckedChanged;
+            // 
+            // totalModeRadioButton
+            // 
+            totalModeRadioButton.AutoSize = true;
+            totalModeRadioButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            totalModeRadioButton.Location = new Point(3, 64);
+            totalModeRadioButton.Name = "totalModeRadioButton";
+            totalModeRadioButton.Size = new Size(176, 25);
+            totalModeRadioButton.TabIndex = 3;
+            totalModeRadioButton.Text = "Total Demand Mode";
+            totalModeRadioButton.UseVisualStyleBackColor = true;
+            totalModeRadioButton.CheckedChanged += radioButton2_CheckedChanged;
             // 
             // closeWindowButton
             // 
@@ -153,8 +155,8 @@
         private TableLayoutPanel tableLayoutPanel1;
         private TableLayoutPanel tableLayoutPanel2;
         private Label label1;
-        private RadioButton radioButton1;
-        private RadioButton radioButton2;
+        private RadioButton deptsModeRadioButton;
+        private RadioButton totalModeRadioButton;
         private Label modeDescriptionLabel;
         private Button closeWindowButton;
     }

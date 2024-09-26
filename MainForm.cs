@@ -35,6 +35,9 @@ namespace BusAllocatorApp
             dataGridView1.DataSource = table;
             vars.InitializeEmptyDataGridView();
 
+            //DEBUG FUNCTIONS
+            vars.OutputDemandModeToDebugConsole();
+
 
             //EVERYTHING AFTER HERE IS ON FORM LOAD
 

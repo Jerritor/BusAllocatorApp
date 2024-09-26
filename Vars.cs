@@ -713,7 +713,10 @@ namespace BusAllocatorApp
 
         public void ClearTotalDemandsData()
         {
-            totalDemands.ClearDemandData();
+            if (totalDemands != null)
+            {
+                totalDemands.ClearDemandData();
+            }
         }
 
         #endregion
@@ -853,6 +856,12 @@ namespace BusAllocatorApp
                     Debug.WriteLine($"  Route: {routeName}, Demand: {demand}");
                 }
             }
+        }
+
+        public void OutputDemandModeToDebugConsole()
+        {
+            Debug.WriteLine("deptsMode = " + IsDeptsAndDemandsCompleted);
+            Debug.WriteLine("totalMode = " + IsTotalDemandsCompleted + "\n");
         }
 
     }
