@@ -28,18 +28,134 @@
         /// </summary>
         private void InitializeComponent()
         {
+            tableLayoutPanel1 = new TableLayoutPanel();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            label1 = new Label();
+            radioButton1 = new RadioButton();
+            radioButton2 = new RadioButton();
+            modeDescriptionLabel = new Label();
+            closeWindowButton = new Button();
+            tableLayoutPanel1.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.AutoSize = true;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 0);
+            tableLayoutPanel1.Controls.Add(closeWindowButton, 0, 2);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 3;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            tableLayoutPanel1.Size = new Size(511, 450);
+            tableLayoutPanel1.TabIndex = 0;
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel2.ColumnCount = 2;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.Controls.Add(label1, 0, 0);
+            tableLayoutPanel2.Controls.Add(modeDescriptionLabel, 1, 1);
+            tableLayoutPanel2.Controls.Add(radioButton1, 0, 1);
+            tableLayoutPanel2.Controls.Add(radioButton2, 0, 2);
+            tableLayoutPanel2.Location = new Point(3, 3);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 3;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.Size = new Size(505, 100);
+            tableLayoutPanel2.TabIndex = 0;
+            // 
+            // label1
+            // 
+            label1.Anchor = AnchorStyles.Top;
+            label1.AutoSize = true;
+            tableLayoutPanel2.SetColumnSpan(label1, 2);
+            label1.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point, 0);
+            label1.Location = new Point(117, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(271, 30);
+            label1.TabIndex = 1;
+            label1.Text = "Spreadsheet Import Mode";
+            // 
+            // radioButton1
+            // 
+            radioButton1.AutoSize = true;
+            radioButton1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            radioButton1.Location = new Point(3, 33);
+            radioButton1.Name = "radioButton1";
+            radioButton1.Size = new Size(246, 25);
+            radioButton1.TabIndex = 1;
+            radioButton1.TabStop = true;
+            radioButton1.Text = "Individual Departments Mode";
+            radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            radioButton2.AutoSize = true;
+            radioButton2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            radioButton2.Location = new Point(3, 64);
+            radioButton2.Name = "radioButton2";
+            radioButton2.Size = new Size(176, 25);
+            radioButton2.TabIndex = 3;
+            radioButton2.TabStop = true;
+            radioButton2.Text = "Total Demand Mode";
+            radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // modeDescriptionLabel
+            // 
+            modeDescriptionLabel.AutoSize = true;
+            modeDescriptionLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            modeDescriptionLabel.Location = new Point(255, 30);
+            modeDescriptionLabel.Name = "modeDescriptionLabel";
+            tableLayoutPanel2.SetRowSpan(modeDescriptionLabel, 2);
+            modeDescriptionLabel.Size = new Size(43, 17);
+            modeDescriptionLabel.TabIndex = 2;
+            modeDescriptionLabel.Text = "label2";
+            // 
+            // closeWindowButton
+            // 
+            closeWindowButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            closeWindowButton.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            closeWindowButton.Location = new Point(3, 413);
+            closeWindowButton.Name = "closeWindowButton";
+            closeWindowButton.Size = new Size(505, 34);
+            closeWindowButton.TabIndex = 1;
+            closeWindowButton.Text = "Close Window";
+            closeWindowButton.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(511, 450);
+            Controls.Add(tableLayoutPanel1);
             Name = "SettingsForm";
             Text = "Settings";
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel2;
+        private Label label1;
+        private RadioButton radioButton1;
+        private RadioButton radioButton2;
+        private Label modeDescriptionLabel;
+        private Button closeWindowButton;
     }
 }
