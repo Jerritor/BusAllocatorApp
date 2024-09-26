@@ -49,16 +49,17 @@
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 3;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.RowCount = 4;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 150F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
             tableLayoutPanel1.Size = new Size(511, 450);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel2
             // 
-            tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel2.ColumnCount = 2;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -72,7 +73,7 @@
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.Size = new Size(505, 100);
+            tableLayoutPanel2.Size = new Size(505, 144);
             tableLayoutPanel2.TabIndex = 0;
             // 
             // label1
@@ -94,9 +95,9 @@
             modeDescriptionLabel.Location = new Point(255, 30);
             modeDescriptionLabel.Name = "modeDescriptionLabel";
             tableLayoutPanel2.SetRowSpan(modeDescriptionLabel, 2);
-            modeDescriptionLabel.Size = new Size(43, 17);
+            modeDescriptionLabel.Size = new Size(245, 85);
             modeDescriptionLabel.TabIndex = 2;
-            modeDescriptionLabel.Text = "label2";
+            modeDescriptionLabel.Text = "In this mode, you can upload and manage separate demand files for each department individually.\r\nYou must use the standard department template for each spreadsheet.";
             // 
             // deptsModeRadioButton
             // 
@@ -116,7 +117,7 @@
             // 
             totalModeRadioButton.AutoSize = true;
             totalModeRadioButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            totalModeRadioButton.Location = new Point(3, 64);
+            totalModeRadioButton.Location = new Point(3, 98);
             totalModeRadioButton.Name = "totalModeRadioButton";
             totalModeRadioButton.Size = new Size(176, 25);
             totalModeRadioButton.TabIndex = 3;
@@ -128,7 +129,7 @@
             // 
             closeWindowButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             closeWindowButton.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            closeWindowButton.Location = new Point(3, 413);
+            closeWindowButton.Location = new Point(3, 173);
             closeWindowButton.Name = "closeWindowButton";
             closeWindowButton.Size = new Size(505, 34);
             closeWindowButton.TabIndex = 1;
