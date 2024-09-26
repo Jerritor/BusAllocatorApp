@@ -27,11 +27,12 @@ namespace BusAllocatorApp
         {
             if (deptsModeRadioButton.Checked)
             {
-                settings.ToggleDemandMode(1);
+                settings.ToggleDemandMode(1); //Updates mode flag
                 modeDescriptionLabel.Text = "In this mode, you can upload and manage separate demand files for each department individually.\n" +
                                             "You must use the standard department template for each spreadsheet.";
                 deptsModeRadioButton.ForeColor = Color.Black;
                 totalModeRadioButton.ForeColor = Color.DimGray;
+                mainForm.checkEditDemandButton.Visible = true;
                 mainForm.WriteLine("Demand Mode changed to 'Individual Departments Mode'. " +
                     "You can now upload multiple department spreadsheets or manually edit demands.");
             }
@@ -42,11 +43,12 @@ namespace BusAllocatorApp
         {
             if (totalModeRadioButton.Checked)
             {
-                settings.ToggleDemandMode(2);
+                settings.ToggleDemandMode(2); //Updates mode flag
                 modeDescriptionLabel.Text = "In this mode, you can upload and manage a single spreadsheet containing the total demand for all departments combined.\n" +
                                             "You must use the standard total demand spreadsheet with only one sheet.";
                 deptsModeRadioButton.ForeColor = Color.DimGray;
                 totalModeRadioButton.ForeColor = Color.Black;
+                mainForm.checkEditDemandButton.Visible = false;
                 mainForm.WriteLine("Demand Mode changed to 'Total Demand Mode'. " +
                     "You can now upload a single total demand spreadsheet. Demands cannot be manually edited.");
             }
