@@ -384,7 +384,7 @@ namespace BusAllocatorApp
         #region Settings Button
         private void settingsButton_Click(object sender, EventArgs e)
         {
-            SettingsForm settingsForm = new SettingsForm(settings);
+            SettingsForm settingsForm = new SettingsForm(settings, this);
 
             settingsForm.ShowDialog();
         }

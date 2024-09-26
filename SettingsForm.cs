@@ -13,11 +13,13 @@ namespace BusAllocatorApp
     public partial class SettingsForm : Form
     {
         Settings settings;
+        MainForm mainForm;
 
-        public SettingsForm(Settings settings)
+        public SettingsForm(Settings settings, MainForm mainForm)
         {
             InitializeComponent();
             this.settings = settings;
+            this.mainForm = mainForm;
         }
 
         //individual depts mode radio button
@@ -30,6 +32,8 @@ namespace BusAllocatorApp
                                             "You must use the standard department template for each spreadsheet.";
                 deptsModeRadioButton.ForeColor = Color.Black;
                 totalModeRadioButton.ForeColor = Color.DimGray;
+                mainForm.WriteLine("Demand Mode changed to 'Individual Departments Mode'. " +
+                    "You can now upload multiple department spreadsheets or manually edit demands.");
             }
         }
 
@@ -39,10 +43,12 @@ namespace BusAllocatorApp
             if (totalModeRadioButton.Checked)
             {
                 settings.ToggleDemandMode(2);
-                modeDescriptionLabel.Text = "In this mode, you can upload and manage a single file containing the total demand for all departments combined.\n" +
-                                            "You must use the standard spreadsheet with only one sheet.";
+                modeDescriptionLabel.Text = "In this mode, you can upload and manage a single spreadsheet containing the total demand for all departments combined.\n" +
+                                            "You must use the standard total demand spreadsheet with only one sheet.";
                 deptsModeRadioButton.ForeColor = Color.DimGray;
                 totalModeRadioButton.ForeColor = Color.Black;
+                mainForm.WriteLine("Demand Mode changed to 'Total Demand Mode'. " +
+                    "You can now upload a single total demand spreadsheet. Demands cannot be manually edited.");
             }
         }
 
