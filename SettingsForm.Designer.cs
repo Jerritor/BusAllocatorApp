@@ -117,6 +117,7 @@
             // 
             totalModeRadioButton.AutoSize = true;
             totalModeRadioButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            totalModeRadioButton.ForeColor = Color.DimGray;
             totalModeRadioButton.Location = new Point(3, 98);
             totalModeRadioButton.Name = "totalModeRadioButton";
             totalModeRadioButton.Size = new Size(176, 25);
