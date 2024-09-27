@@ -37,19 +37,18 @@
             closeWindowButton = new Button();
             incompleteAllocsCheckBox = new CheckBox();
             tableLayoutPanel3 = new TableLayoutPanel();
-            label2 = new Label();
             label3 = new Label();
-            this.allocationFolderTextBox = new TextBox();
-            this.allocationFolderUploadButton = new Button();
+            allocationFolderTextBox = new TextBox();
+            allocationFolderButton = new Button();
             tableLayoutPanel4 = new TableLayoutPanel();
-            allocationFileNameTextBox = new TextBox();
             label5 = new Label();
+            allocationFileNameTextBox = new TextBox();
             tableLayoutPanel5 = new TableLayoutPanel();
+            label4 = new Label();
+            advancedSettingsButton = new Button();
             tableLayoutPanel6 = new TableLayoutPanel();
             bufferSizesButton = new Button();
             busRateButton = new Button();
-            label4 = new Label();
-            advancedSettingsButton = new Button();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
@@ -76,12 +75,12 @@
             tableLayoutPanel1.RowCount = 7;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 140F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.Size = new Size(511, 471);
+            tableLayoutPanel1.Size = new Size(511, 414);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -158,9 +157,9 @@
             // 
             closeWindowButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             closeWindowButton.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            closeWindowButton.Location = new Point(3, 438);
+            closeWindowButton.Location = new Point(3, 376);
             closeWindowButton.Name = "closeWindowButton";
-            closeWindowButton.Size = new Size(505, 34);
+            closeWindowButton.Size = new Size(505, 35);
             closeWindowButton.TabIndex = 1;
             closeWindowButton.Text = "Close Window";
             closeWindowButton.UseVisualStyleBackColor = true;
@@ -171,114 +170,131 @@
             incompleteAllocsCheckBox.AutoSize = true;
             incompleteAllocsCheckBox.Location = new Point(3, 143);
             incompleteAllocsCheckBox.Name = "incompleteAllocsCheckBox";
-            incompleteAllocsCheckBox.Size = new Size(83, 19);
+            incompleteAllocsCheckBox.Size = new Size(313, 19);
             incompleteAllocsCheckBox.TabIndex = 2;
-            incompleteAllocsCheckBox.Text = "checkBox1";
+            incompleteAllocsCheckBox.Text = "Enable allocations even if not all departments are filled";
             incompleteAllocsCheckBox.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel3.ColumnCount = 3;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
-            tableLayoutPanel3.Controls.Add(label2, 0, 0);
-            tableLayoutPanel3.Controls.Add(label3, 0, 1);
-            tableLayoutPanel3.Controls.Add(this.allocationFolderTextBox, 1, 1);
-            tableLayoutPanel3.Controls.Add(this.allocationFolderUploadButton, 2, 1);
-            tableLayoutPanel3.Location = new Point(3, 218);
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.Controls.Add(label3, 0, 0);
+            tableLayoutPanel3.Controls.Add(allocationFolderTextBox, 1, 0);
+            tableLayoutPanel3.Controls.Add(allocationFolderButton, 2, 0);
+            tableLayoutPanel3.Location = new Point(3, 221);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
-            tableLayoutPanel3.RowCount = 2;
+            tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle());
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel3.Size = new Size(505, 94);
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.Size = new Size(505, 30);
             tableLayoutPanel3.TabIndex = 5;
-            // 
-            // label2
-            // 
-            label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label2.AutoSize = true;
-            tableLayoutPanel3.SetColumnSpan(label2, 3);
-            label2.Location = new Point(3, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(499, 15);
-            label2.TabIndex = 0;
-            label2.Text = "Output Folder Selection";
-            label2.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label3
             // 
+            label3.Anchor = AnchorStyles.Left;
             label3.AutoSize = true;
-            label3.Location = new Point(3, 15);
+            label3.Location = new Point(3, 7);
             label3.Name = "label3";
-            label3.Size = new Size(38, 15);
+            label3.Size = new Size(141, 15);
             label3.TabIndex = 1;
-            label3.Text = "label3";
+            label3.Text = "Allocation Output Folder:";
             // 
             // allocationFolderTextBox
             // 
-            this.allocationFolderTextBox.Location = new Point(171, 18);
-            this.allocationFolderTextBox.Name = "allocationFolderTextBox";
-            this.allocationFolderTextBox.Size = new Size(100, 23);
-            this.allocationFolderTextBox.TabIndex = 3;
+            allocationFolderTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            allocationFolderTextBox.Cursor = Cursors.No;
+            allocationFolderTextBox.Enabled = false;
+            allocationFolderTextBox.Location = new Point(150, 3);
+            allocationFolderTextBox.Name = "allocationFolderTextBox";
+            allocationFolderTextBox.Size = new Size(238, 23);
+            allocationFolderTextBox.TabIndex = 3;
             // 
-            // allocationFolderUploadButton
+            // allocationFolderButton
             // 
-            this.allocationFolderUploadButton.Location = new Point(339, 18);
-            this.allocationFolderUploadButton.Name = "allocationFolderUploadButton";
-            this.allocationFolderUploadButton.Size = new Size(75, 23);
-            this.allocationFolderUploadButton.TabIndex = 4;
-            this.allocationFolderUploadButton.Text = "button1";
-            this.allocationFolderUploadButton.UseVisualStyleBackColor = true;
+            allocationFolderButton.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            allocationFolderButton.Location = new Point(394, 3);
+            allocationFolderButton.Name = "allocationFolderButton";
+            allocationFolderButton.Size = new Size(108, 23);
+            allocationFolderButton.TabIndex = 4;
+            allocationFolderButton.Text = "Select Folder";
+            allocationFolderButton.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel4
             // 
             tableLayoutPanel4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel4.ColumnCount = 2;
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Controls.Add(allocationFileNameTextBox, 1, 0);
+            tableLayoutPanel4.ColumnCount = 1;
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel4.Controls.Add(label5, 0, 0);
-            tableLayoutPanel4.Location = new Point(3, 318);
+            tableLayoutPanel4.Controls.Add(allocationFileNameTextBox, 0, 1);
+            tableLayoutPanel4.Location = new Point(3, 257);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
-            tableLayoutPanel4.RowCount = 1;
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(505, 74);
+            tableLayoutPanel4.RowCount = 2;
+            tableLayoutPanel4.RowStyles.Add(new RowStyle());
+            tableLayoutPanel4.RowStyles.Add(new RowStyle());
+            tableLayoutPanel4.Size = new Size(505, 56);
             tableLayoutPanel4.TabIndex = 6;
-            // 
-            // allocationFileNameTextBox
-            // 
-            allocationFileNameTextBox.Location = new Point(255, 3);
-            allocationFileNameTextBox.Name = "allocationFileNameTextBox";
-            allocationFileNameTextBox.Size = new Size(100, 23);
-            allocationFileNameTextBox.TabIndex = 0;
             // 
             // label5
             // 
             label5.AutoSize = true;
             label5.Location = new Point(3, 0);
             label5.Name = "label5";
-            label5.Size = new Size(38, 15);
+            label5.Size = new Size(380, 15);
             label5.TabIndex = 2;
-            label5.Text = "label5";
+            label5.Text = "Allocation File Name (type 'date' to set name as the selected First Date)";
+            // 
+            // allocationFileNameTextBox
+            // 
+            allocationFileNameTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            allocationFileNameTextBox.Location = new Point(3, 18);
+            allocationFileNameTextBox.Name = "allocationFileNameTextBox";
+            allocationFileNameTextBox.Size = new Size(499, 23);
+            allocationFileNameTextBox.TabIndex = 0;
+            allocationFileNameTextBox.Text = "date";
             // 
             // tableLayoutPanel5
             // 
+            tableLayoutPanel5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel5.ColumnCount = 2;
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 53.26733F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 46.7326736F));
             tableLayoutPanel5.Controls.Add(label4, 0, 0);
             tableLayoutPanel5.Controls.Add(advancedSettingsButton, 1, 0);
-            tableLayoutPanel5.Location = new Point(3, 398);
+            tableLayoutPanel5.Location = new Point(3, 319);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
             tableLayoutPanel5.RowCount = 1;
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel5.Size = new Size(200, 34);
+            tableLayoutPanel5.RowStyles.Add(new RowStyle());
+            tableLayoutPanel5.Size = new Size(505, 51);
             tableLayoutPanel5.TabIndex = 7;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
+            label4.Location = new Point(3, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(261, 45);
+            label4.TabIndex = 0;
+            label4.Text = "WARNING: PLEASE PROCEED WITH CAUTION. ONLY ACCESS THE ADVANCED SETTINGS IF YOU ARE FAMILIAR WITH THE FUNCTIONALITY";
+            label4.Click += label4_Click;
+            // 
+            // advancedSettingsButton
+            // 
+            advancedSettingsButton.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            advancedSettingsButton.Location = new Point(272, 14);
+            advancedSettingsButton.Name = "advancedSettingsButton";
+            advancedSettingsButton.Size = new Size(230, 23);
+            advancedSettingsButton.TabIndex = 1;
+            advancedSettingsButton.Text = "Advanced Settings";
+            advancedSettingsButton.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel6
             // 
+            tableLayoutPanel6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel6.ColumnCount = 2;
             tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -287,51 +303,37 @@
             tableLayoutPanel6.Location = new Point(3, 168);
             tableLayoutPanel6.Name = "tableLayoutPanel6";
             tableLayoutPanel6.RowCount = 1;
-            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel6.Size = new Size(200, 44);
+            tableLayoutPanel6.RowStyles.Add(new RowStyle());
+            tableLayoutPanel6.Size = new Size(505, 47);
             tableLayoutPanel6.TabIndex = 8;
             // 
             // bufferSizesButton
             // 
+            bufferSizesButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            bufferSizesButton.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             bufferSizesButton.Location = new Point(3, 3);
             bufferSizesButton.Name = "bufferSizesButton";
-            bufferSizesButton.Size = new Size(75, 23);
+            bufferSizesButton.Size = new Size(246, 41);
             bufferSizesButton.TabIndex = 3;
-            bufferSizesButton.Text = "button1";
+            bufferSizesButton.Text = "Edit Buffer Sizes";
             bufferSizesButton.UseVisualStyleBackColor = true;
             // 
             // busRateButton
             // 
-            busRateButton.Location = new Point(103, 3);
+            busRateButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            busRateButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            busRateButton.Location = new Point(255, 3);
             busRateButton.Name = "busRateButton";
-            busRateButton.Size = new Size(75, 23);
+            busRateButton.Size = new Size(247, 41);
             busRateButton.TabIndex = 4;
-            busRateButton.Text = "button2";
+            busRateButton.Text = "Edit Bus Rates";
             busRateButton.UseVisualStyleBackColor = true;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(3, 0);
-            label4.Name = "label4";
-            label4.Size = new Size(38, 15);
-            label4.TabIndex = 0;
-            label4.Text = "label4";
-            // 
-            // advancedSettingsButton
-            // 
-            advancedSettingsButton.Location = new Point(103, 3);
-            advancedSettingsButton.Name = "advancedSettingsButton";
-            advancedSettingsButton.Size = new Size(75, 23);
-            advancedSettingsButton.TabIndex = 1;
-            advancedSettingsButton.Text = "button2";
-            advancedSettingsButton.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(511, 471);
+            ClientSize = new Size(511, 414);
             Controls.Add(tableLayoutPanel1);
             Name = "SettingsForm";
             Text = "Settings";
@@ -366,8 +368,9 @@
         private TableLayoutPanel tableLayoutPanel4;
         private TableLayoutPanel tableLayoutPanel5;
         private TableLayoutPanel tableLayoutPanel6;
-        private Label label2;
         private Label label3;
+        private TextBox allocationFolderTextBox;
+        private Button allocationFolderButton;
         private TextBox textBox1;
         private TextBox textBox2;
         private Button button1;
