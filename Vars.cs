@@ -736,6 +736,28 @@ namespace BusAllocatorApp
         }
         #endregion
 
+        #region Demand Mode State Retrieval
+        //1 = individual department mode, 2 = total department mode
+        public int GetDemandMode()
+        {
+            if (IsTotalDemandsCompleted != CompletionState.Uninitialized)
+            {
+                // Total Department mode is active
+                return 2;
+            }
+            else if (IsDeptsAndDemandsCompleted != CompletionState.Uninitialized)
+            {
+                // Individual Department mode is active
+                return 1;
+            }
+            else
+            {
+                // Neither mode is properly initialized
+                throw new InvalidOperationException("Demand mode is not properly initialized.");
+            }
+        }
+        #endregion
+
         #region DataGridView Handling
 
         public void ClearAllDemandsInDataGridView()
