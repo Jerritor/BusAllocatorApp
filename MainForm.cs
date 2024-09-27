@@ -364,6 +364,7 @@ namespace BusAllocatorApp
                 // Check if the total demands data was filled successfully
                 if (vars.totalDemands.IsDataFilled)
                 {
+                    settings.SetDemandModeToComplete();
                     MessageBox.Show("Demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     UpdateDataGrid();
                 }
@@ -377,7 +378,7 @@ namespace BusAllocatorApp
                 MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            vars.OutputDemandsToDebugConsole();
+            //vars.OutputDemandsToDebugConsole();
         }
         #endregion
 

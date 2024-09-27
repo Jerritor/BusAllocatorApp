@@ -192,12 +192,18 @@ namespace BusAllocatorApp
                 v.ClearDeptsAndDemandsData();
                 v.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
                 v.ClearAllDemandsInDataGridView();
+
+                //Debug
+                v.OutputDemandModeToDebugConsole();
             }
             else if (modeToInitialize == v.IsTotalDemandsCompleted)
             {
                 v.ClearTotalDemandsData();
                 v.IsTotalDemandsCompleted = CompletionState.Initialized;
                 v.ClearAllDemandsInDataGridView();
+
+                //Debug
+                v.OutputDemandModeToDebugConsole();
             }
             else
             {
@@ -224,7 +230,7 @@ namespace BusAllocatorApp
         }
 
 
-        void SetDemandModeToComplete()
+        public void SetDemandModeToComplete()
         {
             if (v.IsDeptsAndDemandsCompleted == CompletionState.Initialized)
             {
@@ -234,6 +240,7 @@ namespace BusAllocatorApp
             {
                 v.IsTotalDemandsCompleted = CompletionState.Completed;
             }
+            v.OutputDemandModeToDebugConsole();
         }
 
         #endregion
