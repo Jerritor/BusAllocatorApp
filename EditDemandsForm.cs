@@ -112,6 +112,7 @@ namespace BusAllocatorApp
             dataGridViewDemands.RowHeadersDefaultCellStyle = headerStyle;
         }
 
+
         private void buttonFillEmpty_Click(object sender, EventArgs e)
         {
             foreach (DataGridViewRow row in dataGridViewDemands.Rows)

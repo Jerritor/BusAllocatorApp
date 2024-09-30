@@ -8,6 +8,9 @@ namespace BusAllocatorApp
 {
     public class Department
     {
+        //Vars reference
+        Vars vars;
+
         #region Fields
         public string Name { get; set; }
         public bool IsDataFilled { get; set; }
@@ -18,11 +21,12 @@ namespace BusAllocatorApp
         #endregion
 
         //CONSTRUCTORS
-        public Department(string name)
+        public Department(string name, Vars v)
         {
             this.Name = name;
             IsDataFilled = false;
             InstantiateEmptyDemandData();
+            this.vars = v;
         }
 
         public Department(string name, bool isDataFilled)
@@ -35,14 +39,28 @@ namespace BusAllocatorApp
 
         private void InstantiateEmptyDemandData()
         {
+            //Old way
             DemandData = new Dictionary<string, Dictionary<string, int?> >();
         }
 
+        // In Department Class
         public void ClearDemandData()
-        { 
+        {
             DemandData.Clear();
             IsDataFilled = false;
+
+            // Re-initialize DemandData with correct keys
+            foreach (var timeSet in vars.timeSets)
+            {
+                string timeSetKey = $"{timeSet.Time.ToString(@"hh\:mm\:ss")}_{timeSet.IsOutgoing}";
+                DemandData[timeSetKey] = new Dictionary<string, int?>();
+                foreach (var route in vars.solo_routes)
+                {
+                    DemandData[timeSetKey][route] = 0; // or any initial value
+                }
+            }
         }
+
 
         public override string ToString()
         {

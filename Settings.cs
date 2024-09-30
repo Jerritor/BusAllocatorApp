@@ -30,106 +30,10 @@ namespace BusAllocatorApp
         }**/
 
         #region Toggle Demand Mode
-        /**
-        //Sets the other completion flag state to Uninitialized and clears data
-        //if SelectDemandMode is 1 or 2, the user is selecting the specific demand mode to swap to.
-        //0 = toggle, 1 = isDeptsAndDemands Mode, 2 = TotalDemands Mode
-        void ToggleDemandMode(byte selectDemandMode = 0)
-        {
-            // Toggle between DeptsAndDemands and TotalDemands based on the selected mode
-            switch (selectDemandMode)
-            {
-                case 1:  // Activate Department Demands Mode
-                    if (v.IsDeptsAndDemandsCompleted == CompletionState.Uninitialized)
-                    {
-                        v.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
-                        v.IsTotalDemandsCompleted = CompletionState.Uninitialized;
-                        ClearDemandData();
-                    }
-                    break;
-                case 2:  // Activate Total Demands Mode
-                    if (v.IsTotalDemandsCompleted == CompletionState.Uninitialized)
-                    {
-                        v.IsTotalDemandsCompleted = CompletionState.Initialized;
-                        v.IsDeptsAndDemandsCompleted = CompletionState.Uninitialized;
-                        ClearDemandData();
-                    }
-                    break;
-                default:  // Default behavior: toggle both states
-                    v.IsDeptsAndDemandsCompleted = ToggleState(v.IsDeptsAndDemandsCompleted);
-                    v.IsTotalDemandsCompleted = ToggleState(v.IsTotalDemandsCompleted);
-                    break;
-            }
-        }
-
-        private CompletionState ToggleState(CompletionState currentState)
-        {
-            switch (currentState)
-            {
-                case CompletionState.Uninitialized:
-                    return CompletionState.Initialized;  // Turn 0 (Uninitialized) into 1 (Initialized)
-                case CompletionState.Initialized:
-                case CompletionState.Completed:
-                    return CompletionState.Uninitialized;  // Turn 1 or 2 into 0 (Uninitialized)
-                default:
-                    return currentState;  // Return the current state if it's something unexpected
-            }
-        }
-
-        void SetDemandModeToComplete()
-        {
-            if (v.IsDeptsAndDemandsCompleted == CompletionState.Initialized)
-            {
-                v.IsDeptsAndDemandsCompleted = CompletionState.Completed;
-            }
-            else if (v.IsTotalDemandsCompleted == CompletionState.Initialized)
-            {
-                v.IsTotalDemandsCompleted = CompletionState.Completed;
-            }
-        }
-
-        //Sets the Current Demand Mode State to Incomplete (Initialized means that is the active mode but data is incomplete)
-        private void SetDemandModeToInitialized()
-        {
-            //Is in DeptsAndDemands mode
-            if (v.IsDeptsAndDemandsCompleted == CompletionState.Completed)
-            {
-                v.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
-            }
-            //Is in TotalDemands mode
-            else if (v.IsTotalDemandsCompleted == CompletionState.Completed)
-            {
-                v.IsTotalDemandsCompleted = CompletionState.Initialized;
-            }
-        }
-
-        public void ClearDemandData()
-        {
-            if (v.IsDeptsAndDemandsCompleted == CompletionState.Initialized)
-            {
-                v.ClearDeptsAndDemandsData();
-                SetDemandModeToInitialized();
-                v.ClearAllDemandsInDataGridView();
-            }
-            else if (v.IsTotalDemandsCompleted == CompletionState.Initialized)
-            {
-                v.ClearTotalDemandsData();
-                SetDemandModeToInitialized();
-                v.ClearAllDemandsInDataGridView();
-            }
-            else
-            {
-                MessageBox.Show("Could not determine which demand mode is active, so data could not be cleared." +
-                    " Please contact your administrator to resolve this issue.",
-                    "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            }
-        }**/
-
         //
         //if SelectDemandMode is 1 or 2, the user is selecting the specific demand mode to swap to.
         //0 = toggle, 1 = isDeptsAndDemands Mode, 2 = TotalDemands Mode
+        // In Settings Class
         public void ToggleDemandMode(byte selectDemandMode = 0)
         {
             v.OutputDemandModeToDebugConsole();
@@ -142,8 +46,9 @@ namespace BusAllocatorApp
                         // Swapping to DeptsAndDemands mode
                         v.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
                         v.IsTotalDemandsCompleted = CompletionState.Uninitialized;
+                        // Re-initialize DemandData
+                        v.UpdateDepartmentsWithRoutesAndTimeSets(false);
                     }
-                    //If mode is already active, don't do anything
                     break;
 
                 case 2:  // Activate Total Demands Mode
@@ -152,8 +57,9 @@ namespace BusAllocatorApp
                         ClearDemandData();
                         // Swapping to TotalDemands mode
                         v.IsTotalDemandsCompleted = CompletionState.Initialized;
-                        v.IsDeptsAndDemandsCompleted = CompletionState.Uninitialized;                    }
-                    //If mode is already active, don't do anything
+                        v.IsDeptsAndDemandsCompleted = CompletionState.Uninitialized;
+                        // Re-initialize TotalDemands if necessary
+                    }
                     break;
 
                 default:  // Default behavior: toggle between modes
@@ -163,6 +69,7 @@ namespace BusAllocatorApp
                         // Currently in DeptsAndDemands mode, switch to TotalDemands mode
                         v.IsDeptsAndDemandsCompleted = CompletionState.Uninitialized;
                         v.IsTotalDemandsCompleted = CompletionState.Initialized;
+                        // Re-initialize TotalDemands if necessary
                     }
                     else if (v.IsTotalDemandsCompleted != CompletionState.Uninitialized)
                     {
@@ -170,6 +77,8 @@ namespace BusAllocatorApp
                         // Currently in TotalDemands mode, switch to DeptsAndDemands mode
                         v.IsTotalDemandsCompleted = CompletionState.Uninitialized;
                         v.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
+                        // Re-initialize DemandData
+                        v.UpdateDepartmentsWithRoutesAndTimeSets(false);
                     }
                     else
                     {
@@ -179,6 +88,8 @@ namespace BusAllocatorApp
                         // If neither mode is active, default to DeptsAndDemands mode
                         v.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
                         v.IsTotalDemandsCompleted = CompletionState.Uninitialized;
+                        // Re-initialize DemandData
+                        v.UpdateDepartmentsWithRoutesAndTimeSets(false);
                     }
                     break;
             }

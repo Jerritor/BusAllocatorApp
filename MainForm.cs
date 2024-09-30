@@ -420,13 +420,14 @@ namespace BusAllocatorApp
                 // Check if any files were selected
                 if (selectedFilePaths != null && selectedFilePaths.Any())
                 {
-                    bool allDataFilled = true;
+                    //bool allDataFilled = true;
 
                     foreach (string filePath in selectedFilePaths)
                     {
                         // Process each file immediately
-                        bool isDataFilled = vars.ProcessIndivDeptSpreadsheet(filePath,1);
+                        bool isDataFilled = vars.ProcessIndivDeptSpreadsheet(filePath,true);
 
+                        
                         if (isDataFilled)
                         {
                             MessageBox.Show($"Demand data was successfully filled for file: {Path.GetFileName(filePath)}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -436,15 +437,17 @@ namespace BusAllocatorApp
                         }
                         else
                         {
-                            allDataFilled = false;
+                            //allDataFilled = false;
                             MessageBox.Show($"Demand data could not be completely filled for file: {Path.GetFileName(filePath)}. Please check for any empty fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
 
+                    /**
                     if (allDataFilled)
                     {
                         settings.SetDemandModeToComplete();
-                    }
+                    }**/
+                        
                 }
                 else //no files selected
                 {
