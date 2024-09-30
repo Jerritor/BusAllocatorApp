@@ -354,6 +354,7 @@ namespace BusAllocatorApp
 
         private void uploadDemandButton_Click(object sender, EventArgs e)
         {
+            /**
             vars.io.UploadTotalDemandSheet();
 
             if (!string.IsNullOrEmpty(vars.totalDemandFilePath))
@@ -377,6 +378,85 @@ namespace BusAllocatorApp
             {
                 MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            **/
+            // Determine the current demand mode
+            int demandMode = vars.GetDemandMode();
+
+            // Total Demand Mode
+            if (demandMode == 2)
+            {
+                
+                vars.io.UploadTotalDemandSheet();
+
+                if (!string.IsNullOrEmpty(vars.totalDemandFilePath))
+                {
+                    // Process the total demand spreadsheet
+                    vars.ProcessTotalDemandSpreadsheet();
+
+                    // Check if the total demands data was filled successfully
+                    if (vars.totalDemands.IsDataFilled)
+                    {
+                        settings.SetDemandModeToComplete();
+                        MessageBox.Show("Demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        UpdateDataGrid();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            // Individual Department Mode
+            else if (demandMode == 1)
+            {
+                
+                // Upload department spreadsheet(s)
+                List<string> selectedFilePaths = vars.io.UploadIndivDeptSpreadsheet();
+
+                // Check if any files were selected
+                if (selectedFilePaths != null && selectedFilePaths.Any())
+                {
+                    bool allDataFilled = true;
+
+                    foreach (string filePath in selectedFilePaths)
+                    {
+                        // Process each file immediately
+                        bool isDataFilled = vars.ProcessIndivDeptSpreadsheet(filePath,1);
+
+                        if (isDataFilled)
+                        {
+                            MessageBox.Show($"Demand data was successfully filled for file: {Path.GetFileName(filePath)}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            //Disabled because grid should be updated only when all demands are set or when checkbox in settings is checked
+                            //UpdateDataGrid(); // Update the grid after each successful upload
+                        }
+                        else
+                        {
+                            allDataFilled = false;
+                            MessageBox.Show($"Demand data could not be completely filled for file: {Path.GetFileName(filePath)}. Please check for any empty fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+
+                    if (allDataFilled)
+                    {
+                        settings.SetDemandModeToComplete();
+                    }
+                }
+                else //no files selected
+                {
+                    MessageBox.Show("No files selected. Please upload valid department demand sheets.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else // Handle unexpected demand modes
+            {
+                MessageBox.Show("Unknown demand mode selected. Please contact support.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
 
             //vars.OutputDemandsToDebugConsole();
         }

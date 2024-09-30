@@ -15,7 +15,7 @@ namespace BusAllocatorApp
     {
         private Department department;
         private List<TimeSet> timeSets;
-        
+
 
         private bool promptShown = false; // Flag to ensure the prompt appears only once
 
@@ -44,14 +44,14 @@ namespace BusAllocatorApp
 
         private void LoadDemands()
         {
-            // Create a dictionary to map unique keys (time + isOutgoing) to formatted time strings
+            // Create a mapping from TimeSetKey ("16:00:00_True") to formatted time strings ("OUT 4:00PM")
             var timeSetKeyMap = timeSets.ToDictionary(
                 ts => $"{ts.Time.ToString(@"hh\:mm\:ss")}_{ts.IsOutgoing}",
                 ts => ts.GetFormattedTimeINOUT());
 
             var formattedTimeSetKeys = timeSetKeyMap.Values.ToList();
-            
-            //Get list of routes
+
+            // Get list of routes
             var routes = department.DemandData.Values.SelectMany(d => d.Keys).Distinct().ToList();
 
             // Debug: Check the retrieved time sets and routes
@@ -109,59 +109,6 @@ namespace BusAllocatorApp
                 }
             }
 
-            /**
-            // Create a dictionary to map unique keys (time + isOutgoing) to formatted time strings
-            var timeSetKeyMap = timeSets.ToDictionary(
-                ts => $"{ts.Time.ToString(@"hh\:mm\:ss")}_{ts.IsOutgoing}",
-                ts => ts.GetFormattedTimeINOUT());
-
-            var formattedTimeSetKeys = timeSetKeyMap.Values.ToList();
-            var routes = department.DemandData.Values.SelectMany(d => d.Keys).Distinct().ToList();
-
-            // Debug: Check the retrieved time sets and routes
-            Debug.WriteLine("Formatted Time Sets: " + string.Join(", ", formattedTimeSetKeys));
-            Debug.WriteLine("Routes: " + string.Join(", ", routes));
-
-            dataGridViewDemands.ColumnCount = formattedTimeSetKeys.Count;
-            dataGridViewDemands.RowCount = routes.Count;
-
-            DataGridViewCellStyle headerStyle = new DataGridViewCellStyle
-            {
-                Font = new Font(dataGridViewDemands.Font, FontStyle.Bold)
-            };
-
-            for (int i = 0; i < formattedTimeSetKeys.Count; i++)
-            {
-                var formattedTimeSetKey = formattedTimeSetKeys[i];
-                dataGridViewDemands.Columns[i].Name = formattedTimeSetKey;
-                dataGridViewDemands.Columns[i].HeaderCell.Style = headerStyle;
-                dataGridViewDemands.Columns[i].HeaderText = formattedTimeSetKey;
-
-                // Debug: Check the formatted time for columns
-                Debug.WriteLine($"Column {i}: {formattedTimeSetKey}");
-            }
-
-            for (int rowIndex = 0; rowIndex < routes.Count; rowIndex++)
-            {
-                var route = routes[rowIndex];
-                dataGridViewDemands.Rows[rowIndex].HeaderCell.Value = route;
-                dataGridViewDemands.Rows[rowIndex].HeaderCell.Style = headerStyle;
-
-                for (int colIndex = 0; colIndex < formattedTimeSetKeys.Count; colIndex++)
-                {
-                    var formattedTimeSetKey = formattedTimeSetKeys[colIndex];
-
-                    // Convert the formatted key back to original key format
-                    var originalKey = timeSetKeyMap.FirstOrDefault(kvp => kvp.Value == formattedTimeSetKey).Key;
-                    var originalTimeKey = originalKey.Split('_')[0];
-
-                    var demand = department.DemandData.ContainsKey(originalTimeKey) && department.DemandData[originalTimeKey].ContainsKey(route) ? department.DemandData[originalTimeKey][route] : null;
-
-                    dataGridViewDemands.Rows[rowIndex].Cells[colIndex].Value = demand.HasValue ? demand.Value.ToString() : "";
-                }
-            }
-            **/
-
             dataGridViewDemands.RowHeadersDefaultCellStyle = headerStyle;
         }
 
@@ -192,16 +139,13 @@ namespace BusAllocatorApp
                 }
             }
 
+            // Create a mapping from TimeSetKey ("16:00:00_True") to formatted time strings ("OUT 4:00PM")
             var timeSetKeyMap = timeSets.ToDictionary(
                 ts => $"{ts.Time.ToString(@"hh\:mm\:ss")}_{ts.IsOutgoing}",
                 ts => ts.GetFormattedTimeINOUT());
 
-            // Clear out old keys without the True/False suffix
-            var oldKeys = department.DemandData.Keys.Where(key => !key.Contains("_True") && !key.Contains("_False")).ToList();
-            foreach (var oldKey in oldKeys)
-            {
-                department.DemandData.Remove(oldKey);
-            }
+            // No longer need to clear old keys without suffix as all keys now include the suffix
+            // department.DemandData.Clear();
 
             foreach (DataGridViewRow row in dataGridViewDemands.Rows)
             {
@@ -216,22 +160,17 @@ namespace BusAllocatorApp
                     // Debug: Check if originalKey is found
                     Debug.WriteLine($"FormattedTimeSetKey: {formattedTimeSetKey}, OriginalKey: {originalKey}");
 
-                    /**
-                     * original key is formatted as '24hrtime'_IsOutModel'
-                     * ie. 16:00:00_True for OUT 4PM
-                    **/
                     if (!string.IsNullOrEmpty(originalKey))
                     {
-                        //if DemandData doesnt contain originalKey
+                        // Instantiate a new dictionary for the time key if it doesn't exist
                         if (!department.DemandData.ContainsKey(originalKey))
                         {
-                            //instantiate a new dict for that originalKey
                             department.DemandData[originalKey] = new Dictionary<string, int?>();
                         }
 
                         var cellValue = row.Cells[i].Value?.ToString();
-                        
-                        //try to save demand per cell -- saves null otherwise
+
+                        // Try to save demand per cell -- saves null otherwise
                         if (int.TryParse(cellValue, out int demand))
                         {
                             department.DemandData[originalKey][route] = demand;
@@ -259,6 +198,8 @@ namespace BusAllocatorApp
                     Debug.WriteLine($"Saved Data - Key: {key}, Route: {route}, Demand: {demand}");
                 }
             }
+
+            department.IsDataFilled = true;
 
             this.DialogResult = DialogResult.OK;
             this.Close();
@@ -340,4 +281,5 @@ namespace BusAllocatorApp
             }
         }
     }
+
 }

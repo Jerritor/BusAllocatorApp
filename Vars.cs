@@ -454,36 +454,48 @@ namespace BusAllocatorApp
         {
             var updatedDemandData = new Dictionary<string, Dictionary<string, int?>>();
 
-            //Iterate over TimeSets in order
+            // Iterate over TimeSets in order
             foreach (var timeSet in timeSets)
             {
-                string timeSetKey = timeSet.Time.ToString();
+                // Include the _True or _False suffix based on IsOutgoing
+                string timeSetKey = $"{timeSet.Time.ToString(@"hh\:mm\:ss")}_{timeSet.IsOutgoing}";
                 if (!updatedDemandData.ContainsKey(timeSetKey))
                 {
                     updatedDemandData[timeSetKey] = new Dictionary<string, int?>();
                 }
-                //Update demands for solo routes
+
+                // Update demands for solo routes
                 foreach (var route in solo_routes)
                 {
                     if (!updatedDemandData[timeSetKey].ContainsKey(route))
                     {
-                        int? initialDemand = initializeDemands ? null : (department.DemandData.ContainsKey(timeSetKey) && department.DemandData[timeSetKey].ContainsKey(route) ? department.DemandData[timeSetKey][route] : 0);
+                        int? initialDemand = initializeDemands
+                            ? null
+                            : (department.DemandData.ContainsKey(timeSetKey) && department.DemandData[timeSetKey].ContainsKey(route)
+                                ? department.DemandData[timeSetKey][route]
+                                : 0);
                         updatedDemandData[timeSetKey][route] = initialDemand;
                     }
                 }
-                /** Removed because hybrid routes shouldnt be per department
-                //Update demands for hybrid routes
+
+                /**
+                // If you have hybrid routes, ensure they are handled similarly
                 foreach (var hybridRoute in hybrid_routes)
                 {
                     string hybridRouteKey = $"{hybridRoute.Item1}-{hybridRoute.Item2}";
                     if (!updatedDemandData[timeSetKey].ContainsKey(hybridRouteKey))
                     {
-                        int? initialDemand = initializeDemands ? null : (department.DemandData.ContainsKey(timeSetKey) && department.DemandData[timeSetKey].ContainsKey(hybridRouteKey) ? department.DemandData[timeSetKey][hybridRouteKey] : 0);
+                        int? initialDemand = initializeDemands 
+                            ? null 
+                            : (department.DemandData.ContainsKey(timeSetKey) && department.DemandData[timeSetKey].ContainsKey(hybridRouteKey) 
+                                ? department.DemandData[timeSetKey][hybridRouteKey] 
+                                : 0);
                         updatedDemandData[timeSetKey][hybridRouteKey] = initialDemand;
                     }
                 }
                 **/
             }
+
             department.DemandData = updatedDemandData;
         }
 
@@ -734,6 +746,339 @@ namespace BusAllocatorApp
             }
             mainForm.WriteLine("Cleared all demand data from Individual Departments Mode.");
         }
+
+        public bool ProcessIndivDeptSpreadsheet(string filePath, int isDebug = 0)
+        {
+            // Register the code page provider to handle different encodings
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            if (isDebug == 1)
+            {
+                Debug.WriteLine($"[DEBUG] Starting to process spreadsheet: {filePath}");
+            }
+
+            using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    var result = reader.AsDataSet();
+
+                    if (result.Tables.Count == 0)
+                    {
+                        if (isDebug == 1)
+                        {
+                            Debug.WriteLine("[DEBUG] No worksheets found in the Excel file.");
+                        }
+                        return false;
+                    }
+
+                    var table = result.Tables[0];
+
+                    if (isDebug == 1)
+                    {
+                        Debug.WriteLine($"[DEBUG] Processing worksheet: {table.TableName}");
+                    }
+
+                    // Read the department name from cell B1 (Row 0, Column 1)
+                    string departmentName = table.Rows.Count > 0 && table.Columns.Count > 1
+                        ? table.Rows[0][1]?.ToString().Trim()
+                        : string.Empty;
+
+                    if (isDebug == 1)
+                    {
+                        Debug.WriteLine($"[DEBUG] Extracted Department Name: '{departmentName}' from cell B1.");
+                    }
+
+                    if (string.IsNullOrEmpty(departmentName))
+                    {
+                        if (isDebug == 1)
+                        {
+                            Debug.WriteLine("[DEBUG] Department name is empty. Cannot process spreadsheet.");
+                        }
+                        return false;
+                    }
+
+                    // Find the Department object in deptsAndDemands
+                    var department = deptsAndDemands.FirstOrDefault(d => d.Name.Equals(departmentName, StringComparison.OrdinalIgnoreCase));
+
+                    if (department == null)
+                    {
+                        if (isDebug == 1)
+                        {
+                            Debug.WriteLine($"[DEBUG] Department '{departmentName}' not found in deptsAndDemands.");
+                        }
+                        return false;
+                    }
+
+                    if (isDebug == 1)
+                    {
+                        Debug.WriteLine($"[DEBUG] Found Department: {department.Name}");
+                    }
+
+                    try
+                    {
+                        // Read route names from cells D5:D10 (Rows 4 to 9, Column 3)
+                        List<string> routeNamesFromSpreadsheet = new List<string>();
+
+                        for (int row = 4; row <= 9; row++) // Rows 5 to 10 inclusive
+                        {
+                            if (row >= table.Rows.Count)
+                            {
+                                if (isDebug == 1)
+                                {
+                                    Debug.WriteLine($"[DEBUG] Row {row + 1} is out of range. Skipping.");
+                                }
+                                continue;
+                            }
+
+                            string routeName = table.Rows[row][3]?.ToString().Trim(); // Column D is index 3
+
+                            if (isDebug == 1)
+                            {
+                                Debug.WriteLine($"[DEBUG] Extracted Route Name from cell D{row + 1}: '{routeName}'");
+                            }
+
+                            if (!string.IsNullOrEmpty(routeName))
+                            {
+                                routeNamesFromSpreadsheet.Add(routeName);
+                            }
+                        }
+
+                        if (isDebug == 1)
+                        {
+                            Debug.WriteLine($"[DEBUG] Total Routes Extracted: {routeNamesFromSpreadsheet.Count}");
+                        }
+
+                        // Get the list of routes from department.DemandData
+                        var departmentRoutes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                        foreach (var timeSet in department.DemandData.Values)
+                        {
+                            foreach (var route in timeSet.Keys)
+                            {
+                                departmentRoutes.Add(route);
+                            }
+                            break; // Assuming all TimeSets have the same routes
+                        }
+
+                        if (isDebug == 1)
+                        {
+                            Debug.WriteLine($"[DEBUG] Department '{department.Name}' has {departmentRoutes.Count} routes.");
+                        }
+
+                        // Create a mapping from route names in the spreadsheet to department routes
+                        var routeMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                        foreach (var routeName in routeNamesFromSpreadsheet)
+                        {
+                            if (departmentRoutes.Contains(routeName))
+                            {
+                                routeMapping[routeName] = routeName;
+                                if (isDebug == 1)
+                                {
+                                    Debug.WriteLine($"[DEBUG] Route '{routeName}' mapped successfully.");
+                                }
+                            }
+                            else
+                            {
+                                if (isDebug == 1)
+                                {
+                                    Debug.WriteLine($"[DEBUG] Route '{routeName}' from spreadsheet not found in department routes. Skipping.");
+                                }
+                                // Route from spreadsheet not found in department routes; skip
+                            }
+                        }
+
+                        if (isDebug == 1)
+                        {
+                            Debug.WriteLine($"[DEBUG] Total Routes Mapped: {routeMapping.Count}");
+                        }
+
+                        // Define the specific TimeSets and their corresponding columns
+                        var timeAllocations = new Dictionary<string, int>
+                {
+                    {"OUT 4:00PM", 4},  // Column E (index 4)
+                    {"OUT 6:00PM", 5},  // Column F (index 5)
+                    {"OUT 7:00PM", 6},  // Column G (index 6)
+                    {"IN 7:00PM", 7},   // Column H (index 7)
+                    {"IN 10:00PM", 8},  // Column I (index 8)
+                    {"OUT 4:00AM", 10}, // Column K (index 10)
+                    {"OUT 7:00AM", 11}, // Column L (index 11)
+                    {"IN 7:00AM", 12},  // Column M (index 12)
+                };
+
+                        if (isDebug == 1)
+                        {
+                            Debug.WriteLine("[DEBUG] Defined Time Allocations and their corresponding columns:");
+                            foreach (var ta in timeAllocations)
+                            {
+                                Debug.WriteLine($"        '{ta.Key}' => Column {ta.Value + 1}");
+                            }
+                        }
+
+                        // Create a mapping from time strings to TimeSet keys used in department.DemandData
+                        var timeSetKeyMapping = new Dictionary<string, string>();
+
+                        foreach (var timeAllocation in timeAllocations)
+                        {
+                            string timeString = timeAllocation.Key; // e.g., "OUT 4:00PM"
+                            int column = timeAllocation.Value;
+
+                            // Extract the "OUT" or "IN" part
+                            string inOut = timeString.Split(' ')[0]; // "OUT" or "IN"
+
+                            // Extract the time part
+                            string timePart = timeString.Split(' ')[1]; // "4:00PM"
+
+                            // Parse timePart into DateTime
+                            if (!DateTime.TryParseExact(timePart, "h:mmtt", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateTime))
+                            {
+                                if (isDebug == 1)
+                                {
+                                    Debug.WriteLine($"[DEBUG] Failed to parse time '{timePart}' from time string '{timeString}'. Skipping.");
+                                }
+                                continue;
+                            }
+
+                            TimeSpan timeSpan = dateTime.TimeOfDay;
+                            string timeSetKey = $"{timeSpan.ToString(@"hh\:mm\:ss")}_{inOut.Equals("OUT", StringComparison.OrdinalIgnoreCase)}";
+
+                            // Add to the mapping
+                            if (!timeSetKeyMapping.ContainsKey(timeString))
+                            {
+                                timeSetKeyMapping[timeString] = timeSetKey;
+                                if (isDebug == 1)
+                                {
+                                    Debug.WriteLine($"[DEBUG] Mapped Time String '{timeString}' to TimeSetKey '{timeSetKey}'");
+                                }
+                            }
+                        }
+
+                        // Now iterate over each time allocation using the TimeSetKey
+                        foreach (var timeAllocation in timeAllocations)
+                        {
+                            string timeString = timeAllocation.Key; // e.g., "OUT 4:00PM"
+                            int column = timeAllocation.Value;
+
+                            if (!timeSetKeyMapping.TryGetValue(timeString, out string timeSetKey))
+                            {
+                                if (isDebug == 1)
+                                {
+                                    Debug.WriteLine($"[DEBUG] TimeSetKey not found for time string '{timeString}'. Skipping.");
+                                }
+                                continue;
+                            }
+
+                            if (isDebug == 1)
+                            {
+                                Debug.WriteLine($"[DEBUG] Processing TimeSet: '{timeSetKey}' (from '{timeString}') in Column {column + 1}");
+                            }
+
+                            // Check if the TimeSet exists in department.DemandData
+                            if (!department.DemandData.ContainsKey(timeSetKey))
+                            {
+                                if (isDebug == 1)
+                                {
+                                    Debug.WriteLine($"[DEBUG] TimeSet '{timeSetKey}' not found in department.DemandData. Skipping.");
+                                }
+                                continue;
+                            }
+
+                            // Iterate over the routes from the spreadsheet
+                            for (int i = 0; i < routeNamesFromSpreadsheet.Count; i++)
+                            {
+                                string routeNameFromSpreadsheet = routeNamesFromSpreadsheet[i];
+
+                                // Check if this route is mapped to a department route
+                                if (!routeMapping.ContainsKey(routeNameFromSpreadsheet))
+                                {
+                                    if (isDebug == 1)
+                                    {
+                                        Debug.WriteLine($"[DEBUG] Route '{routeNameFromSpreadsheet}' is not mapped to department routes. Skipping.");
+                                    }
+                                    continue;
+                                }
+
+                                string departmentRouteName = routeMapping[routeNameFromSpreadsheet];
+
+                                int row = 4 + i; // Since route names are from rows 5 to 10 (0-based index 4 to 9)
+
+                                if (row >= table.Rows.Count)
+                                {
+                                    if (isDebug == 1)
+                                    {
+                                        Debug.WriteLine($"[DEBUG] Row {row + 1} is out of range for demands. Skipping.");
+                                    }
+                                    continue;
+                                }
+
+                                if (column >= table.Columns.Count)
+                                {
+                                    if (isDebug == 1)
+                                    {
+                                        Debug.WriteLine($"[DEBUG] Column {column + 1} is out of range for demands. Skipping.");
+                                    }
+                                    continue;
+                                }
+
+                                object demandObj = table.Rows[row][column];
+                                string demandText = demandObj?.ToString().Trim();
+
+                                if (isDebug == 1)
+                                {
+                                    Debug.WriteLine($"[DEBUG] Reading Demand from cell ({row + 1}, {column + 1}): '{demandText}'");
+                                }
+
+                                int demand = 0;
+                                if (string.IsNullOrEmpty(demandText))
+                                {
+                                    demand = 0;
+                                    if (isDebug == 1)
+                                    {
+                                        Debug.WriteLine($"[DEBUG] Demand is empty. Treated as 0.");
+                                    }
+                                }
+                                else if (!int.TryParse(demandText, out demand) || demand < 0)
+                                {
+                                    string errorMsg = $"Invalid demand value at cell (Row {row + 1}, Column {column + 1}): '{demandText}'";
+                                    if (isDebug == 1)
+                                    {
+                                        Debug.WriteLine($"[DEBUG] {errorMsg}");
+                                    }
+                                    throw new Exception(errorMsg);
+                                }
+
+                                // Update the department's DemandData
+                                department.DemandData[timeSetKey][departmentRouteName] = demand;
+
+                                if (isDebug == 1)
+                                {
+                                    Debug.WriteLine($"[DEBUG] Updated DemandData: TimeSet='{timeSetKey}', Route='{departmentRouteName}', Demand={demand}");
+                                }
+                            }
+                        }
+
+                        department.IsDataFilled = true;
+
+                        if (isDebug == 1)
+                        {
+                            Debug.WriteLine($"[DEBUG] Successfully processed department '{department.Name}'. IsDataFilled set to true.");
+                        }
+                        //mainForm.UpdateDataGrid();
+
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (isDebug == 1)
+                        {
+                            Debug.WriteLine($"[DEBUG] Exception occurred while processing spreadsheet: {ex.Message}");
+                        }
+                        department.IsDataFilled = false;
+                        return false;
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Demand Mode State Retrieval
