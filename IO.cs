@@ -82,6 +82,7 @@ namespace BusAllocatorApp
             }
         }
 
+        //sets the config option named 'optionName' to the data 'optionData'
         public void SetConfigOption(string optionName, string optionData)
         {
             try
@@ -229,6 +230,41 @@ namespace BusAllocatorApp
                 // Proceed with loading rates
             }
         }
+
+        public void UploadTotalDemandSheet()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Excel Files|*.xlsx;*.xls";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                vars.totalDemandFilePath = openFileDialog.FileName;
+            }
+        }
+
+        public List<string> UploadIndivDeptSpreadsheet()
+        {
+            // Create a file dialog to allow the user to upload department spreadsheets
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Multiselect = true, // Allow multiple file selection
+                Filter = "Excel Files|*.xlsx;*.xls", // Only allow Excel files
+                Title = "Select Department Demand Files"
+            };
+
+            // If the user selects files and clicks OK
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Return the list of selected file paths
+                return openFileDialog.FileNames.ToList();
+            }
+            else
+            {
+                // If the user cancels or doesn't select any files, return null
+                return null;
+            }
+        }
+
+
 
         #endregion
 

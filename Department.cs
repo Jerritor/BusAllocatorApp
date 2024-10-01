@@ -8,15 +8,25 @@ namespace BusAllocatorApp
 {
     public class Department
     {
+        //Vars reference
+        Vars vars;
+
+        #region Fields
         public string Name { get; set; }
         public bool IsDataFilled { get; set; }
-        public Dictionary<string, Dictionary<string, int?>> DemandData { get; set; } //time set 1:{route 1:demand 1, route 2: demand 2, etc.}, timeset 2:{route1,demand1...}, etc. 
 
-        public Department(string name)
+        //[time set n: [route n: demand n, ... ], ...]
+        //ie. time set 1:{route 1:demand 1, route 2: demand 2, etc.}, timeset 2:{route1,demand1...}, etc.
+        public Dictionary<string, Dictionary<string, int?>> DemandData { get; set; }
+        #endregion
+
+        //CONSTRUCTORS
+        public Department(string name, Vars v)
         {
             this.Name = name;
             IsDataFilled = false;
             InstantiateEmptyDemandData();
+            this.vars = v;
         }
 
         public Department(string name, bool isDataFilled)
@@ -26,10 +36,31 @@ namespace BusAllocatorApp
             InstantiateEmptyDemandData();
         }
 
+
         private void InstantiateEmptyDemandData()
         {
+            //Old way
             DemandData = new Dictionary<string, Dictionary<string, int?> >();
         }
+
+        // In Department Class
+        public void ClearDemandData()
+        {
+            DemandData.Clear();
+            IsDataFilled = false;
+
+            // Re-initialize DemandData with correct keys
+            foreach (var timeSet in vars.timeSets)
+            {
+                string timeSetKey = $"{timeSet.Time.ToString(@"hh\:mm\:ss")}_{timeSet.IsOutgoing}";
+                DemandData[timeSetKey] = new Dictionary<string, int?>();
+                foreach (var route in vars.solo_routes)
+                {
+                    DemandData[timeSetKey][route] = null; //= 0// or any initial value
+                }
+            }
+        }
+
 
         public override string ToString()
         {

@@ -6,6 +6,9 @@ namespace BusAllocatorApp
     public partial class MainForm : Form
     {
         Vars vars;
+        Settings settings;
+
+        public DataTable table;
 
         private bool isSecondDateSet = false;
 
@@ -14,77 +17,49 @@ namespace BusAllocatorApp
             InitializeComponent();
 
             vars = new Vars(this);
+            settings = new Settings(vars);
 
             //File validation
             CheckConfigFileAndRatesPath();
             vars.io.CheckAndCreateVarsFolderAndFiles();
 
-            SetupTemplateGrid();
+            //UpdateDataGrid();
+
+            if (vars.deptsAndDemands == null || vars.deptsAndDemands.Count == 0)
+            {
+                vars.LoadDepartments(true);
+            }
+
+            //Initialize empty demands table
+            table = new DataTable();
+            dataGridView1.DataSource = table;
+            vars.InitializeEmptyDataGridView();
+
+            //DEBUG FUNCTIONS
+            vars.OutputDemandModeToDebugConsole();
+
+
             //EVERYTHING AFTER HERE IS ON FORM LOAD
 
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            //
-            if (vars.departments == null || vars.departments.Count == 0)
-            {
-                vars.LoadDepartments(true);
-            }
-
             //Enable below to create JSON files
             //vars.GenerateJSONFiles();
         }
 
         #region Total Riders Data Grid
-        private void SetupTemplateGrid()
+        public void UpdateDataGrid()
         {
-            // Create a DataTable
-            DataTable table = new DataTable();
+            UpdateTotalDemandDisplay();
 
-            // Add columns to the DataTable
-            table.Columns.Add("Location", typeof(string));
-            table.Columns.Add("OUT 4:00PM", typeof(int));
-            table.Columns.Add("OUT 6:00PM", typeof(int));
-            table.Columns.Add("OUT 7:00PM", typeof(int));
-            table.Columns.Add("IN 7:00PM", typeof(int));
-            table.Columns.Add("IN 10:00PM", typeof(int));
-            table.Columns.Add("OUT 4:00AM", typeof(int));
-            table.Columns.Add("OUT 7:00AM", typeof(int));
-            table.Columns.Add("IN 7:00AM", typeof(int));
-
-            // Add rows to the DataTable
-            table.Rows.Add("Alabang", 3, 12, 8, 6, 0, 0, 6, 27);
-            table.Rows.Add("Balibago", 85, 45, 135, 83, 0, 0, 83, 306);
-            table.Rows.Add("Binan", 22, 2, 40, 23, 0, 0, 23, 88);
-            table.Rows.Add("Carmona", 6, 7, 20, 6, 0, 0, 6, 40);
-            table.Rows.Add("Cabuyao", 19, 15, 23, 13, 0, 0, 13, 69);
-            table.Rows.Add("Calamba", 17, 46, 35, 25, 0, 0, 25, 110);
-
-
-            // Set the DataSource of the DataGridView
-            dataGridView1.DataSource = table;
-
-            // Alternatively, you can create DataGridView columns and bind them to DataTable columns
-            // This step is optional if you already set AutoGenerateColumns to true
-            /**
-            foreach (DataColumn column in table.Columns)
-            {
-                DataGridViewTextBoxColumn dgvColumn = new DataGridViewTextBoxColumn
-                {
-                    DataPropertyName = column.ColumnName,
-                    Name = column.ColumnName,
-                    HeaderText = column.ColumnName
-                };
-                dataGridView1.Columns.Add(dgvColumn);
-            }
-            **/
-
+            //Formatting
             ResizeDataGridView();
             FormatDataGridView();
             ResizeFormToFitTableLayoutPanel();
         }
-        private void ResizeDataGridView()
+        public void ResizeDataGridView()
         {
             // Calculate the required size
             int totalWidth = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible);
@@ -94,7 +69,7 @@ namespace BusAllocatorApp
             dataGridView1.ClientSize = new Size(totalWidth, totalHeight);
         }
 
-        private void FormatDataGridView()
+        public void FormatDataGridView()
         {
             // Disable sorting on all columns
             dataGridView1.ColumnAdded += (sender, e) =>
@@ -112,7 +87,7 @@ namespace BusAllocatorApp
             };
         }
 
-        private void ResizeFormToFitTableLayoutPanel()
+        public void ResizeFormToFitTableLayoutPanel()
         {
             // Calculate the preferred size of the TableLayoutPanel
             Size preferredSize = tableLayoutPanel1.PreferredSize;
@@ -121,6 +96,56 @@ namespace BusAllocatorApp
             this.ClientSize = new Size(preferredSize.Width, preferredSize.Height);
         }
 
+        public void UpdateTotalDemandDisplay()
+        {
+            if (vars.totalDemands == null || vars.totalDemands.DemandData == null)
+            {
+                MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Add "Location" column
+            //table.Columns.Add("Location", typeof(string));
+
+            // Get all unique shifts from DemandData and order them as desired
+            var shifts = vars.totalDemands.DemandData.Keys.OrderBy(s => s).ToList();
+
+            // Add a column for each shift
+            /**
+            foreach (var shift in shifts)
+            {
+                table.Columns.Add(shift, typeof(int));
+            }
+            **/
+
+            //clear current rows
+            table.Rows.Clear();
+
+            // Populate the DataTable with solo_routes
+            foreach (var route in vars.solo_routes)
+            {
+                DataRow newRow = table.NewRow();
+                newRow["Location"] = route;
+
+                foreach (var shift in shifts)
+                {
+                    if (vars.totalDemands.DemandData[shift].ContainsKey(route))
+                    {
+                        newRow[shift] = vars.totalDemands.DemandData[shift][route];
+                    }
+                    else
+                    {
+                        // If for some reason the route is missing, default to 0
+                        newRow[shift] = 0;
+                    }
+                }
+
+                table.Rows.Add(newRow);
+            }
+        }
+
+
+        #endregion
         public void WriteLine(string message)
         {
             if (outputLog.InvokeRequired)
@@ -139,7 +164,6 @@ namespace BusAllocatorApp
                 outputLog.Refresh(); **/
             }
         }
-        #endregion
 
         #region DATE PICKERS
         private void editFirstDateButton_Click(object sender, EventArgs e)
@@ -266,7 +290,7 @@ namespace BusAllocatorApp
         }
         #endregion
 
-        #region Bus Rate Spreadsheet Popup
+        #region Bus Rate Spreadsheet On Start Popup
         private void CheckConfigFileAndRatesPath()
         {
             if (!File.Exists(vars.configFile))
@@ -314,18 +338,145 @@ namespace BusAllocatorApp
 
         #endregion
 
-        #region BUS RATES
+        #region BUS RATES BUTTON AND CODE
         private void busRateButton_Click(object sender, EventArgs e)
         {
             vars.io.UploadRatesSheet();
         }
         #endregion
 
-        #region DEMANDS BUTTONS
+        #region DEMANDS BUTTONS AND CODE
         private void checkEditDemandButton_Click(object sender, EventArgs e)
         {
             DeptsCheckForm deptsCheckForm = new DeptsCheckForm(vars);
-            deptsCheckForm.Show();
+            deptsCheckForm.ShowDialog();
+        }
+
+        private void uploadDemandButton_Click(object sender, EventArgs e)
+        {
+            /**
+            vars.io.UploadTotalDemandSheet();
+
+            if (!string.IsNullOrEmpty(vars.totalDemandFilePath))
+            {
+                // Process the total demand spreadsheet
+                vars.ProcessTotalDemandSpreadsheet();
+
+                // Check if the total demands data was filled successfully
+                if (vars.totalDemands.IsDataFilled)
+                {
+                    settings.SetDemandModeToComplete();
+                    MessageBox.Show("Demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    UpdateDataGrid();
+                }
+                else
+                {
+                    MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            **/
+            // Determine the current demand mode
+            int demandMode = vars.GetDemandMode();
+
+            // Total Demand Mode
+            if (demandMode == 2)
+            {
+                vars.io.UploadTotalDemandSheet();
+
+                if (!string.IsNullOrEmpty(vars.totalDemandFilePath))
+                {
+                    // Process the total demand spreadsheet
+                    vars.ProcessTotalDemandSpreadsheet();
+
+                    // Check if the total demands data was filled successfully
+                    if (vars.totalDemands.IsDataFilled)
+                    {
+                        settings.SetDemandModeToComplete();
+                        MessageBox.Show("Demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        UpdateDataGrid();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            // Individual Department Mode
+            else if (demandMode == 1)
+            {
+                
+                // Upload department spreadsheet(s)
+                List<string> selectedFilePaths = vars.io.UploadIndivDeptSpreadsheet();
+
+                // Check if any files were selected
+                if (selectedFilePaths != null && selectedFilePaths.Any())
+                {
+                    //bool allDataFilled = true;
+
+                    foreach (string filePath in selectedFilePaths)
+                    {
+                        // Process each file immediately
+                        bool isDataFilled = vars.ProcessIndivDeptSpreadsheet(filePath,true);
+
+                        
+                        if (isDataFilled)
+                        {
+                            MessageBox.Show($"Demand data was successfully filled for file: {Path.GetFileName(filePath)}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            //Disabled because grid should be updated only when all demands are set or when checkbox in settings is checked
+                            //UpdateDataGrid(); // Update the grid after each successful upload
+                        }
+                        else
+                        {
+                            //allDataFilled = false;
+                            MessageBox.Show($"Demand data could not be completely filled for file: {Path.GetFileName(filePath)}. Please check for any empty fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+
+                    /**
+                    if (allDataFilled)
+                    {
+                        settings.SetDemandModeToComplete();
+                    }**/
+                        
+                }
+                else //no files selected
+                {
+                    MessageBox.Show("No files selected. Please upload valid department demand sheets.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else // Handle unexpected demand modes
+            {
+                MessageBox.Show("Unknown demand mode selected. Please contact support.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
+
+            //vars.OutputDemandsToDebugConsole();
+        }
+        #endregion
+
+        #region Settings Button
+        private void settingsButton_Click(object sender, EventArgs e)
+        {
+            SettingsForm settingsForm = new SettingsForm(settings, this);
+
+            settingsForm.ShowDialog();
+        }
+        #endregion
+
+        #region Clear Demand Data Button
+        private void clearDemandDataButton_Click(object sender, EventArgs e)
+        {
+            settings.ClearDemandData();
         }
         #endregion
     }

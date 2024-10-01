@@ -48,7 +48,7 @@
             dataGridView1 = new DataGridView();
             tableLayoutPanel2 = new TableLayoutPanel();
             settingsButton = new Button();
-            generateDemandsButton = new Button();
+            clearDemandDataButton = new Button();
             generateAllocationsButton = new Button();
             outputLog = new TextBox();
             label3 = new Label();
@@ -296,6 +296,7 @@
             uploadDemandButton.TabIndex = 8;
             uploadDemandButton.Text = "Upload Demand Spreadsheet";
             uploadDemandButton.UseVisualStyleBackColor = false;
+            uploadDemandButton.Click += uploadDemandButton_Click;
             // 
             // checkEditDemandButton
             // 
@@ -340,11 +341,11 @@
             // 
             tableLayoutPanel2.ColumnCount = 3;
             tableLayoutPanel1.SetColumnSpan(tableLayoutPanel2, 3);
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel2.Controls.Add(settingsButton, 0, 0);
-            tableLayoutPanel2.Controls.Add(generateDemandsButton, 1, 0);
+            tableLayoutPanel2.Controls.Add(clearDemandDataButton, 1, 0);
             tableLayoutPanel2.Controls.Add(generateAllocationsButton, 2, 0);
             tableLayoutPanel2.Dock = DockStyle.Left;
             tableLayoutPanel2.Location = new Point(3, 291);
@@ -361,32 +362,36 @@
             settingsButton.ForeColor = SystemColors.ControlLightLight;
             settingsButton.Location = new Point(3, 3);
             settingsButton.Name = "settingsButton";
-            settingsButton.Size = new Size(202, 40);
+            settingsButton.Size = new Size(94, 40);
             settingsButton.TabIndex = 0;
             settingsButton.Text = "Settings";
             settingsButton.UseVisualStyleBackColor = false;
+            settingsButton.Click += settingsButton_Click;
             // 
-            // generateDemandsButton
+            // clearDemandDataButton
             // 
-            generateDemandsButton.BackColor = SystemColors.ControlText;
-            generateDemandsButton.Dock = DockStyle.Fill;
-            generateDemandsButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            generateDemandsButton.ForeColor = SystemColors.ControlLightLight;
-            generateDemandsButton.Location = new Point(211, 3);
-            generateDemandsButton.Name = "generateDemandsButton";
-            generateDemandsButton.Size = new Size(335, 41);
-            generateDemandsButton.TabIndex = 1;
-            generateDemandsButton.Text = "Generate Demands Spreadsheet";
-            generateDemandsButton.UseVisualStyleBackColor = false;
+            clearDemandDataButton.BackColor = SystemColors.ControlText;
+            clearDemandDataButton.Dock = DockStyle.Fill;
+            clearDemandDataButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            clearDemandDataButton.ForeColor = SystemColors.ControlLightLight;
+            clearDemandDataButton.Location = new Point(103, 3);
+            clearDemandDataButton.Name = "clearDemandDataButton";
+            clearDemandDataButton.Size = new Size(194, 41);
+            clearDemandDataButton.TabIndex = 1;
+            clearDemandDataButton.Text = "Clear All Demand Data";
+            clearDemandDataButton.UseVisualStyleBackColor = false;
+            clearDemandDataButton.Click += clearDemandDataButton_Click;
             // 
             // generateAllocationsButton
             // 
+            generateAllocationsButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            generateAllocationsButton.AutoSize = true;
             generateAllocationsButton.BackColor = SystemColors.ControlText;
             generateAllocationsButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             generateAllocationsButton.ForeColor = SystemColors.ControlLightLight;
-            generateAllocationsButton.Location = new Point(552, 3);
+            generateAllocationsButton.Location = new Point(303, 3);
             generateAllocationsButton.Name = "generateAllocationsButton";
-            generateAllocationsButton.Size = new Size(335, 41);
+            generateAllocationsButton.Size = new Size(584, 41);
             generateAllocationsButton.TabIndex = 2;
             generateAllocationsButton.Text = "Generate Allocations Spreadsheet";
             generateAllocationsButton.UseVisualStyleBackColor = false;
@@ -433,7 +438,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(1200, 777);
+            ClientSize = new Size(1200, 697);
             Controls.Add(tableLayoutPanel1);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "MainForm";
@@ -446,6 +451,7 @@
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -461,21 +467,21 @@
         public CheckBox busRateCheckBox;
         private Button uploadDemandButton;
         private Button editSecondDateButton;
-        private Button checkEditDemandButton;
         private DateTimePicker secondDatePicker;
         private DateTimePicker firstDatePicker;
         private Button editFirstDateButton;
         private Button setFirstDateButton;
         private Button setSecondDateButton;
-        private DataGridView dataGridView1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private Label label2;
         private TableLayoutPanel tableLayoutPanel2;
         private Button settingsButton;
-        private Button generateDemandsButton;
+        private Button clearDemandDataButton;
         private Button generateAllocationsButton;
         private Label label3;
         private TextBox outputLog;
         private FolderBrowserDialog folderBrowserDialog1;
+        public DataGridView dataGridView1;
+        public Button checkEditDemandButton;
     }
 }

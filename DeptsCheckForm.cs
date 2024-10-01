@@ -20,7 +20,7 @@ namespace BusAllocatorApp
         {
             InitializeComponent();
             this.vars = vars;
-            this.departments = vars.departments;
+            this.departments = vars.deptsAndDemands;
             this.timeSets = vars.timeSets;
 
 
@@ -67,10 +67,10 @@ namespace BusAllocatorApp
         private void CreateDepartmentList()
         {
             flowLayoutPanel1.Controls.Clear();
-            foreach (var department in departments)
+            foreach (var dept in departments)
             {
-                int? totalDemand = GetTotalDemandAndCheckboxes(department);
-                department.IsDataFilled = totalDemand.HasValue;
+                int? totalDemand = GetTotalDemandAndCheckboxes(dept);
+                dept.IsDataFilled = totalDemand.HasValue;
                 
                 Panel departmentPanel = new Panel
                 {
@@ -79,12 +79,12 @@ namespace BusAllocatorApp
                     Margin = new Padding(5),
                     AutoSize = true
                 };
-                string demandText = totalDemand.HasValue ? totalDemand.Value.ToString() : "Incomplete";
+                string demandText = totalDemand.HasValue ? totalDemand.Value.ToString() : "INCOMPLETE";
 
                 CheckBox checkBox = new CheckBox
                 {
-                    Text = $"{department.Name} - Total Demand: {demandText}",
-                    Checked = department.IsDataFilled,
+                    Text = $"{dept.Name} - Total Demand: {demandText}",
+                    Checked = dept.IsDataFilled,
                     Location = new Point(10, 10),
                     AutoSize = true,
                     AutoCheck = false
@@ -95,7 +95,7 @@ namespace BusAllocatorApp
                     Width = 50,
                     Height = 25
                 };
-                editButton.Click += (sender, e) => EditDepartment(department);
+                editButton.Click += (sender, e) => EditDepartment(dept);
 
                 // Add controls to the Panel
                 departmentPanel.Controls.Add(checkBox);
