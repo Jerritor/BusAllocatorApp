@@ -27,6 +27,9 @@ namespace BusAllocatorApp
         {
             if (deptsModeRadioButton.Checked)
             {
+                incompleteAllocsCheckBox.Enabled = true;
+                incompleteAllocsCheckBox.Visible = true;
+
                 settings.ToggleDemandMode(1); //Updates mode flag
                 modeDescriptionLabel.Text = "In this mode, you can upload and manage separate demand files for each department individually.\n" +
                                             "You must use the standard department template for each spreadsheet.";
@@ -43,6 +46,9 @@ namespace BusAllocatorApp
         {
             if (totalModeRadioButton.Checked)
             {
+                incompleteAllocsCheckBox.Enabled = false;
+                incompleteAllocsCheckBox.Visible = false;
+
                 settings.ToggleDemandMode(2); //Updates mode flag
                 modeDescriptionLabel.Text = "In this mode, you can upload and manage a single spreadsheet containing the total demand for all departments combined.\n" +
                                             "You must use the standard total demand spreadsheet with only one sheet.";

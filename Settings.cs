@@ -21,7 +21,7 @@ namespace BusAllocatorApp
             this.v = v;
         }
 
-        #region Toggle Demand Mode
+        #region Demand Mode Handling
         //
         //if SelectDemandMode is 1 or 2, the user is selecting the specific demand mode to swap to.
         //0 = toggle, 1 = isDeptsAndDemands Mode, 2 = TotalDemands Mode
@@ -133,7 +133,7 @@ namespace BusAllocatorApp
         }
 
 
-        public void SetDemandModeToComplete()
+        public void SetDemandModeToComplete(bool isDebug = false)
         {
             if (v.IsDeptsAndDemandsCompleted == CompletionState.Initialized)
             {
@@ -143,7 +143,8 @@ namespace BusAllocatorApp
             {
                 v.IsTotalDemandsCompleted = CompletionState.Completed;
             }
-            v.OutputDemandModeToDebugConsole();
+
+            if (isDebug) v.OutputDemandModeToDebugConsole();
         }
 
         #endregion
