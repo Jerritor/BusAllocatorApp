@@ -80,7 +80,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.Size = new Size(511, 414);
+            tableLayoutPanel1.Size = new Size(511, 428);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -157,9 +157,9 @@
             // 
             closeWindowButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             closeWindowButton.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            closeWindowButton.Location = new Point(3, 376);
+            closeWindowButton.Location = new Point(3, 391);
             closeWindowButton.Name = "closeWindowButton";
-            closeWindowButton.Size = new Size(505, 35);
+            closeWindowButton.Size = new Size(505, 34);
             closeWindowButton.TabIndex = 1;
             closeWindowButton.Text = "Close Window";
             closeWindowButton.UseVisualStyleBackColor = true;
@@ -167,12 +167,13 @@
             // 
             // incompleteAllocsCheckBox
             // 
+            incompleteAllocsCheckBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             incompleteAllocsCheckBox.AutoSize = true;
-            incompleteAllocsCheckBox.Location = new Point(3, 143);
+            incompleteAllocsCheckBox.Location = new Point(86, 143);
             incompleteAllocsCheckBox.Name = "incompleteAllocsCheckBox";
-            incompleteAllocsCheckBox.Size = new Size(335, 19);
+            incompleteAllocsCheckBox.Size = new Size(338, 34);
             incompleteAllocsCheckBox.TabIndex = 2;
-            incompleteAllocsCheckBox.Text = "Enable bus allocations even if not all departments are filled";
+            incompleteAllocsCheckBox.Text = "Enable bus allocations even if not all departments are filled.\r\nChecking/Unchecking this will clear any data.";
             incompleteAllocsCheckBox.UseVisualStyleBackColor = true;
             incompleteAllocsCheckBox.CheckedChanged += incompleteAllocsCheckBox_CheckedChanged;
             // 
@@ -186,7 +187,7 @@
             tableLayoutPanel3.Controls.Add(label3, 0, 0);
             tableLayoutPanel3.Controls.Add(allocationFolderTextBox, 1, 0);
             tableLayoutPanel3.Controls.Add(allocationFolderButton, 2, 0);
-            tableLayoutPanel3.Location = new Point(3, 221);
+            tableLayoutPanel3.Location = new Point(3, 236);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle());
@@ -231,7 +232,7 @@
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel4.Controls.Add(label5, 0, 0);
             tableLayoutPanel4.Controls.Add(allocationFileNameTextBox, 0, 1);
-            tableLayoutPanel4.Location = new Point(3, 257);
+            tableLayoutPanel4.Location = new Point(3, 272);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle());
@@ -265,7 +266,7 @@
             tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 46.7326736F));
             tableLayoutPanel5.Controls.Add(label4, 0, 0);
             tableLayoutPanel5.Controls.Add(advancedSettingsButton, 1, 0);
-            tableLayoutPanel5.Location = new Point(3, 319);
+            tableLayoutPanel5.Location = new Point(3, 334);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
             tableLayoutPanel5.RowCount = 1;
             tableLayoutPanel5.RowStyles.Add(new RowStyle());
@@ -300,7 +301,7 @@
             tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel6.Controls.Add(bufferSizesButton, 0, 0);
             tableLayoutPanel6.Controls.Add(busRateButton, 1, 0);
-            tableLayoutPanel6.Location = new Point(3, 168);
+            tableLayoutPanel6.Location = new Point(3, 183);
             tableLayoutPanel6.Name = "tableLayoutPanel6";
             tableLayoutPanel6.RowCount = 1;
             tableLayoutPanel6.RowStyles.Add(new RowStyle());
@@ -333,7 +334,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(511, 414);
+            ClientSize = new Size(511, 428);
             Controls.Add(tableLayoutPanel1);
             Name = "SettingsForm";
             Text = "Settings";

@@ -118,29 +118,44 @@ namespace BusAllocatorApp
         }
 
         //Polymorphism (one-case recursive) function that clears the data of the active mode
+        private void DisableAllocationsButton()
+        {
+            v.mainForm.generateAllocationsButton.Enabled = false;
+            v.mainForm.generateAllocationsButton.Visible = false;
+        }
+
+        private void EnableAllocationsButton()
+        {
+            v.mainForm.generateAllocationsButton.Enabled = true;
+            v.mainForm.generateAllocationsButton.Visible = true;
+        }
+
         public void ClearDemandData()
         {
             //if active mode is individual dept mode
             if (v.IsDeptsAndDemandsCompleted != CompletionState.Uninitialized)
             {
                 ClearDemandData(v.IsDeptsAndDemandsCompleted);
+                DisableAllocationsButton();
             }
             //if active mode is total demand mode
             else if (v.IsTotalDemandsCompleted != CompletionState.Uninitialized)
             {
                 ClearDemandData(v.IsTotalDemandsCompleted);
+                DisableAllocationsButton();
             }
         }
-
 
         public void SetDemandModeToComplete(bool isDebug = false)
         {
             if (v.IsDeptsAndDemandsCompleted == CompletionState.Initialized)
             {
+                EnableAllocationsButton();
                 v.IsDeptsAndDemandsCompleted = CompletionState.Completed;
             }
             else if (v.IsTotalDemandsCompleted == CompletionState.Initialized)
             {
+                EnableAllocationsButton();
                 v.IsTotalDemandsCompleted = CompletionState.Completed;
             }
 

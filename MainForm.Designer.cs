@@ -477,11 +477,11 @@
         private TableLayoutPanel tableLayoutPanel2;
         private Button settingsButton;
         private Button clearDemandDataButton;
-        private Button generateAllocationsButton;
         private Label label3;
         private TextBox outputLog;
         private FolderBrowserDialog folderBrowserDialog1;
         public DataGridView dataGridView1;
         public Button checkEditDemandButton;
+        public Button generateAllocationsButton;
     }
 }

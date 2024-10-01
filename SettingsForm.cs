@@ -112,6 +112,8 @@ namespace BusAllocatorApp
         {
             //2nd parameter is if debug mode is on
             settings.SetIncompleteAllocs(incompleteAllocsCheckBox.Checked, true);
+
+            settings.ClearDemandData();
         }
     }
 }

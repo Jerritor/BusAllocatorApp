@@ -16,7 +16,7 @@ namespace BusAllocatorApp
 {
     public class Vars
     {
-        private MainForm mainForm;
+        public MainForm mainForm;
         public IO io;
 
         //Constructor
@@ -258,13 +258,6 @@ namespace BusAllocatorApp
             capacitySmallBus = 18;
             capacityLargeBus = 56;
             mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
-        }
-        #endregion
-
-        #region Get mainForm
-        public MainForm GetMainForm()
-        {
-            return mainForm;
         }
         #endregion
 
