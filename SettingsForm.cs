@@ -24,8 +24,11 @@ namespace BusAllocatorApp
             this.mainForm = mainForm;
 
             SetRadioButtonsBasedOnMode();
+            SetIncompleteAllocsCheckBox();
             isInitializing = false; //sets initializing to complete
         }
+
+        #region RadioButtons
 
         /// <summary>
         /// Sets the RadioButtons based on the current demand mode.
@@ -88,6 +91,8 @@ namespace BusAllocatorApp
             {
                 setVisualModeToIndivDepts();
                 settings.ToggleDemandMode(1); //Updates mode flag
+
+                SetIncompleteAllocsCheckBox();
             }
         }
 
@@ -100,20 +105,41 @@ namespace BusAllocatorApp
             {
                 setVisualModeToTotal();
                 settings.ToggleDemandMode(2); //Updates mode flag
+
+                SetIncompleteAllocsCheckBox();
             }
         }
+
+        #endregion
 
         private void closeWindowButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        #region Incomplete Allocations Checkbox
+        /// <summary>
+        /// Sets the incompleteAllocsCheckBox based on the current setting.
+        /// </summary>
+        private void SetIncompleteAllocsCheckBox()
+        {
+            // Only set the checkbox state if in Individual Department Mode
+            int demandMode = settings.v.GetDemandMode();
+
+            if (demandMode == 1) incompleteAllocsCheckBox.Checked = settings.v.canAllocateWithIncompeleteDepts;
+            else incompleteAllocsCheckBox.Checked = false; // Default or irrelevant in Total Demand Mode so resets it
+        }
+
         private void incompleteAllocsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
+            if (isInitializing) return; //exit if the form is still initializing
+
             //2nd parameter is if debug mode is on
             settings.SetIncompleteAllocs(incompleteAllocsCheckBox.Checked, true);
 
             settings.ClearDemandData();
         }
+
+        #endregion
     }
 }
