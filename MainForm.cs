@@ -98,25 +98,268 @@ namespace BusAllocatorApp
 
         public void UpdateTotalDemandDisplay()
         {
+            // Determine the current demand mode: 1 = Individual Department Mode, 2 = Total Demand Mode
+            int demandMode = vars.GetDemandMode();
+
+            // This will hold the demand data to display
+            Dictionary<string, Dictionary<string, int?>> displayDemandData = null;
+
+            // This will hold the formatted shift names for column headers
+            List<string> shiftsFormatted = new List<string>();
+
+            // This will map formatted shift names back to raw time keys (only used in Individual Department Mode)
+            Dictionary<string, string> formattedToRawShiftMap = new Dictionary<string, string>();
+
+            if (demandMode == 2)
+            {
+                // --- Total Demand Mode ---
+
+                if (vars.totalDemands == null || vars.totalDemands.DemandData == null)
+                {
+                    MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Use the total demands data directly
+                displayDemandData = vars.totalDemands.DemandData;
+
+                // Get all shifts (formatted strings) and sort them
+                shiftsFormatted = displayDemandData.Keys.OrderBy(s => s).ToList(); // Assuming shifts are already formatted strings
+            }
+            else if (demandMode == 1)
+            {
+                // --- Individual Department Mode ---
+
+                // Aggregate demands from all departments
+                displayDemandData = new Dictionary<string, Dictionary<string, int?>>();
+
+                foreach (var department in vars.deptsAndDemands)
+                {
+                    if (!department.IsDataFilled)
+                    {
+                        // Optionally skip departments without data
+                        continue;
+                    }
+
+                    foreach (var timeKey in department.DemandData.Keys)
+                    {
+                        if (!displayDemandData.ContainsKey(timeKey))
+                        {
+                            displayDemandData[timeKey] = new Dictionary<string, int?>();
+                        }
+
+                        foreach (var route in department.DemandData[timeKey].Keys)
+                        {
+                            int? demandValue = department.DemandData[timeKey][route];
+                            if (demandValue.HasValue)
+                            {
+                                if (!displayDemandData[timeKey].ContainsKey(route))
+                                {
+                                    displayDemandData[timeKey][route] = 0;
+                                }
+                                displayDemandData[timeKey][route] += demandValue.Value;
+                            }
+                        }
+                    }
+                }
+
+                if (displayDemandData.Count == 0)
+                {
+                    MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Build a mapping from raw time keys ("HH:mm:ss_True/False") to formatted shift names ("OUT 4:00PM")
+                var rawToFormattedShiftMap = vars.timeSets.ToDictionary(
+                    ts => $"{ts.Time.ToString(@"hh\:mm\:ss")}_{ts.IsOutgoing}",
+                    ts => ts.GetFormattedTimeINOUT());
+
+                // Invert the mapping for easy lookup (formatted to raw)
+                formattedToRawShiftMap = rawToFormattedShiftMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+
+                // Now, prepare the formatted shifts list in a sorted order
+                shiftsFormatted = displayDemandData.Keys
+                    .Where(k => rawToFormattedShiftMap.ContainsKey(k))
+                    .Select(k => rawToFormattedShiftMap[k])
+                    .OrderBy(s => s)
+                    .ToList();
+            }
+            else
+            {
+                // Unknown demand mode
+                MessageBox.Show("Unknown demand mode selected. Please contact support.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // --- Preparing the Display Table ---
+
+            // Clear existing columns and rows
+            table.Columns.Clear();
+            table.Rows.Clear();
+
+            // Add "Location" column
+            table.Columns.Add("Location", typeof(string));
+
+            // Add a column for each shift
+            foreach (var shift in shiftsFormatted)
+            {
+                table.Columns.Add(shift, typeof(int));
+            }
+
+            // Populate the DataTable with solo_routes
+            foreach (var route in vars.solo_routes)
+            {
+                DataRow newRow = table.NewRow();
+                newRow["Location"] = route;
+
+                for (int i = 0; i < shiftsFormatted.Count; i++)
+                {
+                    string shift = shiftsFormatted[i];
+                    string rawTimeKey = demandMode == 2 ? shift : (formattedToRawShiftMap.ContainsKey(shift) ? formattedToRawShiftMap[shift] : "");
+
+                    if (demandMode == 2)
+                    {
+                        // Total Demand Mode
+                        if (displayDemandData.ContainsKey(shift) && displayDemandData[shift].ContainsKey(route))
+                        {
+                            newRow[shift] = displayDemandData[shift][route];
+                        }
+                        else
+                        {
+                            // If for some reason the route is missing, default to 0
+                            newRow[shift] = 0;
+                        }
+                    }
+                    else if (demandMode == 1)
+                    {
+                        // Individual Department Mode
+                        if (!string.IsNullOrEmpty(rawTimeKey) && displayDemandData.ContainsKey(rawTimeKey) && displayDemandData[rawTimeKey].ContainsKey(route))
+                        {
+                            newRow[shift] = displayDemandData[rawTimeKey][route];
+                        }
+                        else
+                        {
+                            // If the route is missing for this shift, default to 0
+                            newRow[shift] = 0;
+                        }
+                    }
+                }
+
+                table.Rows.Add(newRow);
+            }
+
+            /**
+            // Determine the current demand mode: 1 = Individual Department Mode, 2 = Total Demand Mode
+            int demandMode = vars.GetDemandMode();
+
+            // This will hold the demand data to display
+            Dictionary<string, Dictionary<string, int?>> demandData = null;
+
+            // Total Demand Mode
+            if (demandMode == 2)
+            {
+                
+                if (vars.totalDemands == null || vars.totalDemands.DemandData == null)
+                {
+                    MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                demandData = vars.totalDemands.DemandData;
+            }
+            // Individual Department Mode
+            else if (demandMode == 1)
+            {
+                // Aggregate demands from all departments
+                demandData = new Dictionary<string, Dictionary<string, int?>>();
+
+                foreach (var department in vars.deptsAndDemands)
+                {
+                    if (!department.IsDataFilled)
+                    {
+                        // Optionally skip departments without data
+                        continue;
+                    }
+
+                    foreach (var timeKey in department.DemandData.Keys)
+                    {
+                        if (!demandData.ContainsKey(timeKey))
+                        {
+                            demandData[timeKey] = new Dictionary<string, int?>();
+                        }
+
+                        foreach (var route in department.DemandData[timeKey].Keys)
+                        {
+                            int? demandValue = department.DemandData[timeKey][route];
+                            if (demandValue.HasValue)
+                            {
+                                if (!demandData[timeKey].ContainsKey(route))
+                                {
+                                    demandData[timeKey][route] = 0;
+                                }
+                                demandData[timeKey][route] += demandValue.Value;
+                            }
+                        }
+                    }
+                }
+
+                if (demandData.Count == 0)
+                {
+                    MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Unknown demand mode selected. Please contact support.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Now, demandData contains the aggregated demands for the current mode.
+
+            // Get all unique shifts (time keys) from DemandData and order them
+            var shifts = demandData.Keys.OrderBy(s => s).ToList();
+
+            // Clear existing columns and rows in the table
+            table.Columns.Clear();
+            table.Rows.Clear();
+
+            // Add "Location" column
+            table.Columns.Add("Location", typeof(string));
+
+            // Add a column for each shift
+            foreach (var shift in shifts)
+            {
+                table.Columns.Add(shift, typeof(int));
+            }
+
+            // Populate the DataTable with solo_routes
+            foreach (var route in vars.solo_routes)
+            {
+                DataRow newRow = table.NewRow();
+                newRow["Location"] = route;
+
+                foreach (var shift in shifts)
+                {
+                    if (demandData[shift].ContainsKey(route))
+                    {
+                        newRow[shift] = demandData[shift][route];
+                    }
+                    else
+                    {
+                        // If the route is missing for this shift, default to 0
+                        newRow[shift] = 0;
+                    }
+                }
+
+                table.Rows.Add(newRow);
+            }
+            **/ //2
+            /**
             if (vars.totalDemands == null || vars.totalDemands.DemandData == null)
             {
                 MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-
-            // Add "Location" column
-            //table.Columns.Add("Location", typeof(string));
-
-            // Get all unique shifts from DemandData and order them as desired
-            var shifts = vars.totalDemands.DemandData.Keys.OrderBy(s => s).ToList();
-
-            // Add a column for each shift
-            /**
-            foreach (var shift in shifts)
-            {
-                table.Columns.Add(shift, typeof(int));
-            }
-            **/
 
             //clear current rows
             table.Rows.Clear();
@@ -142,6 +385,7 @@ namespace BusAllocatorApp
 
                 table.Rows.Add(newRow);
             }
+            **/ //1
         }
 
 
@@ -381,7 +625,7 @@ namespace BusAllocatorApp
             // Individual Department Mode
             else if (demandMode == 1)
             {
-                
+                /**
                 // Upload department spreadsheet(s)
                 List<string> selectedFilePaths = vars.io.UploadIndivDeptSpreadsheet();
 
@@ -406,6 +650,49 @@ namespace BusAllocatorApp
                             MessageBox.Show(fileDemandErrorMsg, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
+                }
+                **/
+                // Upload department spreadsheet(s)
+                List<string> selectedFilePaths = vars.io.UploadIndivDeptSpreadsheet();
+
+                // Check if any files were selected
+                if (selectedFilePaths != null && selectedFilePaths.Any())
+                {
+                    foreach (string filePath in selectedFilePaths)
+                    {
+                        // Process each file immediately
+                        bool isDataFilled = vars.ProcessIndivDeptSpreadsheet(filePath, true);
+
+                        if (isDataFilled) WriteLine($"Demand data was successfully filled for file: {Path.GetFileName(filePath)}");
+                        else
+                        {
+                            string fileDemandErrorMsg = $"Demand data could not be completely filled for file: {Path.GetFileName(filePath)}. Please check for any empty fields.";
+                            WriteLine(fileDemandErrorMsg);
+                            MessageBox.Show(fileDemandErrorMsg, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+
+                    // After processing all files
+                    int totalDepartments = vars.deptsAndDemands.Count;
+                    int filledDepartments = vars.deptsAndDemands.Count(dept => dept.IsDataFilled);
+
+                    //if incomplete demands checkbox is enabled in settings
+                    if (vars.canAllocateWithIncompeleteDepts && filledDepartments > 0)
+                    {
+                        // Some departments have data filled, and allocations can proceed with incomplete departments
+                        settings.SetDemandModeToComplete();
+                        MessageBox.Show($"Demand data was successfully filled for {filledDepartments} out of {totalDepartments} departments.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        UpdateDataGrid();
+                    }
+                    //If all departments have data filled
+                    else if (filledDepartments == totalDepartments)
+                    {
+                        settings.SetDemandModeToComplete();
+                        MessageBox.Show("All demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        UpdateDataGrid();
+                    }
+                    // Not enough data to make allocations
+                    else WriteLine($"Not all departments' demands are completed yet. Keep uploading department spreadsheets or allocate more manually.");
                 }
                 else MessageBox.Show("No files selected. Please upload valid department demand sheets.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

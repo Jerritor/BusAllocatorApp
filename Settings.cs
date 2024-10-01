@@ -10,7 +10,7 @@ namespace BusAllocatorApp
 {
     public class Settings
     {
-        Vars v { get; set; }
+        public Vars v { get; set; }
 
         //The spreadsheet demand upload mode on app startup
         //true = Individual Demand Mode (default), false = Total Demand Mode (all)
