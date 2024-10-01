@@ -752,10 +752,7 @@ namespace BusAllocatorApp
             // Register the code page provider to handle different encodings
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-            if (isDebug)
-            {
-                Debug.WriteLine($"[DEBUG] Starting to process spreadsheet: {filePath}");
-            }
+            if (isDebug) Debug.WriteLine($"Starting to process spreadsheet: {filePath}");
 
             using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
             {
@@ -765,36 +762,24 @@ namespace BusAllocatorApp
 
                     if (result.Tables.Count == 0)
                     {
-                        if (isDebug)
-                        {
-                            Debug.WriteLine("[DEBUG] No worksheets found in the Excel file.");
-                        }
+                        if (isDebug)Debug.WriteLine("No worksheets found in the Excel file.");
                         return false;
                     }
 
                     var table = result.Tables[0];
 
-                    if (isDebug)
-                    {
-                        Debug.WriteLine($"[DEBUG] Processing worksheet: {table.TableName}");
-                    }
+                    if (isDebug) Debug.WriteLine($"Processing worksheet: {table.TableName}");
 
                     // Read the department name from cell B1 (Row 0, Column 1)
                     string departmentName = table.Rows.Count > 0 && table.Columns.Count > 1
                         ? table.Rows[0][1]?.ToString().Trim()
                         : string.Empty;
 
-                    if (isDebug)
-                    {
-                        Debug.WriteLine($"[DEBUG] Extracted Department Name: '{departmentName}' from cell B1.");
-                    }
+                    if (isDebug) Debug.WriteLine($"Extracted Department Name: '{departmentName}' from cell B1.");
 
                     if (string.IsNullOrEmpty(departmentName))
                     {
-                        if (isDebug)
-                        {
-                            Debug.WriteLine("[DEBUG] Department name is empty. Cannot process spreadsheet.");
-                        }
+                        if (isDebug)Debug.WriteLine("Department name is empty. Cannot process spreadsheet.");
                         return false;
                     }
 
@@ -803,17 +788,11 @@ namespace BusAllocatorApp
 
                     if (department == null)
                     {
-                        if (isDebug)
-                        {
-                            Debug.WriteLine($"[DEBUG] Department '{departmentName}' not found in deptsAndDemands.");
-                        }
+                        if (isDebug) Debug.WriteLine($"Department '{departmentName}' not found in deptsAndDemands.");
                         return false;
                     }
 
-                    if (isDebug)
-                    {
-                        Debug.WriteLine($"[DEBUG] Found Department: {department.Name}");
-                    }
+                    if (isDebug) Debug.WriteLine($"Found Department: {department.Name}");
 
                     try
                     {
@@ -824,19 +803,13 @@ namespace BusAllocatorApp
                         {
                             if (row >= table.Rows.Count)
                             {
-                                if (isDebug)
-                                {
-                                    Debug.WriteLine($"[DEBUG] Row {row + 1} is out of range. Skipping.");
-                                }
+                                if (isDebug) Debug.WriteLine($"Row {row + 1} is out of range. Skipping.");
                                 continue;
                             }
 
                             string routeName = table.Rows[row][3]?.ToString().Trim(); // Column D is index 3
 
-                            if (isDebug)
-                            {
-                                Debug.WriteLine($"[DEBUG] Extracted Route Name from cell D{row + 1}: '{routeName}'");
-                            }
+                            if (isDebug) Debug.WriteLine($"Extracted Route Name from cell D{row + 1}: '{routeName}'");
 
                             if (!string.IsNullOrEmpty(routeName))
                             {
@@ -844,10 +817,7 @@ namespace BusAllocatorApp
                             }
                         }
 
-                        if (isDebug)
-                        {
-                            Debug.WriteLine($"[DEBUG] Total Routes Extracted: {routeNamesFromSpreadsheet.Count}");
-                        }
+                        if (isDebug) Debug.WriteLine($"Total Routes Extracted: {routeNamesFromSpreadsheet.Count}");
 
                         // Get the list of routes from department.DemandData
                         var departmentRoutes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -860,10 +830,7 @@ namespace BusAllocatorApp
                             break; // Assuming all TimeSets have the same routes
                         }
 
-                        if (isDebug)
-                        {
-                            Debug.WriteLine($"[DEBUG] Department '{department.Name}' has {departmentRoutes.Count} routes.");
-                        }
+                        if (isDebug) Debug.WriteLine($"Department '{department.Name}' has {departmentRoutes.Count} routes.");
 
                         // Create a mapping from route names in the spreadsheet to department routes
                         var routeMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -872,25 +839,16 @@ namespace BusAllocatorApp
                             if (departmentRoutes.Contains(routeName))
                             {
                                 routeMapping[routeName] = routeName;
-                                if (isDebug)
-                                {
-                                    Debug.WriteLine($"[DEBUG] Route '{routeName}' mapped successfully.");
-                                }
+                                if (isDebug) Debug.WriteLine($"Route '{routeName}' mapped successfully.");
                             }
                             else
                             {
-                                if (isDebug)
-                                {
-                                    Debug.WriteLine($"[DEBUG] Route '{routeName}' from spreadsheet not found in department routes. Skipping.");
-                                }
+                                if (isDebug) Debug.WriteLine($"Route '{routeName}' from spreadsheet not found in department routes. Skipping.");
                                 // Route from spreadsheet not found in department routes; skip
                             }
                         }
 
-                        if (isDebug)
-                        {
-                            Debug.WriteLine($"[DEBUG] Total Routes Mapped: {routeMapping.Count}");
-                        }
+                        if (isDebug) Debug.WriteLine($"Total Routes Mapped: {routeMapping.Count}");
 
                         // Define the specific TimeSets and their corresponding columns
                         var timeAllocations = new Dictionary<string, int>
@@ -907,7 +865,7 @@ namespace BusAllocatorApp
 
                         if (isDebug)
                         {
-                            Debug.WriteLine("[DEBUG] Defined Time Allocations and their corresponding columns:");
+                            Debug.WriteLine("Defined Time Allocations and their corresponding columns:");
                             foreach (var ta in timeAllocations)
                             {
                                 Debug.WriteLine($"        '{ta.Key}' => Column {ta.Value + 1}");
@@ -931,10 +889,7 @@ namespace BusAllocatorApp
                             // Parse timePart into DateTime
                             if (!DateTime.TryParseExact(timePart, "h:mmtt", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateTime))
                             {
-                                if (isDebug)
-                                {
-                                    Debug.WriteLine($"[DEBUG] Failed to parse time '{timePart}' from time string '{timeString}'. Skipping.");
-                                }
+                                if (isDebug) Debug.WriteLine($"Failed to parse time '{timePart}' from time string '{timeString}'. Skipping.");
                                 continue;
                             }
 
@@ -946,10 +901,7 @@ namespace BusAllocatorApp
                             if (!timeSetKeyMapping.ContainsKey(timeString))
                             {
                                 timeSetKeyMapping[timeString] = timeSetKey;
-                                if (isDebug)
-                                {
-                                    Debug.WriteLine($"[DEBUG] Mapped Time String '{timeString}' to TimeSetKey '{timeSetKey}'");
-                                }
+                                if (isDebug) Debug.WriteLine($"Mapped Time String '{timeString}' to TimeSetKey '{timeSetKey}'");
                             }
                         }
 
@@ -961,25 +913,19 @@ namespace BusAllocatorApp
 
                             if (!timeSetKeyMapping.TryGetValue(timeString, out string timeSetKey))
                             {
-                                if (isDebug)
-                                {
-                                    Debug.WriteLine($"[DEBUG] TimeSetKey not found for time string '{timeString}'. Skipping.");
-                                }
+                                if (isDebug)  Debug.WriteLine($"TimeSetKey not found for time string '{timeString}'. Skipping.");
                                 continue;
                             }
 
                             if (isDebug)
                             {
-                                Debug.WriteLine($"[DEBUG] Processing TimeSet: '{timeSetKey}' (from '{timeString}') in Column {column + 1}");
+                                Debug.WriteLine($"Processing TimeSet: '{timeSetKey}' (from '{timeString}') in Column {column + 1}");
                             }
 
                             // Check if the TimeSet exists in department.DemandData
                             if (!department.DemandData.ContainsKey(timeSetKey))
                             {
-                                if (isDebug)
-                                {
-                                    Debug.WriteLine($"[DEBUG] TimeSet '{timeSetKey}' not found in department.DemandData. Skipping.");
-                                }
+                                if (isDebug) Debug.WriteLine($"TimeSet '{timeSetKey}' not found in department.DemandData. Skipping.");
                                 continue;
                             }
 
@@ -991,10 +937,7 @@ namespace BusAllocatorApp
                                 // Check if this route is mapped to a department route
                                 if (!routeMapping.ContainsKey(routeNameFromSpreadsheet))
                                 {
-                                    if (isDebug)
-                                    {
-                                        Debug.WriteLine($"[DEBUG] Route '{routeNameFromSpreadsheet}' is not mapped to department routes. Skipping.");
-                                    }
+                                    if (isDebug) Debug.WriteLine($"Route '{routeNameFromSpreadsheet}' is not mapped to department routes. Skipping.");
                                     continue;
                                 }
 
@@ -1004,74 +947,50 @@ namespace BusAllocatorApp
 
                                 if (row >= table.Rows.Count)
                                 {
-                                    if (isDebug)
-                                    {
-                                        Debug.WriteLine($"[DEBUG] Row {row + 1} is out of range for demands. Skipping.");
-                                    }
+                                    if (isDebug) Debug.WriteLine($"Row {row + 1} is out of range for demands. Skipping.");
                                     continue;
                                 }
 
                                 if (column >= table.Columns.Count)
                                 {
-                                    if (isDebug)
-                                    {
-                                        Debug.WriteLine($"[DEBUG] Column {column + 1} is out of range for demands. Skipping.");
-                                    }
+                                    if (isDebug) Debug.WriteLine($"Column {column + 1} is out of range for demands. Skipping.");
                                     continue;
                                 }
 
                                 object demandObj = table.Rows[row][column];
                                 string demandText = demandObj?.ToString().Trim();
 
-                                if (isDebug)
-                                {
-                                    Debug.WriteLine($"[DEBUG] Reading Demand from cell ({row + 1}, {column + 1}): '{demandText}'");
-                                }
+                                if (isDebug) Debug.WriteLine($"Reading Demand from cell ({row + 1}, {column + 1}): '{demandText}'");
 
                                 int demand = 0;
                                 if (string.IsNullOrEmpty(demandText))
                                 {
                                     demand = 0;
-                                    if (isDebug)
-                                    {
-                                        Debug.WriteLine($"[DEBUG] Demand is empty. Treated as 0.");
-                                    }
+                                    if (isDebug) Debug.WriteLine($"Demand is empty. Treated as 0.");
                                 }
                                 else if (!int.TryParse(demandText, out demand) || demand < 0)
                                 {
                                     string errorMsg = $"Invalid demand value at cell (Row {row + 1}, Column {column + 1}): '{demandText}'";
-                                    if (isDebug)
-                                    {
-                                        Debug.WriteLine($"[DEBUG] {errorMsg}");
-                                    }
+                                    if (isDebug) Debug.WriteLine($"{errorMsg}");
                                     throw new Exception(errorMsg);
                                 }
 
                                 // Update the department's DemandData
                                 department.DemandData[timeSetKey][departmentRouteName] = demand;
 
-                                if (isDebug)
-                                {
-                                    Debug.WriteLine($"[DEBUG] Updated DemandData: TimeSet='{timeSetKey}', Route='{departmentRouteName}', Demand={demand}");
-                                }
+                                if (isDebug)  Debug.WriteLine($"Updated DemandData: TimeSet='{timeSetKey}', Route='{departmentRouteName}', Demand={demand}");
                             }
                         }
 
                         department.IsDataFilled = true;
 
-                        if (isDebug)
-                        {
-                            Debug.WriteLine($"[DEBUG] Successfully processed department '{department.Name}'. IsDataFilled set to true.");
-                        }
+                        if (isDebug) Debug.WriteLine($"Successfully processed department '{department.Name}'. IsDataFilled set to true.");
 
                         return true;
                     }
                     catch (Exception ex)
                     {
-                        if (isDebug)
-                        {
-                            Debug.WriteLine($"[DEBUG] Exception occurred while processing spreadsheet: {ex.Message}");
-                        }
+                        if (isDebug) Debug.WriteLine($"Exception occurred while processing spreadsheet: {ex.Message}");
                         department.IsDataFilled = false;
                         return false;
                     }

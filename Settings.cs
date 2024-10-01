@@ -96,7 +96,7 @@ namespace BusAllocatorApp
             v.OutputDemandModeToDebugConsole();
         }
 
-        public void ClearDemandData(CompletionState modeToInitialize)
+        private void ClearDemandData(CompletionState modeToInitialize)
         {
             if (modeToInitialize == v.IsDeptsAndDemandsCompleted)
             {

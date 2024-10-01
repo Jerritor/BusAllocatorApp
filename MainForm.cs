@@ -385,7 +385,6 @@ namespace BusAllocatorApp
             // Total Demand Mode
             if (demandMode == 2)
             {
-                
                 vars.io.UploadTotalDemandSheet();
 
                 if (!string.IsNullOrEmpty(vars.totalDemandFilePath))

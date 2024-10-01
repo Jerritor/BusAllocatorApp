@@ -174,6 +174,7 @@
             incompleteAllocsCheckBox.TabIndex = 2;
             incompleteAllocsCheckBox.Text = "Enable allocations even if not all departments are filled";
             incompleteAllocsCheckBox.UseVisualStyleBackColor = true;
+            incompleteAllocsCheckBox.CheckedChanged += incompleteAllocsCheckBox_CheckedChanged;
             // 
             // tableLayoutPanel3
             // 
@@ -280,7 +281,6 @@
             label4.Size = new Size(261, 45);
             label4.TabIndex = 0;
             label4.Text = "WARNING: PLEASE PROCEED WITH CAUTION. ONLY ACCESS THE ADVANCED SETTINGS IF YOU ARE FAMILIAR WITH THE FUNCTIONALITY";
-            label4.Click += label4_Click;
             // 
             // advancedSettingsButton
             // 

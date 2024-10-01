@@ -59,7 +59,7 @@ namespace BusAllocatorApp
             this.Close();
         }
 
-        private void label4_Click(object sender, EventArgs e)
+        private void incompleteAllocsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
 
         }
