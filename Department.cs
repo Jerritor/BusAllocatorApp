@@ -56,7 +56,7 @@ namespace BusAllocatorApp
                 DemandData[timeSetKey] = new Dictionary<string, int?>();
                 foreach (var route in vars.solo_routes)
                 {
-                    DemandData[timeSetKey][route] = 0; // or any initial value
+                    DemandData[timeSetKey][route] = null; //= 0// or any initial value
                 }
             }
         }
