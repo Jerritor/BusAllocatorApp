@@ -984,13 +984,18 @@ namespace BusAllocatorApp
 
                         department.IsDataFilled = true;
 
-                        if (isDebug) Debug.WriteLine($"Successfully processed department '{department.Name}'. IsDataFilled set to true.");
+                        string successDeptMessage = $"Successfully processed department '{department.Name}'.";
+                        mainForm.WriteLine(successDeptMessage + " Departmment demands marked as filled.");
+                        if (isDebug) Debug.WriteLine(successDeptMessage + " IsDataFilled set to true.");
 
                         return true;
                     }
                     catch (Exception ex)
                     {
-                        if (isDebug) Debug.WriteLine($"Exception occurred while processing spreadsheet: {ex.Message}");
+                        string failDeptMessage = $"Error occurred while processing spreadsheet: {ex.Message}";
+                        mainForm.WriteLine(failDeptMessage);
+                        if (isDebug) Debug.WriteLine(failDeptMessage);
+
                         department.IsDataFilled = false;
                         return false;
                     }
