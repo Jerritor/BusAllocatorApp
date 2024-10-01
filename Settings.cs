@@ -16,18 +16,10 @@ namespace BusAllocatorApp
         //true = Individual Demand Mode (default), false = Total Demand Mode (all)
         //default true
         //bool IsIndividualDemandModeOnStartup { get; set; } = true;
-
         public Settings(Vars v)
         {
             this.v = v;
         }
-
-        /**
-        public Settings(Vars v, bool StartupMode)
-        {
-            this.v = v;
-            IsIndividualDemandModeOnStartup = StartupMode;
-        }**/
 
         #region Toggle Demand Mode
         //
@@ -155,5 +147,12 @@ namespace BusAllocatorApp
         }
 
         #endregion
+
+        public void SetIncompleteAllocs(bool canIncompleteDemands, bool isDebug = false)
+        {
+            v.canAllocateWithIncompeleteDepts = canIncompleteDemands;
+            //debug prints
+            if (isDebug) Debug.WriteLine($"canAllocateIncomplete = '{v.canAllocateWithIncompeleteDepts}'");
+        }
     }
 }

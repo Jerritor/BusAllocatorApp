@@ -61,7 +61,8 @@ namespace BusAllocatorApp
 
         private void incompleteAllocsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+            //2nd parameter is if debug mode is on
+            settings.SetIncompleteAllocs(incompleteAllocsCheckBox.Checked, true);
         }
     }
 }

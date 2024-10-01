@@ -170,9 +170,9 @@
             incompleteAllocsCheckBox.AutoSize = true;
             incompleteAllocsCheckBox.Location = new Point(3, 143);
             incompleteAllocsCheckBox.Name = "incompleteAllocsCheckBox";
-            incompleteAllocsCheckBox.Size = new Size(313, 19);
+            incompleteAllocsCheckBox.Size = new Size(335, 19);
             incompleteAllocsCheckBox.TabIndex = 2;
-            incompleteAllocsCheckBox.Text = "Enable allocations even if not all departments are filled";
+            incompleteAllocsCheckBox.Text = "Enable bus allocations even if not all departments are filled";
             incompleteAllocsCheckBox.UseVisualStyleBackColor = true;
             incompleteAllocsCheckBox.CheckedChanged += incompleteAllocsCheckBox_CheckedChanged;
             // 

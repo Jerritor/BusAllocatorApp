@@ -31,13 +31,8 @@ namespace BusAllocatorApp
             //FirstLoadRoutesTimeSetsDepartments();
         }
 
-        //CONFIG INFO
-        public string configFile = "config.cfg";
-        public string ratesPath { get; set; }
-
-        public string totalDemandFilePath { get; set; }
-
-
+        #region All Vars Fields
+        #region Class Fields
         //--Empty object instantiation--
         //List of Routes
         public List<string>? solo_routes { get; set; }
@@ -74,8 +69,8 @@ namespace BusAllocatorApp
         public List<Department>? deptsAndDemands { get; private set; }
         //this one is used if the setting is total demands
         public Department? totalDemands { get; private set; }
-
-
+        #endregion
+        #region Demand Mode Enum and Flag Tracker Fields
         //Demands Completion Flags - 1 if the demands are ready for generating spreadsheets.
         public enum CompletionState
         {
@@ -89,6 +84,19 @@ namespace BusAllocatorApp
         //tracks totalDemands state
         //is initially off by default as default mode is not all dept demand mode
         public CompletionState IsTotalDemandsCompleted { get; set; } = CompletionState.Uninitialized;
+        #endregion
+        #region Config Fields
+        //CONFIG INFO
+        public string configFile = "config.cfg";
+        public string ratesPath { get; set; }
+        public string totalDemandFilePath { get; set; }
+        #endregion
+        #region Settings Fields
+        public bool canAllocateWithIncompeleteDepts { get; set; } = false;
+
+
+        #endregion
+        #endregion
 
         #region Variable Instantiation
         public void InstantiateVars()
@@ -250,6 +258,13 @@ namespace BusAllocatorApp
             capacitySmallBus = 18;
             capacityLargeBus = 56;
             mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
+        }
+        #endregion
+
+        #region Get mainForm
+        public MainForm GetMainForm()
+        {
+            return mainForm;
         }
         #endregion
 
@@ -731,7 +746,6 @@ namespace BusAllocatorApp
             }
             mainForm.WriteLine("Cleared all demand data from Total Demand Mode.");
         }
-
         #endregion
 
         #region Individual Department Demand Spreadsheet Processing
@@ -1124,12 +1138,9 @@ namespace BusAllocatorApp
             mainForm.FormatDataGridView();
             mainForm.ResizeFormToFitTableLayoutPanel();
         }
-
-
-
-
         #endregion
 
+        #region Debug Functions
         //Debug Parser Function
         public void OutputDemandsToDebugConsole()
         {
@@ -1159,6 +1170,6 @@ namespace BusAllocatorApp
             Debug.WriteLine("deptsMode = " + IsDeptsAndDemandsCompleted);
             Debug.WriteLine("totalMode = " + IsTotalDemandsCompleted + "\n");
         }
-
+        #endregion
     }
 }
