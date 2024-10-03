@@ -87,10 +87,10 @@ namespace BusAllocatorApp
         #endregion
         #region MainForm State Trackers
         //Checkboxes
-        private bool isBusRateCheckBox { get; set; } = false;
-        private bool isDemandsCheckBox { get; set; } = false;
-        private bool isFirstDateCheckBox { get; set; } = false;
-        private bool isSecondDateCheckBox { get; set; } = false;
+        private bool isBusRateCheckBox { get; set; }
+        private bool isDemandsCheckBox { get; set; }
+        private bool isFirstDateCheckBox { get; set; }
+        private bool isSecondDateCheckBox { get; set; }
 
         #endregion
         #region Config Fields
@@ -271,6 +271,14 @@ namespace BusAllocatorApp
         #endregion
 
         #region Completion State Handling and Checker
+        public void SyncMainFormCheckboxes()
+        {
+            isBusRateCheckBox = mainForm.busRateCheckBox.Checked;
+            isDemandsCheckBox = mainForm.demandsCheckBox.Checked;
+            isFirstDateCheckBox = mainForm.firstDateCheckBox.Checked;
+            isSecondDateCheckBox = mainForm.secondDateCheckBox.Checked;
+        }
+
         //BusRateCheckBox
         public void DisableBusRateCheckBox()
         {
@@ -336,26 +344,26 @@ namespace BusAllocatorApp
         //Allocations Button Checker and State Setter
         private void DisableAllocationsButton()
         {
+            mainForm.WriteLine("The generate allocations button is now disabled. One or more requirements are no longer met.");
             mainForm.generateAllocationsButton.Enabled = false;
             mainForm.generateAllocationsButton.Visible = false;
         }
-
         private void EnableAllocationsButton()
         {
+            mainForm.WriteLine("You can now generate bus allocations. All requirements have been met.");
             mainForm.generateAllocationsButton.Enabled = true;
             mainForm.generateAllocationsButton.Visible = true;
         }
-
         public void CheckSetModeCompletionState()
         {
             // Example of checking if all checkboxes are enabled
             if (isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox)
             {
-                EnableAllocationsButton();
+                if (!mainForm.generateAllocationsButton.Visible) EnableAllocationsButton();
             }
             else
             {
-                DisableAllocationsButton();
+                if (mainForm.generateAllocationsButton.Visible) DisableAllocationsButton();
             }
         }
         #endregion

@@ -1,4 +1,5 @@
 using System.Data;
+using System.Security;
 using System.Windows.Forms;
 
 namespace BusAllocatorApp
@@ -45,6 +46,7 @@ namespace BusAllocatorApp
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            vars.SyncMainFormCheckboxes();
             //Enable below to create JSON files
             //vars.GenerateJSONFiles();
         }
@@ -410,6 +412,47 @@ namespace BusAllocatorApp
         }
 
         #region DATE PICKERS
+        private bool CheckFirstDate(out bool result)
+        {
+            if (isSecondDateSet && (secondDatePicker.Value.Date <= firstDatePicker.Value.Date))
+            {
+                MessageBox.Show("The first date must be before the second date.",
+                    "Invalid First Date",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                vars.DisableFirstDateCheckBox();
+
+                result = false;
+                return false;
+            }
+            else
+            {
+                vars.EnableFirstDateCheckBox();
+                result = true;
+                return true;
+            }
+        }
+
+        private bool CheckSecondDate()
+        {
+            if (secondDatePicker.Value.Date <= firstDatePicker.Value.Date)
+            {
+                MessageBox.Show("The second date must be after the first date.",
+                    "Invalid Second Date",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                vars.DisableSecondDateCheckBox();
+                return false;
+            }
+            else
+            {
+                vars.EnableSecondDateCheckBox();
+                return true;
+            }
+        }
+
         private void editFirstDateButton_Click(object sender, EventArgs e)
         {
             firstDatePicker.Enabled = true;
@@ -426,101 +469,54 @@ namespace BusAllocatorApp
 
         private void setFirstDateButton_Click(object sender, EventArgs e)
         {
-            if (isSecondDateSet && !CheckFirstDate()) { return; }
+            bool isFirstDate = false;
+            //bool result = false;
+            //if (isSecondDateSet && !CheckFirstDate(out result)) return;
+            //else isFirstDate = result;
 
-            firstDatePicker.Enabled = false;
-            setFirstDateButton.Enabled = false;
-            editFirstDateButton.Enabled = true;
-            editSecondDateButton.Enabled = true;
-            firstDatePicker.Enabled = false;
-
-            setFirstDateButton.Enabled = false;
-            setFirstDateButton.Visible = false;
-
-            editFirstDateButton.Enabled = true;
-            editFirstDateButton.Visible = true;
-
-            editSecondDateButton.Enabled = true;
-            editSecondDateButton.Visible = true;
-
-            firstDateCheckBox.Checked = true;
-
-            vars.firstDay = firstDatePicker.Value.Date;
-            string formattedDate = firstDatePicker.Value.ToLongDateString();
-            WriteLine("First date selected: " + formattedDate);
-            //WriteLine(vars.firstDay.Value.ToString());
-        }
-
-        private void editSecondDateButton_Click(object sender, EventArgs e)
-        {
-            secondDatePicker.Enabled = true;
-
-            editFirstDateButton.Enabled = false;
-            editFirstDateButton.Visible = false;
-
-            editSecondDateButton.Enabled = false;
-            editSecondDateButton.Visible = false;
-
-            setSecondDateButton.Enabled = true;
-            setSecondDateButton.Visible = true;
-        }
-
-        private bool CheckFirstDate()
-        {
-            if (isSecondDateSet && (secondDatePicker.Value.Date <= firstDatePicker.Value.Date))
+            if (isSecondDateSet)
             {
-                firstDateCheckBox.Checked = false;
-
-                MessageBox.Show("The first date must be before the second date.",
-                    "Invalid First Date",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-
-                vars.DisableFirstDateCheckBox();
-                vars.CheckSetModeCompletionState();
-                return false;
+                // If the second date is set, validate the first date against it
+                bool checkResult = CheckFirstDate(out bool result);
+                if (!checkResult)
+                {
+                    // If validation fails, exit the method
+                    return;
+                }
+                isFirstDate = result; // Assign the result from CheckFirstDate
             }
             else
             {
                 vars.EnableFirstDateCheckBox();
-                vars.CheckSetModeCompletionState();
-                return true;
+                // If the second date is not set, setting the first date is always valid
+                isFirstDate = true;
             }
-        }
 
-        private bool CheckSecondDate()
-        {
-            if (secondDatePicker.Value.Date <= firstDatePicker.Value.Date)
+
+            if (isFirstDate)
             {
-                secondDateCheckBox.Checked = false;
+                firstDatePicker.Enabled = false;
+                setFirstDateButton.Enabled = false;
+                editFirstDateButton.Enabled = true;
+                editSecondDateButton.Enabled = true;
+                firstDatePicker.Enabled = false;
 
-                MessageBox.Show("The second date must be after the first date.",
-                    "Invalid Second Date",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                setFirstDateButton.Enabled = false;
+                setFirstDateButton.Visible = false;
 
-                vars.DisableSecondDateCheckBox();
-                vars.CheckSetModeCompletionState();
-                return false;
+                editFirstDateButton.Enabled = true;
+                editFirstDateButton.Visible = true;
+
+                editSecondDateButton.Enabled = true;
+                editSecondDateButton.Visible = true;
+
+                vars.firstDay = firstDatePicker.Value.Date;
+                string formattedDate = firstDatePicker.Value.ToLongDateString();
+                WriteLine("First date selected: " + formattedDate);
+                //WriteLine(vars.firstDay.Value.ToString());
             }
-            else
-            {
-                vars.EnableSecondDateCheckBox();
-                vars.CheckSetModeCompletionState();
-                return true;
-            }
+            vars.CheckSetModeCompletionState();
         }
-
-        private void firstDatePicker_ValueChanged(object sender, EventArgs e)
-        {
-            CheckFirstDate();
-        }
-
-        private void secondDatePicker_ValueChanged(object sender, EventArgs e)
-        {
-            CheckSecondDate();
-        }
-
         private void setSecondDateButton_Click(object sender, EventArgs e)
         {
             if (CheckSecondDate())
@@ -536,8 +532,6 @@ namespace BusAllocatorApp
                 editSecondDateButton.Enabled = true;
                 editSecondDateButton.Visible = true;
 
-                secondDateCheckBox.Checked = true;
-
                 isSecondDateSet = true;
 
                 vars.secondDay = secondDatePicker.Value.Date;
@@ -545,6 +539,31 @@ namespace BusAllocatorApp
                 WriteLine("Second date selected: " + formattedDate);
                 //WriteLine(vars.secondDay.Value.ToString());
             }
+            vars.CheckSetModeCompletionState();
+        }
+        private void editSecondDateButton_Click(object sender, EventArgs e)
+        {
+            secondDatePicker.Enabled = true;
+
+            editFirstDateButton.Enabled = false;
+            editFirstDateButton.Visible = false;
+
+            editSecondDateButton.Enabled = false;
+            editSecondDateButton.Visible = false;
+
+            setSecondDateButton.Enabled = true;
+            setSecondDateButton.Visible = true;
+        }
+        private void firstDatePicker_ValueChanged(object sender, EventArgs e)
+        {
+            //'out _' discards the outputed value
+            CheckFirstDate(out _);
+            vars.CheckSetModeCompletionState();
+        }
+        private void secondDatePicker_ValueChanged(object sender, EventArgs e)
+        {
+            CheckSecondDate();
+            vars.CheckSetModeCompletionState();
         }
         #endregion
 
@@ -637,7 +656,7 @@ namespace BusAllocatorApp
                     if (vars.totalDemands.IsDataFilled)
                     {
                         vars.SetDemandModeToComplete();
-                        MessageBox.Show("Demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        WriteLine("Demand data was successfully filled!");
                         UpdateDataGrid();
                     }
                     else
