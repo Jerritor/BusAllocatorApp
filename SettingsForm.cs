@@ -16,12 +16,14 @@ namespace BusAllocatorApp
 
         Settings settings;
         MainForm mainForm;
+        Vars vars;
 
-        public SettingsForm(Settings settings, MainForm mainForm)
+        public SettingsForm(Settings settings, MainForm mainForm, Vars v)
         {
             InitializeComponent();
             this.settings = settings;
             this.mainForm = mainForm;
+            this.vars = v;
 
             SetRadioButtonsBasedOnMode();
             SetIncompleteAllocsCheckBox();
@@ -124,7 +126,7 @@ namespace BusAllocatorApp
         private void SetIncompleteAllocsCheckBox()
         {
             // Only set the checkbox state if in Individual Department Mode
-            int demandMode = settings.vars.GetDemandMode();
+            int demandMode = vars.GetDemandMode();
 
             if (demandMode == 1) incompleteAllocsCheckBox.Checked = settings.vars.canAllocateWithIncompeleteDepts;
             else incompleteAllocsCheckBox.Checked = false; // Default or irrelevant in Total Demand Mode so resets it
@@ -137,7 +139,7 @@ namespace BusAllocatorApp
             //2nd parameter is if debug mode is on
             settings.SetIncompleteAllocs(incompleteAllocsCheckBox.Checked, true);
 
-            settings.ClearDemandData();
+            vars.ClearDemandData();
         }
 
         #endregion
