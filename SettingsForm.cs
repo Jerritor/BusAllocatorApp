@@ -35,7 +35,7 @@ namespace BusAllocatorApp
         /// </summary>
         private void SetRadioButtonsBasedOnMode()
         {
-            int demandMode = settings.v.GetDemandMode();
+            int demandMode = settings.vars.GetDemandMode();
 
             if (demandMode == 1) //indiv dept mode
             {
@@ -124,9 +124,9 @@ namespace BusAllocatorApp
         private void SetIncompleteAllocsCheckBox()
         {
             // Only set the checkbox state if in Individual Department Mode
-            int demandMode = settings.v.GetDemandMode();
+            int demandMode = settings.vars.GetDemandMode();
 
-            if (demandMode == 1) incompleteAllocsCheckBox.Checked = settings.v.canAllocateWithIncompeleteDepts;
+            if (demandMode == 1) incompleteAllocsCheckBox.Checked = settings.vars.canAllocateWithIncompeleteDepts;
             else incompleteAllocsCheckBox.Checked = false; // Default or irrelevant in Total Demand Mode so resets it
         }
 

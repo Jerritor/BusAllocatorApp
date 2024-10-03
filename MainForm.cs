@@ -584,7 +584,7 @@ namespace BusAllocatorApp
         {
             DialogResult result = MessageBox.Show("Have the bus rates changed since your last update?\n\nClick 'Yes' to upload new rates.\nClick 'No' if the rates are up-to-date.",
                                                   "Check Rates",
-                                                  MessageBoxButtons.NoYes,
+                                                  MessageBoxButtons.YesNo,
                                                   MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
@@ -594,7 +594,7 @@ namespace BusAllocatorApp
             {
                 MessageBox.Show("Rates confirmed. Proceeding with loading rates.");
                 
-                vars.EnableBusRateCheckBox();
+                vars.EnableBusRateCheckBox(); //put this in the logic code below once implemented
                 
                 // Proceed with loading rates
             }
@@ -634,11 +634,15 @@ namespace BusAllocatorApp
                     // Check if the total demands data was filled successfully
                     if (vars.totalDemands.IsDataFilled)
                     {
-                        settings.SetDemandModeToComplete();
+                        vars.SetDemandModeToComplete();
                         MessageBox.Show("Demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         UpdateDataGrid();
                     }
-                    else MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    else
+                    {
+
+                        MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
                 else MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -700,7 +704,7 @@ namespace BusAllocatorApp
                     if (vars.canAllocateWithIncompeleteDepts && filledDepartments > 0)
                     {
                         // Some departments have data filled, and allocations can proceed with incomplete departments
-                        settings.SetDemandModeToComplete();
+                        vars.SetDemandModeToComplete();
 
                         string incompleteDeptsModeIsCompletedMsg = $"Demand data was successfully filled for {filledDepartments} out of {totalDepartments} departments. You can allocate bus allocations.";
                         MessageBox.Show(incompleteDeptsModeIsCompletedMsg, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -711,7 +715,7 @@ namespace BusAllocatorApp
                     //If all departments have data filled
                     else if (filledDepartments == totalDepartments)
                     {
-                        settings.SetDemandModeToComplete();
+                        vars.SetDemandModeToComplete();
                         MessageBox.Show("All demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         UpdateDataGrid();
                     }
@@ -738,7 +742,7 @@ namespace BusAllocatorApp
         #region Clear Demand Data Button
         private void clearDemandDataButton_Click(object sender, EventArgs e)
         {
-            settings.ClearDemandData();
+            vars.ClearDemandData();
         }
         #endregion
     }

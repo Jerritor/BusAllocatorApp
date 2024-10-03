@@ -102,9 +102,10 @@ namespace BusAllocatorApp
         #region Settings Fields
         public bool canAllocateWithIncompeleteDepts { get; set; } = false;
 
+        #endregion
+        #endregion
 
-        #endregion
-        #endregion
+        //////////////////
 
         #region Variable Instantiation
         public void InstantiateVars()
@@ -330,6 +331,7 @@ namespace BusAllocatorApp
         {
             return isSecondDateCheckBox;
         }
+
 
         //Allocations Button Checker and State Setter
         private void DisableAllocationsButton()
@@ -1116,18 +1118,45 @@ namespace BusAllocatorApp
             //if active mode is individual dept mode
             if (IsDeptsAndDemandsCompleted != CompletionState.Uninitialized)
             {
-                ClearDemandData(IsDeptsAndDemandsCompleted);
-
-                DisableDemandsCheckBox();
-                DisableAllocationsButton();
+                ClearDeptsAndDemandsData();
+                SetDemandModeToIncomplete(IsDeptsAndDemandsCompleted);
+                ClearAllDemandsInDataGridView();
             }
             //if active mode is total demand mode
             else if (IsTotalDemandsCompleted != CompletionState.Uninitialized)
             {
-                ClearDemandData(IsTotalDemandsCompleted);
+                ClearTotalDemandsData();
+                SetDemandModeToIncomplete(IsTotalDemandsCompleted);
+                ClearAllDemandsInDataGridView();
+            }
+        }
 
+        //also clears demand data
+        private void SetDemandModeToIncomplete(CompletionState modeToInitialize, bool isDebug = false)
+        {
+            if (modeToInitialize == IsDeptsAndDemandsCompleted)
+            {
+                
+                IsDeptsAndDemandsCompleted = CompletionState.Initialized;
                 DisableDemandsCheckBox();
-                DisableAllocationsButton();
+                CheckSetModeCompletionState();
+
+                if (isDebug) OutputDemandModeToDebugConsole();
+            }
+            else if (modeToInitialize == IsTotalDemandsCompleted)
+            {
+                
+                IsTotalDemandsCompleted = CompletionState.Initialized;
+                DisableDemandsCheckBox();
+                CheckSetModeCompletionState();
+
+                if (isDebug) OutputDemandModeToDebugConsole();
+            }
+            else
+            {
+                MessageBox.Show("Invalid mode specified for clearing demand data.",
+                    "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1136,14 +1165,14 @@ namespace BusAllocatorApp
             if (IsDeptsAndDemandsCompleted == CompletionState.Initialized)
             {
                 EnableDemandsCheckBox();
-                EnableAllocationsButton();
+                CheckSetModeCompletionState();
 
                 IsDeptsAndDemandsCompleted = CompletionState.Completed;
             }
             else if (IsTotalDemandsCompleted == CompletionState.Initialized)
             {
                 EnableDemandsCheckBox();
-                EnableAllocationsButton();
+                CheckSetModeCompletionState();
 
                 IsTotalDemandsCompleted = CompletionState.Completed;
             }
