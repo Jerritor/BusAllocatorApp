@@ -85,6 +85,14 @@ namespace BusAllocatorApp
         //is initially off by default as default mode is not all dept demand mode
         public CompletionState IsTotalDemandsCompleted { get; set; } = CompletionState.Uninitialized;
         #endregion
+        #region MainForm State Trackers
+        //Checkboxes
+        private bool isBusRateCheckBox { get; set; } = false;
+        private bool isDemandsCheckBox { get; set; } = false;
+        private bool isFirstDateCheckBox { get; set; } = false;
+        private bool isSecondDateCheckBox { get; set; } = false;
+
+        #endregion
         #region Config Fields
         //CONFIG INFO
         public string configFile = "config.cfg";
@@ -258,6 +266,95 @@ namespace BusAllocatorApp
             capacitySmallBus = 18;
             capacityLargeBus = 56;
             mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
+        }
+        #endregion
+
+        #region Completion State Handling and Checker
+        //BusRateCheckBox
+        public void DisableBusRateCheckBox()
+        {
+            mainForm.busRateCheckBox.Checked = false;
+            isBusRateCheckBox = false;
+        }
+        public void EnableBusRateCheckBox()
+        {
+            mainForm.busRateCheckBox.Checked = true;
+            isBusRateCheckBox = true;
+        }
+        public bool GetBusRateCheckBox()
+        {
+            return isBusRateCheckBox;
+        }
+        //DemandsCheckBox
+        public void DisableDemandsCheckBox()
+        {
+            mainForm.demandsCheckBox.Checked = false;
+            isDemandsCheckBox = false;
+        }
+        public void EnableDemandsCheckBox()
+        {
+            mainForm.demandsCheckBox.Checked = true;
+            isDemandsCheckBox = true;
+        }
+        public bool GetDemandsCheckBox()
+        {
+            return isDemandsCheckBox;
+        }
+        //FirstDateCheckBox
+        public void DisableFirstDateCheckBox()
+        {
+            mainForm.firstDateCheckBox.Checked = false;
+            isFirstDateCheckBox = false;
+        }
+        public void EnableFirstDateCheckBox()
+        {
+            mainForm.firstDateCheckBox.Checked = true;
+            isFirstDateCheckBox = true;
+        }
+        public bool GetFirstDateCheckBox()
+        {
+            return isFirstDateCheckBox;
+        }
+        //SecondDateCheckBox
+        public void DisableSecondDateCheckBox()
+        {
+            mainForm.secondDateCheckBox.Checked = false;
+            isSecondDateCheckBox = false;
+        }
+        public void EnableSecondDateCheckBox()
+        {
+            mainForm.secondDateCheckBox.Checked = true;
+            isSecondDateCheckBox = true;
+        }
+        public bool GetSecondDateCheckBox()
+        {
+            return isSecondDateCheckBox;
+        }
+
+        //Allocations Button Checker and State Setter
+        private void DisableAllocationsButton()
+        {
+            mainForm.generateAllocationsButton.Enabled = false;
+            mainForm.generateAllocationsButton.Visible = false;
+        }
+
+        private void EnableAllocationsButton()
+        {
+            mainForm.generateAllocationsButton.Enabled = true;
+            mainForm.generateAllocationsButton.Visible = true;
+        }
+
+        public void CheckSetModeCompletionState()
+        {
+            // Example of checking if all checkboxes are enabled
+            if (isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox)
+            {
+                EnableAllocationsButton();
+            }
+            else
+            {
+                DisableAllocationsButton();
+            }
         }
         #endregion
 
@@ -1012,7 +1109,49 @@ namespace BusAllocatorApp
 
         #endregion
 
-        #region Demand Mode State Retrieval
+        #region Demand Mode State Handling
+        //Same as SetDemandModeToIncomplete
+        public void ClearDemandData()
+        {
+            //if active mode is individual dept mode
+            if (IsDeptsAndDemandsCompleted != CompletionState.Uninitialized)
+            {
+                ClearDemandData(IsDeptsAndDemandsCompleted);
+
+                DisableDemandsCheckBox();
+                DisableAllocationsButton();
+            }
+            //if active mode is total demand mode
+            else if (IsTotalDemandsCompleted != CompletionState.Uninitialized)
+            {
+                ClearDemandData(IsTotalDemandsCompleted);
+
+                DisableDemandsCheckBox();
+                DisableAllocationsButton();
+            }
+        }
+
+        public void SetDemandModeToComplete(bool isDebug = false)
+        {
+            if (IsDeptsAndDemandsCompleted == CompletionState.Initialized)
+            {
+                EnableDemandsCheckBox();
+                EnableAllocationsButton();
+
+                IsDeptsAndDemandsCompleted = CompletionState.Completed;
+            }
+            else if (IsTotalDemandsCompleted == CompletionState.Initialized)
+            {
+                EnableDemandsCheckBox();
+                EnableAllocationsButton();
+
+                IsTotalDemandsCompleted = CompletionState.Completed;
+            }
+
+            if (isDebug) OutputDemandModeToDebugConsole();
+        }
+
+        //Demand Mode State Retrieval
         //1 = individual department mode, 2 = total department mode
         public int GetDemandMode()
         {

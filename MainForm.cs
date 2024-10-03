@@ -476,9 +476,16 @@ namespace BusAllocatorApp
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
 
+                vars.DisableFirstDateCheckBox();
+                vars.CheckSetModeCompletionState();
                 return false;
             }
-            else { return true; }
+            else
+            {
+                vars.EnableFirstDateCheckBox();
+                vars.CheckSetModeCompletionState();
+                return true;
+            }
         }
 
         private bool CheckSecondDate()
@@ -492,9 +499,16 @@ namespace BusAllocatorApp
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
 
+                vars.DisableSecondDateCheckBox();
+                vars.CheckSetModeCompletionState();
                 return false;
             }
-            else { return true; }
+            else
+            {
+                vars.EnableSecondDateCheckBox();
+                vars.CheckSetModeCompletionState();
+                return true;
+            }
         }
 
         private void firstDatePicker_ValueChanged(object sender, EventArgs e)
@@ -554,11 +568,15 @@ namespace BusAllocatorApp
                                     "Rates Path Missing",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Information);
+
+                    vars.DisableBusRateCheckBox();
                 }
                 else
                 {
                     ShowRatesChangedPopup();
                 }
+
+                //TODO: ADD MORE IFELSE STATEMENTS TO CHECK OTHER CONFIG OPTIONS HERE
             }
         }
 
@@ -566,7 +584,7 @@ namespace BusAllocatorApp
         {
             DialogResult result = MessageBox.Show("Have the bus rates changed since your last update?\n\nClick 'Yes' to upload new rates.\nClick 'No' if the rates are up-to-date.",
                                                   "Check Rates",
-                                                  MessageBoxButtons.YesNo,
+                                                  MessageBoxButtons.NoYes,
                                                   MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
@@ -575,7 +593,9 @@ namespace BusAllocatorApp
             else if (result == DialogResult.No)
             {
                 MessageBox.Show("Rates confirmed. Proceeding with loading rates.");
-                busRateCheckBox.Checked = true;
+                
+                vars.EnableBusRateCheckBox();
+                
                 // Proceed with loading rates
             }
         }

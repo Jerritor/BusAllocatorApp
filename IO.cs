@@ -219,15 +219,20 @@ namespace BusAllocatorApp
             {
                 vars.ratesPath = openFileDialog.FileName;
                 SetConfigOption("rate_path", vars.ratesPath);
-                mainform.busRateCheckBox.Checked = true;
+
+                vars.EnableBusRateCheckBox();
 
                 //mainform.WriteLine("Rates sheet uploaded succesfully! " + vars.ratesPath);
 
-                
+
 
                 // Logic to handle the file upload
                 //MessageBox.Show("Rates sheet uploaded successfully!");
                 // Proceed with loading rates
+            }
+            else
+            {
+                vars.DisableBusRateCheckBox();
             }
         }
 
