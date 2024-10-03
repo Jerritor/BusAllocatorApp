@@ -570,6 +570,7 @@ namespace BusAllocatorApp
                                     MessageBoxIcon.Information);
 
                     vars.DisableBusRateCheckBox();
+                    vars.CheckSetModeCompletionState();
                 }
                 else
                 {
@@ -595,7 +596,8 @@ namespace BusAllocatorApp
                 MessageBox.Show("Rates confirmed. Proceeding with loading rates.");
                 
                 vars.EnableBusRateCheckBox(); //put this in the logic code below once implemented
-                
+                vars.CheckSetModeCompletionState(); //this too
+
                 // Proceed with loading rates
             }
         }
