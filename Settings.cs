@@ -89,11 +89,13 @@ namespace BusAllocatorApp
         }
         #endregion
 
+        #region Incomplete Allocation Checkbox Handling
         public void SetIncompleteAllocs(bool canIncompleteDemands, bool isDebug = false)
         {
-            vars.canAllocateWithIncompeleteDepts = canIncompleteDemands;
+            vars.canAllocateWithIncompleteDepts = canIncompleteDemands;
             //debug prints
-            if (isDebug) Debug.WriteLine($"canAllocateIncomplete = '{vars.canAllocateWithIncompeleteDepts}'");
+            if (isDebug) Debug.WriteLine($"canAllocateIncomplete = '{vars.canAllocateWithIncompleteDepts}'");
         }
+        #endregion
     }
 }

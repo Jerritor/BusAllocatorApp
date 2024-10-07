@@ -589,7 +589,7 @@ namespace BusAllocatorApp
                                     MessageBoxIcon.Information);
 
                     vars.DisableBusRateCheckBox();
-                    vars.CheckSetModeCompletionState();
+                    //vars.CheckSetModeCompletionState();
                 }
                 else
                 {
@@ -670,33 +670,6 @@ namespace BusAllocatorApp
             // Individual Department Mode
             else if (demandMode == 1)
             {
-                /**
-                // Upload department spreadsheet(s)
-                List<string> selectedFilePaths = vars.io.UploadIndivDeptSpreadsheet();
-
-                // Check if any files were selected
-                if (selectedFilePaths != null && selectedFilePaths.Any())
-                {
-                    foreach (string filePath in selectedFilePaths)
-                    {
-                        // Process each file immediately
-                        bool isDataFilled = vars.ProcessIndivDeptSpreadsheet(filePath,true);
-                        if (isDataFilled)
-                        {
-                            WriteLine($"Demand data was successfully filled for file: {Path.GetFileName(filePath)}");
-
-                            //Disabled because grid should be updated only when all demands are set or when checkbox in settings is checked
-                            //UpdateDataGrid(); // Update the grid after each successful upload
-                        }
-                        else
-                        {
-                            string fileDemandErrorMsg = $"Demand data could not be completely filled for file: {Path.GetFileName(filePath)}. Please check for any empty fields.";
-                            WriteLine(fileDemandErrorMsg);
-                            MessageBox.Show(fileDemandErrorMsg, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }
-                    }
-                }
-                **/
                 // Upload department spreadsheet(s)
                 List<string> selectedFilePaths = vars.io.UploadIndivDeptSpreadsheet();
 
@@ -717,12 +690,15 @@ namespace BusAllocatorApp
                         }
                     }
 
+                    //////////FILE PROCESSING DONE HERE
+
+
                     // After processing all files
                     int totalDepartments = vars.deptsAndDemands.Count;
                     int filledDepartments = vars.deptsAndDemands.Count(dept => dept.IsDataFilled);
 
-                    //if incomplete demands checkbox is enabled in settings
-                    if (vars.canAllocateWithIncompeleteDepts && filledDepartments > 0)
+                    //if incomplete demands checkbox is enabled in settings AND there is at least 1 filled department
+                    if (vars.canAllocateWithIncompleteDepts && filledDepartments > 0)
                     {
                         // Some departments have data filled, and allocations can proceed with incomplete departments
                         vars.SetDemandModeToComplete();
@@ -733,7 +709,7 @@ namespace BusAllocatorApp
 
                         UpdateDataGrid();
                     }
-                    //If all departments have data filled
+                    //If incomplete demands checkbox is disabled AND all departments have data filled
                     else if (filledDepartments == totalDepartments)
                     {
                         vars.SetDemandModeToComplete();

@@ -100,7 +100,7 @@ namespace BusAllocatorApp
         public string totalDemandFilePath { get; set; }
         #endregion
         #region Settings Fields
-        public bool canAllocateWithIncompeleteDepts { get; set; } = false;
+        public bool canAllocateWithIncompleteDepts { get; set; } = false;
 
         #endregion
         #endregion
@@ -354,8 +354,37 @@ namespace BusAllocatorApp
             mainForm.generateAllocationsButton.Enabled = true;
             mainForm.generateAllocationsButton.Visible = true;
         }
-        public void CheckSetModeCompletionState()
+
+        //Departments Filled State Checker and Completion State Checker
+        //false = No, true = Yes.
+        public bool AreDepartmentsFilled()
         {
+            // Check the settings checkbox state (canAllocateWithIncompleteDepts)
+            if (!canAllocateWithIncompleteDepts)
+            {
+                // If incomplete departments are not allowed, return true only if all departments are filled
+                return deptsAndDemands.All(dept => dept.IsDataFilled);
+            }
+            else
+            {
+                // If incomplete departments are allowed, return true if at least one department is filled
+                return deptsAndDemands.Any(dept => dept.IsDataFilled);
+            }
+        }
+
+        public void CheckSetModeCompletionState(bool shouldUpdateDataGrid = false)
+        {
+            //if all requirements are met
+            if (AreDepartmentsFilled() && (isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox))
+            {
+                if (shouldUpdateDataGrid) mainForm.UpdateDataGrid();
+                if (!mainForm.generateAllocationsButton.Visible) EnableAllocationsButton();
+            }
+            else
+            {
+                if (mainForm.generateAllocationsButton.Visible) DisableAllocationsButton();
+            }
+            /**
             // Example of checking if all checkboxes are enabled
             if (isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox)
             {
@@ -365,6 +394,7 @@ namespace BusAllocatorApp
             {
                 if (mainForm.generateAllocationsButton.Visible) DisableAllocationsButton();
             }
+            **/
         }
         #endregion
 

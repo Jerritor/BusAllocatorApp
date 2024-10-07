@@ -128,7 +128,7 @@ namespace BusAllocatorApp
             // Only set the checkbox state if in Individual Department Mode
             int demandMode = vars.GetDemandMode();
 
-            if (demandMode == 1) incompleteAllocsCheckBox.Checked = settings.vars.canAllocateWithIncompeleteDepts;
+            if (demandMode == 1) incompleteAllocsCheckBox.Checked = settings.vars.canAllocateWithIncompleteDepts;
             else incompleteAllocsCheckBox.Checked = false; // Default or irrelevant in Total Demand Mode so resets it
         }
 
