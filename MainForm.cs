@@ -717,7 +717,7 @@ namespace BusAllocatorApp
                         // Some departments have data filled, and allocations can proceed with incomplete departments
                         vars.SetDemandModeToComplete();
 
-                        string incompleteDeptsModeIsCompletedMsg = $"Demand data was successfully filled for {filledDepartments} out of {totalDepartments} departments. You can allocate bus allocations.";
+                        string incompleteDeptsModeIsCompletedMsg = $"Demand data was successfully filled for {filledDepartments} out of {totalDepartments} departments.";
                         MessageBox.Show(incompleteDeptsModeIsCompletedMsg, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         WriteLine(incompleteDeptsModeIsCompletedMsg);
 
