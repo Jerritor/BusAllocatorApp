@@ -364,18 +364,6 @@ namespace BusAllocatorApp
 
             return timeSets;
         }
-        /**
-        public List<Dictionary<string, object>> LoadTimeSets()
-        {
-            string timeSetsFilePath = GetPathInDataFolder(timeSetsFileName);
-            if (!File.Exists(timeSetsFilePath))
-            {
-                return new List<Dictionary<string, object>>();
-            }
-
-            string json = File.ReadAllText(timeSetsFilePath);
-            return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(json);
-        }**/
 
         //Load Departments
         public List<string> LoadDeptNames()

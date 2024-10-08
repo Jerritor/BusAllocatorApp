@@ -615,7 +615,7 @@ namespace BusAllocatorApp
                 MessageBox.Show("Rates confirmed. Proceeding with loading rates.");
                 
                 vars.EnableBusRateCheckBox(); //put this in the logic code below once implemented
-                vars.CheckSetModeCompletionState(); //this too
+                //vars.CheckSetModeCompletionState(); //this too
 
                 // Proceed with loading rates
             }
@@ -649,20 +649,34 @@ namespace BusAllocatorApp
 
                 if (!string.IsNullOrEmpty(vars.totalDemandFilePath))
                 {
-                    // Process the total demand spreadsheet
-                    vars.ProcessTotalDemandSpreadsheet();
-
-                    // Check if the total demands data was filled successfully
-                    if (vars.totalDemands.IsDataFilled)
+                    try
                     {
-                        vars.SetDemandModeToComplete();
-                        WriteLine("Demand data was successfully filled!");
-                        UpdateDataGrid();
+                        // Process the total demand spreadsheet
+                        vars.ProcessTotalDemandSpreadsheet();
+
+                        if (vars.totalDemands != null)
+                        {
+                            // Check if the total demands data was filled successfully
+                            if (vars.totalDemands.IsDataFilled)
+                            {
+                                vars.SetDemandModeToComplete();
+                                WriteLine("Demand data was successfully filled!");
+                                UpdateDataGrid();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("An error occurred: Demand data could not be processed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-
-                        MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        // Handle the specific exception thrown by ProcessTotalDemandSpreadsheet
+                        MessageBox.Show($"An error occurred while processing the spreadsheet: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

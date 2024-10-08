@@ -148,7 +148,7 @@ namespace BusAllocatorApp
             {
                 "3M", "ASTI", "IE", "ICTC", "JCM", "VISHAY", "OKURA", "NIDEC", "R&D / NPI", "TIP", "SUMITRONICS",
                 "MERCHANT", "GLOBAL SKYWARE", "GLOBAL INVACOM", "ANALOG", "ENGG", "QA", "PCMC/SCM", "WAREHOUSE",
-                "FACILITIES", "TQM", "IT", "INTERNAL AUDITOR", "FINANCE", "HR", "SECURITY", "TOPSEARCH", "CANTEEN",
+                "FACILITIES", "TQM", "IM", "INTERNAL AUDITOR", "FINANCE", "HR", "SECURITY", "TOPSEARCH", "CANTEEN",
                 "OFFISTE", "ERTI", "CREOTEC", "ESPI", "Sales and Marketing"
             };
             mainForm.WriteLine("Instantiated departments.");
@@ -372,8 +372,13 @@ namespace BusAllocatorApp
             }
         }
 
+        //isInitialized: set to true if mainForm and vars hasnt been initialized yet
+        //shouldUpdateDataGrid, should set to true ONLY if the datagridview should be updated as well
         public void CheckSetModeCompletionState(bool shouldUpdateDataGrid = false)
         {
+            //bool areDeptsFilled = false;
+            //if (isInitialized) areDeptsFilled = AreDepartmentsFilled();
+
             //if all requirements are met
             if (AreDepartmentsFilled() && (isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox))
             {
@@ -384,6 +389,7 @@ namespace BusAllocatorApp
             {
                 if (mainForm.generateAllocationsButton.Visible) DisableAllocationsButton();
             }
+
             /**
             // Example of checking if all checkboxes are enabled
             if (isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox)
