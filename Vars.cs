@@ -379,15 +379,42 @@ namespace BusAllocatorApp
             //bool areDeptsFilled = false;
             //if (isInitialized) areDeptsFilled = AreDepartmentsFilled();
 
-            //if all requirements are met
-            if (AreDepartmentsFilled() && (isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox))
+            bool areAllCheckboxesChecked = isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox;
+            int demandMode = GetDemandMode();
+
+            //individual dept mode
+            if (demandMode == 1)
             {
-                if (shouldUpdateDataGrid) mainForm.UpdateDataGrid();
-                if (!mainForm.generateAllocationsButton.Visible) EnableAllocationsButton();
+                //if all requirements are met
+                if (AreDepartmentsFilled() && areAllCheckboxesChecked)
+                {
+                    if (!mainForm.generateAllocationsButton.Visible) EnableAllocationsButton();
+
+                    if (shouldUpdateDataGrid) mainForm.UpdateDataGrid();
+                }
+                else
+                {
+                    if (mainForm.generateAllocationsButton.Visible) DisableAllocationsButton();
+                }
+            }
+            //total dept mode
+            if (demandMode == 2)
+            {
+                //if all requirements are met
+                if (areAllCheckboxesChecked)
+                {
+                    if (!mainForm.generateAllocationsButton.Visible) EnableAllocationsButton();
+
+                    if (shouldUpdateDataGrid) mainForm.UpdateDataGrid();
+                }
+                else
+                {
+                    if (mainForm.generateAllocationsButton.Visible) DisableAllocationsButton();
+                }
             }
             else
             {
-                if (mainForm.generateAllocationsButton.Visible) DisableAllocationsButton();
+                Debug.WriteLine("CANNOT GET DEMAND MODE");
             }
 
             /**
@@ -1183,7 +1210,9 @@ namespace BusAllocatorApp
                 
                 IsDeptsAndDemandsCompleted = CompletionState.Initialized;
                 DisableDemandsCheckBox();
-                CheckSetModeCompletionState();
+
+                DisableAllocationsButton();
+                //CheckSetModeCompletionState(false);
 
                 if (isDebug) OutputDemandModeToDebugConsole();
             }
@@ -1192,7 +1221,9 @@ namespace BusAllocatorApp
                 
                 IsTotalDemandsCompleted = CompletionState.Initialized;
                 DisableDemandsCheckBox();
-                CheckSetModeCompletionState();
+
+                DisableAllocationsButton();
+                //CheckSetModeCompletionState(false);
 
                 if (isDebug) OutputDemandModeToDebugConsole();
             }
@@ -1209,14 +1240,14 @@ namespace BusAllocatorApp
             if (IsDeptsAndDemandsCompleted == CompletionState.Initialized)
             {
                 EnableDemandsCheckBox();
-                CheckSetModeCompletionState();
+                CheckSetModeCompletionState(false);
 
                 IsDeptsAndDemandsCompleted = CompletionState.Completed;
             }
             else if (IsTotalDemandsCompleted == CompletionState.Initialized)
             {
                 EnableDemandsCheckBox();
-                CheckSetModeCompletionState();
+                CheckSetModeCompletionState(false);
 
                 IsTotalDemandsCompleted = CompletionState.Completed;
             }

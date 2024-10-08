@@ -515,7 +515,7 @@ namespace BusAllocatorApp
                 WriteLine("First date selected: " + formattedDate);
                 //WriteLine(vars.firstDay.Value.ToString());
             }
-            vars.CheckSetModeCompletionState();
+            vars.CheckSetModeCompletionState(true);
         }
         private void setSecondDateButton_Click(object sender, EventArgs e)
         {
@@ -539,7 +539,7 @@ namespace BusAllocatorApp
                 WriteLine("Second date selected: " + formattedDate);
                 //WriteLine(vars.secondDay.Value.ToString());
             }
-            vars.CheckSetModeCompletionState();
+            vars.CheckSetModeCompletionState(true);
         }
         private void editSecondDateButton_Click(object sender, EventArgs e)
         {
@@ -558,12 +558,12 @@ namespace BusAllocatorApp
         {
             //'out _' discards the outputed value
             CheckFirstDate(out _);
-            vars.CheckSetModeCompletionState();
+            vars.CheckSetModeCompletionState(true);
         }
         private void secondDatePicker_ValueChanged(object sender, EventArgs e)
         {
             CheckSecondDate();
-            vars.CheckSetModeCompletionState();
+            vars.CheckSetModeCompletionState(true);
         }
         #endregion
 

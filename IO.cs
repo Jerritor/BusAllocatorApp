@@ -221,7 +221,6 @@ namespace BusAllocatorApp
                 SetConfigOption("rate_path", vars.ratesPath);
 
                 vars.EnableBusRateCheckBox();
-                vars.CheckSetModeCompletionState();
 
                 //mainform.WriteLine("Rates sheet uploaded succesfully! " + vars.ratesPath);
 
@@ -234,8 +233,9 @@ namespace BusAllocatorApp
             else
             {
                 vars.DisableBusRateCheckBox();
-                vars.CheckSetModeCompletionState();
             }
+
+            vars.CheckSetModeCompletionState(false);
         }
 
         public void UploadTotalDemandSheet()
