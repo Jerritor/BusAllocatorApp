@@ -396,6 +396,7 @@
             generateAllocationsButton.Text = "Generate Allocations Spreadsheet";
             generateAllocationsButton.UseVisualStyleBackColor = false;
             generateAllocationsButton.Visible = false;
+            generateAllocationsButton.Click += generateAllocationsButton_Click;
             // 
             // outputLog
             // 

@@ -608,12 +608,16 @@ namespace BusAllocatorApp
                                                   MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                vars.io.UploadRatesSheet();
+                vars.InstantiateRates(); //replace this later
+
+                //TODO: ACTIVATE THIS WHEN ITS READY
+                //vars.io.UploadRatesSheet();
             }
             else if (result == DialogResult.No)
             {
                 MessageBox.Show("Rates confirmed. Proceeding with loading rates.");
-                
+                vars.InstantiateVars(); //replace this later
+
                 vars.EnableBusRateCheckBox(); //put this in the logic code below once implemented
                 //vars.CheckSetModeCompletionState(); //this too
 
@@ -756,5 +760,10 @@ namespace BusAllocatorApp
             vars.ClearDemandData();
         }
         #endregion
+
+        private void generateAllocationsButton_Click(object sender, EventArgs e)
+        {
+            BusAllocator allocator = new BusAllocator(vars, vars.GetDemandMode());
+        }
     }
 }

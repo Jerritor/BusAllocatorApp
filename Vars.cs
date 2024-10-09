@@ -191,7 +191,7 @@ namespace BusAllocatorApp
             mainForm.WriteLine("Instantiated timeSets.");
         }
 
-        private void InstantiateRates()
+        public void InstantiateRates()
         {
             costSmallBus = new Dictionary<string, double>
             {
@@ -201,7 +201,7 @@ namespace BusAllocatorApp
                 { "CABUYAO", 586.5 },
                 { "CALAMBA", 1300.5 }
             };
-            mainForm.WriteLine("Instantiated costSmallBus.");
+            Debug.WriteLine("Instantiated costSmallBus.");
 
             costLargeBus = new Dictionary<string, double>
             {
@@ -212,7 +212,7 @@ namespace BusAllocatorApp
                 { "CABUYAO", 1935 },
                 { "CALAMBA", 2127 }
             };
-            mainForm.WriteLine("Instantiated costLargeBus.");
+            Debug.WriteLine("Instantiated costLargeBus.");
 
             costSmallHybridRoute = new Dictionary<(string, string), double>
             {
@@ -220,7 +220,7 @@ namespace BusAllocatorApp
                 { ("BINAN", "CARMONA"), 630.0 },
                 { ("CALAMBA", "CABUYAO"), 630.0 }
             };
-            mainForm.WriteLine("Instantiated costSmallHybridRoute.");
+            Debug.WriteLine("Instantiated costSmallHybridRoute.");
 
             costLargeHybridRoute = new Dictionary<(string, string), double>
             {
@@ -228,7 +228,7 @@ namespace BusAllocatorApp
                 { ("BINAN", "CARMONA"), 2550 },
                 { ("CALAMBA", "CABUYAO"), 2625 }
             };
-            mainForm.WriteLine("Instantiated costLargeHybridRoute.");
+            Debug.WriteLine("Instantiated costLargeHybridRoute.");
         }
 
         private void InstantiateBuffers()
@@ -1314,6 +1314,64 @@ namespace BusAllocatorApp
             // Return the calculated total demands
             return demandCounter;
         }
+
+        /// <summary>
+        /// Aggregates demand data for allocation based on the specified mode.
+        /// </summary>
+        /// <param name="mode">Demand mode: 1 for Individual Department Mode, 2 for Total Demand Mode.</param>
+        /// <returns>A dictionary mapping each route to its total demand.</returns>
+        public Dictionary<string, int> GetDemandsForAlloc(int mode)
+        {
+            Dictionary<string, int> demands = new Dictionary<string, int>();
+
+            if (mode == 2)
+            {
+                // Total Demand Mode
+                foreach (var timeSet in totalDemands.DemandData)
+                {
+                    foreach (var route in timeSet.Value)
+                    {
+                        if (route.Value.HasValue)
+                        {
+                            if (demands.ContainsKey(route.Key))
+                                demands[route.Key] += route.Value.Value;
+                            else
+                                demands[route.Key] = route.Value.Value;
+                        }
+                    }
+                }
+            }
+            else if (mode == 1)
+            {
+                // Individual Department Mode
+                foreach (var department in deptsAndDemands)
+                {
+                    if (department.IsDataFilled)
+                    {
+                        foreach (var timeSet in department.DemandData)
+                        {
+                            foreach (var route in timeSet.Value)
+                            {
+                                if (route.Value.HasValue)
+                                {
+                                    if (demands.ContainsKey(route.Key))
+                                        demands[route.Key] += route.Value.Value;
+                                    else
+                                        demands[route.Key] = route.Value.Value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Invalid demand mode specified.");
+            }
+
+            return demands;
+        }
+
         #endregion
 
         #region DataGridView Handling
