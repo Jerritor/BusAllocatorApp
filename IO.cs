@@ -164,8 +164,7 @@ namespace BusAllocatorApp
                                     MessageBoxIcon.Error);
                 }
             }
-
-            if (Directory.Exists(dataFolder))
+            else //if (Directory.Exists(dataFolder))
             {
                 bool isEmpty = Directory.GetFiles(dataFolder).Length == 0 &&
                                Directory.GetDirectories(dataFolder).Length == 0;

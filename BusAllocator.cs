@@ -100,8 +100,9 @@ namespace BusAllocatorApp
             IntegrateVars();
             //set to true if you want to try with test values
             //InstantiateVars();
-            
-            IncomingModel();
+
+            ProcessAllocationsPerTimeSet();
+            //IncomingModel();
         }
 
         #region Model variables instantiation
@@ -237,7 +238,7 @@ namespace BusAllocatorApp
 
 
             //Integrate Demand Data
-            this.demand = vars.GetDemandsForAlloc(this.DemandMode);
+            //this.demand = vars.GetDemandsForAlloc(this.DemandMode);
         }
         /**
         private void InstantiateTemplateVars()
@@ -399,7 +400,50 @@ namespace BusAllocatorApp
             }
         }
         **/
+        public void ProcessAllocationsPerTimeSet()
+        {
+            foreach (var timeSet in timeSets)
+            {
+                if (!timeSet.IsOutgoing)
+                {
+                    // For incoming TimeSets, use the current allocation model
+                    this.demand = vars.GetDemandsForAlloc(this.DemandMode, timeSet);
+                    IncomingModel(timeSet);
+                }
+                else
+                {
+                    // For outgoing TimeSets, use a modified version of the model
+                    this.demand = vars.GetDemandsForAlloc(this.DemandMode, timeSet);
+                    OutgoingModel(timeSet);
+                }
+            }
+        }
 
+        public void IncomingModel(TimeSet timeSet)
+        {
+            // Initialize the solver
+            solver = Solver.CreateSolver("CBC_MIXED_INTEGER_PROGRAMMING");
+            if (solver == null)
+            {
+                throw new Exception("Failed to create solver.");
+            }
+
+            // Initialize Decision Variables
+            InitializeDecisionVariables();
+
+            // Define Objective Function
+            DefineObjectiveFunction();
+
+            // Define Constraints
+            DefineConstraints();
+
+            // Solve the problem
+            Solver.ResultStatus resultStatus = solver.Solve();
+
+            // Handle Solution
+            HandleSolution(resultStatus, timeSet);
+        }
+        /**
         public void IncomingModel()
         {
             // Initialize the solver
@@ -423,7 +467,34 @@ namespace BusAllocatorApp
 
             // Handle Solution
             HandleSolution(resultStatus);
+        }**/
+        public void OutgoingModel(TimeSet timeSet)
+        {
+            IncomingModel(timeSet);
+            /**
+            // Initialize the solver
+            solver = Solver.CreateSolver("CBC_MIXED_INTEGER_PROGRAMMING");
+            if (solver == null)
+            {
+                throw new Exception("Failed to create solver.");
+            }
+
+            // Initialize Decision Variables
+            InitializeDecisionVariables();
+
+            // Define Objective Function
+            DefineObjectiveFunction();
+
+            // Define Constraints (modify as needed for outgoing routes)
+            DefineConstraints();
+
+            // Solve the problem
+            Solver.ResultStatus resultStatus = solver.Solve();
+
+            // Handle Solution
+            HandleSolution(resultStatus, timeSet);**/
         }
+
 
         /// Initializes decision variables for the optimization model.
         /// </summary>
@@ -589,6 +660,35 @@ namespace BusAllocatorApp
             }
         }
 
+        private void HandleSolution(Solver.ResultStatus resultStatus, TimeSet timeSet)
+        {
+            if (resultStatus == Solver.ResultStatus.OPTIMAL)
+            {
+                vars.mainForm.WriteLine($"TimeSet: {timeSet.GetFormattedTimeINOUT()}");
+                vars.mainForm.WriteLine($"Total Cost = {solver!.Objective().Value()}");
+
+                // Output variable values for solo routes
+                foreach (var route in solo_routes)
+                {
+                    vars.mainForm.WriteLine($"{x_small[route].Name()} = {x_small[route].SolutionValue()}");
+                    vars.mainForm.WriteLine($"{x_large[route].Name()} = {x_large[route].SolutionValue()}");
+                }
+
+                // Output variable values for hybrid routes
+                foreach (var hybrid in hybrid_routes)
+                {
+                    var key = (hybrid.Item1, hybrid.Item2);
+                    vars.mainForm.WriteLine($"{y_small[key].Name()} = {y_small[key].SolutionValue()}");
+                    vars.mainForm.WriteLine($"{y_large[key].Name()} = {y_large[key].SolutionValue()}");
+                }
+            }
+            else
+            {
+                vars.mainForm.WriteLine($"TimeSet: {timeSet.GetFormattedTimeINOUT()}");
+                vars.mainForm.WriteLine("The problem does not have an optimal solution.");
+            }
+        }
+        /**
         /// <summary>
         /// Handles the solution after the solver has run.
         /// </summary>
@@ -613,16 +713,12 @@ namespace BusAllocatorApp
                     vars.mainForm.WriteLine($"{y_small[key].Name()} = {y_small[key].SolutionValue()}");
                     vars.mainForm.WriteLine($"{y_large[key].Name()} = {y_large[key].SolutionValue()}");
                 }
-                /**foreach (var hybrid in hybrid_routes)
-                {
-                    vars.mainForm.WriteLine($"{y_small[hybrid].Name()} = {y_small[hybrid].SolutionValue()}");
-                    vars.mainForm.WriteLine($"{y_large[hybrid].Name()} = {y_large[hybrid].SolutionValue()}");
-                }**/
             }
             else
             {
                 vars.mainForm.WriteLine("The problem does not have an optimal solution.");
             }
         }
+        **/
     }
 }

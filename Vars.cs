@@ -110,27 +110,27 @@ namespace BusAllocatorApp
         #region Variable Instantiation
         public void InstantiateVars()
         {
-            InstantiateSoloRoutes();
-            InstantiateHybridRoutes();
-            InstantiateDeptNames();
-            InstantiateDates();
-            InstantiateTimeSets();
-            InstantiateRates();
-            InstantiateBuffers();
-            InstantiateBusCapacities();
+            InstantiateSoloRoutes(true);
+            InstantiateHybridRoutes(true);
+            InstantiateDeptNames(true);
+            InstantiateDates(true);
+            InstantiateTimeSets(true);
+            InstantiateRates(true);
+            InstantiateBuffers(true);
+            InstantiateBusCapacities(true);
         }
 
-        private void InstantiateSoloRoutes()
+        private void InstantiateSoloRoutes(bool isDebug = false)
         {
             // Instantiate solo_routes list
             solo_routes = new List<string>
             {
                 "ALABANG", "BINAN", "BALIBAGO", "CARMONA", "CABUYAO", "CALAMBA"
             };
-            mainForm.WriteLine("Instantiated solo_routes.");
+            if (isDebug) mainForm.WriteLine("Instantiated solo_routes.");
         }
 
-        private void InstantiateHybridRoutes()
+        private void InstantiateHybridRoutes(bool isDebug = false)
         {
             // Instantiate hybrid_routes list
             hybrid_routes = new List<Tuple<string, string>>
@@ -139,10 +139,10 @@ namespace BusAllocatorApp
                 Tuple.Create("BINAN", "CARMONA"),
                 Tuple.Create("CALAMBA", "CABUYAO")
             };
-            mainForm.WriteLine("Instantiated hybrid_routes.");
+            if (isDebug) mainForm.WriteLine("Instantiated hybrid_routes.");
         }
 
-        private void InstantiateDeptNames()
+        private void InstantiateDeptNames(bool isDebug = false)
         {
             deptNames = new List<string>
             {
@@ -151,17 +151,17 @@ namespace BusAllocatorApp
                 "FACILITIES", "TQM", "IM", "INTERNAL AUDITOR", "FINANCE", "HR", "SECURITY", "TOPSEARCH", "CANTEEN",
                 "OFFISTE", "ERTI", "CREOTEC", "ESPI", "Sales and Marketing"
             };
-            mainForm.WriteLine("Instantiated departments.");
+            if (isDebug) mainForm.WriteLine("Instantiated departments.");
         }
 
-        private void InstantiateDates()
+        private void InstantiateDates(bool isDebug = false)
         {
             firstDay = new DateTime(2024, 2, 26); // Monday, Feb 26
             secondDay = new DateTime(2024, 2, 27); // Tuesday, Feb 27
-            mainForm.WriteLine("Instantiated firstDay & secondDay.");
+            if (isDebug) mainForm.WriteLine("Instantiated firstDay & secondDay.");
         }
 
-        private void InstantiateTimeSets()
+        private void InstantiateTimeSets(bool isDebug = false)
         {
             /** OLD WAY
             timeSets = new List<Dictionary<string, object>>
@@ -188,10 +188,10 @@ namespace BusAllocatorApp
                 new TimeSet(false, "7:00AM",false)
             };
 
-            mainForm.WriteLine("Instantiated timeSets.");
+            if (isDebug) mainForm.WriteLine("Instantiated timeSets.");
         }
 
-        public void InstantiateRates()
+        public void InstantiateRates(bool isDebug = false)
         {
             costSmallBus = new Dictionary<string, double>
             {
@@ -201,7 +201,7 @@ namespace BusAllocatorApp
                 { "CABUYAO", 586.5 },
                 { "CALAMBA", 1300.5 }
             };
-            Debug.WriteLine("Instantiated costSmallBus.");
+            if (isDebug) mainForm.WriteLine("Instantiated costSmallBus.");
 
             costLargeBus = new Dictionary<string, double>
             {
@@ -212,7 +212,7 @@ namespace BusAllocatorApp
                 { "CABUYAO", 1935 },
                 { "CALAMBA", 2127 }
             };
-            Debug.WriteLine("Instantiated costLargeBus.");
+            if (isDebug) mainForm.WriteLine("Instantiated costLargeBus.");
 
             costSmallHybridRoute = new Dictionary<(string, string), double>
             {
@@ -220,7 +220,7 @@ namespace BusAllocatorApp
                 { ("BINAN", "CARMONA"), 630.0 },
                 { ("CALAMBA", "CABUYAO"), 630.0 }
             };
-            Debug.WriteLine("Instantiated costSmallHybridRoute.");
+            if (isDebug) mainForm.WriteLine("Instantiated costSmallHybridRoute.");
 
             costLargeHybridRoute = new Dictionary<(string, string), double>
             {
@@ -228,10 +228,10 @@ namespace BusAllocatorApp
                 { ("BINAN", "CARMONA"), 2550 },
                 { ("CALAMBA", "CABUYAO"), 2625 }
             };
-            Debug.WriteLine("Instantiated costLargeHybridRoute.");
+            if (isDebug) mainForm.WriteLine("Instantiated costLargeHybridRoute.");
         }
 
-        private void InstantiateBuffers()
+        private void InstantiateBuffers(bool isDebug = false)
         {
             bufferCurrentSmall = new Dictionary<object, int>
             {
@@ -245,7 +245,7 @@ namespace BusAllocatorApp
                 { ("BINAN", "CARMONA"), 0 },
                 { ("CALAMBA", "CABUYAO"), 0 }
             };
-            mainForm.WriteLine("Instantiated bufferCurrentSmall.");
+            if (isDebug) mainForm.WriteLine("Instantiated bufferCurrentSmall.");
 
             bufferCurrentLarge = new Dictionary<object, int>
             {
@@ -259,14 +259,14 @@ namespace BusAllocatorApp
                 { ("BINAN", "CARMONA"), 3 },
                 { ("CALAMBA", "CABUYAO"), 3 }
             };
-            mainForm.WriteLine("Instantiated bufferCurrentLarge.");
+            if (isDebug) mainForm.WriteLine("Instantiated bufferCurrentLarge.");
         }
 
-        private void InstantiateBusCapacities()
+        private void InstantiateBusCapacities(bool isDebug = false)
         {
             capacitySmallBus = 18;
             capacityLargeBus = 56;
-            mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
+            if (isDebug) mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
         }
         #endregion
 
@@ -467,20 +467,23 @@ namespace BusAllocatorApp
         #endregion
 
         #region IO Loading JSON Files
-        private void LoadRoutes()
+        private void LoadRoutes(bool isDebug = false)
         {
             (solo_routes, hybrid_routes) = io.LoadRoutes();
 
             //printing
-            mainForm.WriteLine(StringListToString(solo_routes));
-            mainForm.WriteLine(StringListOfTuplesToString(hybrid_routes));
+            if (isDebug)
+            {
+                mainForm.WriteLine(StringListToString(solo_routes));
+                mainForm.WriteLine(StringListOfTuplesToString(hybrid_routes));
+            }
         }
 
-        private void LoadTimeSets()
+        private void LoadTimeSets(bool isDebug = false)
         {
             timeSets = io.LoadTimeSets();
 
-            PrintAllTimeSets();
+            if (isDebug) PrintAllTimeSets();
             //mainForm.WriteLine(StringListToString(timeSets));
         }
 
@@ -489,7 +492,7 @@ namespace BusAllocatorApp
             deptNames = io.LoadDeptNames();
         }
 
-        public void LoadDepartments(bool isInitialLoad = false)
+        public void LoadDepartments(bool isInitialLoad = false, bool isDebug = false)
         {
             LoadDepartmentNames();
 
@@ -499,10 +502,13 @@ namespace BusAllocatorApp
             //initialize the department demands
             UpdateDepartmentsWithRoutesAndTimeSets(isInitialLoad);
 
-            //printing department names
-            mainForm.WriteLine(StringListToString(deptNames));
-            //printing departments object list
-            PrintAllDepartments();
+            if (isDebug)
+            {
+                //printing department names
+                mainForm.WriteLine(StringListToString(deptNames));
+                //printing departments object list
+                PrintAllDepartments();
+            }
         }
 
         public void LoadJSONFiles()
@@ -1315,6 +1321,56 @@ namespace BusAllocatorApp
             return demandCounter;
         }
 
+        public Dictionary<string, int> GetDemandsForAlloc(int mode, TimeSet timeSet)
+        {
+            Dictionary<string, int> demands = new Dictionary<string, int>();
+
+            if (mode == 2)
+            {
+                // Total Demand Mode
+                if (totalDemands.DemandData.ContainsKey(timeSet.GetFormattedTimeINOUT()))
+                {
+                    foreach (var route in totalDemands.DemandData[timeSet.GetFormattedTimeINOUT()])
+                    {
+                        if (route.Value.HasValue)
+                        {
+                            demands[route.Key] = route.Value.Value;
+                        }
+                    }
+                }
+            }
+            else if (mode == 1)
+            {
+                // Individual Department Mode
+                foreach (var department in deptsAndDemands)
+                {
+                    if (department.IsDataFilled)
+                    {
+                        if (department.DemandData.ContainsKey(timeSet.GetFormattedTimeINOUT()))
+                        {
+                            foreach (var route in department.DemandData[timeSet.GetFormattedTimeINOUT()])
+                            {
+                                if (route.Value.HasValue)
+                                {
+                                    if (demands.ContainsKey(route.Key))
+                                        demands[route.Key] += route.Value.Value;
+                                    else
+                                        demands[route.Key] = route.Value.Value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Invalid demand mode specified.");
+            }
+
+            return demands;
+        }
+
+        /**
         /// <summary>
         /// Aggregates demand data for allocation based on the specified mode.
         /// </summary>
@@ -1371,6 +1427,7 @@ namespace BusAllocatorApp
 
             return demands;
         }
+        **/
 
         #endregion
 
