@@ -1277,6 +1277,45 @@ namespace BusAllocatorApp
         }
         #endregion
 
+        #region Demand Summation
+        private int CalculateTotalDemands(Dictionary<string, Dictionary<string, int?>> demandData)
+        {
+            int total = 0;
+            // Iterate over each time set in the demand data
+            foreach (var timeSet in demandData)
+                // Iterate over each route within the current time set
+                foreach (var route in timeSet.Value)
+                    // Only add to the counter if the demand value is not null
+                    if (route.Value.HasValue)
+                        total += route.Value.Value;
+            return total;
+        }
+
+        public int GetDemandsTotal(int mode)
+        {
+            // Initialize the total demand counter
+            int demandCounter = 0;
+
+            //Total Demand Mode
+            if (mode == 2) demandCounter = CalculateTotalDemands(totalDemands.DemandData);
+
+            // Mode 1: Calculate total demands by iterating over each department in deptsAndDemands
+            else if (mode == 1)
+            {
+                foreach (var department in deptsAndDemands)
+                {
+                    // Only process departments that have filled demand data
+                    if (department.IsDataFilled) demandCounter += CalculateTotalDemands(department.DemandData);
+                }
+            }
+            // Throw an exception if an invalid mode is provided
+            else throw new ArgumentException("Invalid demand mode specified.");
+
+            // Return the calculated total demands
+            return demandCounter;
+        }
+        #endregion
+
         #region DataGridView Handling
 
         public void ClearAllDemandsInDataGridView()
