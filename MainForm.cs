@@ -1,4 +1,5 @@
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Security;
 using System.Windows.Forms;
 
@@ -716,26 +717,42 @@ namespace BusAllocatorApp
                     int filledDepartments = vars.deptsAndDemands.Count(dept => dept.IsDataFilled);
 
                     //if incomplete demands checkbox is enabled in settings AND there is at least 1 filled department
-                    if (vars.canAllocateWithIncompleteDepts && filledDepartments > 0)
+                    if (vars.canAllocateWithIncompleteDepts)
                     {
-                        // Some departments have data filled, and allocations can proceed with incomplete departments
-                        vars.SetDemandModeToComplete();
+                        if (filledDepartments > 0)
+                        {
+                            // Some departments have data filled, and allocations can proceed with incomplete departments
+                            vars.SetDemandModeToComplete();
 
-                        string incompleteDeptsModeIsCompletedMsg = $"Demand data was successfully filled for {filledDepartments} out of {totalDepartments} departments.";
-                        MessageBox.Show(incompleteDeptsModeIsCompletedMsg, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        WriteLine(incompleteDeptsModeIsCompletedMsg);
+                            string incompleteDeptsModeIsCompletedMsg = $"Demand data was successfully filled for {filledDepartments} out of {totalDepartments} departments.";
+                            MessageBox.Show(incompleteDeptsModeIsCompletedMsg, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            WriteLine(incompleteDeptsModeIsCompletedMsg);
 
-                        UpdateDataGrid();
+                            UpdateDataGrid();
+                        }
+                        else
+                        {
+                            WriteLine("No departments have been completed yet.");
+                            vars.SetDemandModeToIncomplete(vars.GetDemandModeObject());
+                        }
                     }
-                    //If incomplete demands checkbox is disabled AND all departments have data filled
-                    else if (filledDepartments == totalDepartments)
+                    //If incomplete demands checkbox is disabled
+                    else
                     {
-                        vars.SetDemandModeToComplete();
-                        MessageBox.Show("All demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        UpdateDataGrid();
+                        //all departments have data filled
+                        if (filledDepartments == totalDepartments)
+                        {
+                            vars.SetDemandModeToComplete();
+                            MessageBox.Show("All demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            UpdateDataGrid();
+                        }
+                        else
+                        {
+                            // Not enough data to make allocations
+                            WriteLine($"Not all departments' demands are completed yet. Keep uploading department spreadsheets or allocate more manually.");
+                            vars.SetDemandModeToIncomplete(vars.GetDemandModeObject());
+                        }
                     }
-                    // Not enough data to make allocations
-                    else WriteLine($"Not all departments' demands are completed yet. Keep uploading department spreadsheets or allocate more manually.");
                 }
                 else MessageBox.Show("No files selected. Please upload valid department demand sheets.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

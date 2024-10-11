@@ -132,7 +132,25 @@ namespace BusAllocatorApp
         //Runs when the form is closed
         private void DeptsCheckForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            CompletionCheckOnClose();
+            //vars.CheckSetModeCompletionState(true);
+        }
+
+        private void CompletionCheckOnClose()
+        {
             vars.CheckSetModeCompletionState(true);
+
+            // Update the requirements checkbox on the Main Form based on the new state
+            if (vars.GetDemandsCheckBox())
+            {
+                vars.EnableDemandsCheckBox();
+
+                vars.mainForm.UpdateDataGrid();
+            }
+            else
+            {
+                vars.DisableDemandsCheckBox();
+            }
         }
     }
 }

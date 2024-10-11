@@ -16,9 +16,6 @@ namespace BusAllocatorApp
 {
     public class Vars
     {
-        public MainForm mainForm;
-        public IO io;
-
         //Constructor
         public Vars(MainForm form)
         {
@@ -32,6 +29,10 @@ namespace BusAllocatorApp
         }
 
         #region All Vars Fields
+        #region Passed Reference Fields
+        public MainForm mainForm;
+        public IO io;
+        #endregion
         #region Class Fields
         //--Empty object instantiation--
         //List of Routes
@@ -372,6 +373,65 @@ namespace BusAllocatorApp
             }
         }
 
+        // isInitialized: set to true if mainForm and vars haven't been initialized yet
+        // shouldUpdateDataGrid: set to true ONLY if the datagridview should be updated as well
+        public void CheckSetModeCompletionState(bool shouldUpdateDataGrid = false)
+        {
+            bool areAllCheckboxesChecked = isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox;
+            int demandMode = GetDemandMode();
+
+            switch (demandMode)
+            {
+                case 1: // Individual Departments Mode
+                    bool isComplete = areAllCheckboxesChecked && AreDepartmentsFilled();
+
+                    if (isComplete)
+                    {
+
+                        if (!mainForm.generateAllocationsButton.Visible)
+                            EnableAllocationsButton();
+
+                        if (shouldUpdateDataGrid)
+                            mainForm.UpdateDataGrid();
+                    }
+                    else
+                    {
+                        //SetDemandModeToIncomplete(IsDeptsAndDemandsCompleted);
+
+                        if (mainForm.generateAllocationsButton.Visible)
+                            DisableAllocationsButton();
+                    }
+                    break;
+
+
+                case 2: // Total Demand Mode
+                    bool totalDemandsFilled = totalDemands != null && totalDemands.IsDataFilled;
+
+                    if (areAllCheckboxesChecked && totalDemandsFilled)
+                    {
+
+                        if (!mainForm.generateAllocationsButton.Visible)
+                            EnableAllocationsButton();
+
+                        if (shouldUpdateDataGrid)
+                            mainForm.UpdateDataGrid();
+                    }
+                    else
+                    {
+                        SetDemandModeToIncomplete(IsTotalDemandsCompleted);
+
+                        if (mainForm.generateAllocationsButton.Visible)
+                            DisableAllocationsButton();
+                    }
+                    break;
+
+                default:
+                    Debug.WriteLine("CANNOT GET DEMAND MODE");
+                    break;
+            }
+        }
+
+        /**
         //isInitialized: set to true if mainForm and vars hasnt been initialized yet
         //shouldUpdateDataGrid, should set to true ONLY if the datagridview should be updated as well
         public void CheckSetModeCompletionState(bool shouldUpdateDataGrid = false)
@@ -416,19 +476,8 @@ namespace BusAllocatorApp
             {
                 Debug.WriteLine("CANNOT GET DEMAND MODE");
             }
-
-            /**
-            // Example of checking if all checkboxes are enabled
-            if (isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox)
-            {
-                if (!mainForm.generateAllocationsButton.Visible) EnableAllocationsButton();
-            }
-            else
-            {
-                if (mainForm.generateAllocationsButton.Visible) DisableAllocationsButton();
-            }
-            **/
         }
+        **/
         #endregion
 
         #region To_String Functions
@@ -1209,7 +1258,7 @@ namespace BusAllocatorApp
         }
 
         //also clears demand data
-        private void SetDemandModeToIncomplete(CompletionState modeToInitialize, bool isDebug = false)
+        public void SetDemandModeToIncomplete(CompletionState modeToInitialize, bool isDebug = false)
         {
             if (modeToInitialize == IsDeptsAndDemandsCompleted)
             {
@@ -1218,6 +1267,9 @@ namespace BusAllocatorApp
                 DisableDemandsCheckBox();
 
                 DisableAllocationsButton();
+
+                //canAllocateWithIncompleteDepts = false;
+
                 //CheckSetModeCompletionState(false);
 
                 if (isDebug) OutputDemandModeToDebugConsole();
@@ -1279,6 +1331,20 @@ namespace BusAllocatorApp
             {
                 // Neither mode is properly initialized
                 throw new InvalidOperationException("Demand mode is not properly initialized.");
+            }
+        }
+
+        public CompletionState GetDemandModeObject()
+        {
+            int demandModeNum = GetDemandMode();
+            if (demandModeNum == 2)
+            {
+                return IsTotalDemandsCompleted;
+            }
+            //mode == 1
+            else
+            {
+                return IsDeptsAndDemandsCompleted;
             }
         }
         #endregion
