@@ -418,7 +418,7 @@ namespace BusAllocatorApp
                     }
                     else
                     {
-                        SetDemandModeToIncomplete(IsTotalDemandsCompleted);
+                        //SetDemandModeToIncomplete(IsTotalDemandsCompleted);
 
                         if (mainForm.generateAllocationsButton.Visible)
                             DisableAllocationsButton();

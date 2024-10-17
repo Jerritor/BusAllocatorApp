@@ -393,7 +393,7 @@
             generateAllocationsButton.Name = "generateAllocationsButton";
             generateAllocationsButton.Size = new Size(584, 41);
             generateAllocationsButton.TabIndex = 2;
-            generateAllocationsButton.Text = "Generate Allocations Spreadsheet";
+            generateAllocationsButton.Text = "Generate Allocations";
             generateAllocationsButton.UseVisualStyleBackColor = false;
             generateAllocationsButton.Visible = false;
             generateAllocationsButton.Click += generateAllocationsButton_Click;
