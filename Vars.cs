@@ -377,6 +377,69 @@ namespace BusAllocatorApp
         // shouldUpdateDataGrid: set to true ONLY if the datagridview should be updated as well
         public void CheckSetModeCompletionState(bool shouldUpdateDataGrid = false)
         {
+            int demandMode = GetDemandMode();
+
+            switch (demandMode)
+            {
+                case 1: // Individual Departments Mode
+                        // Set isDemandsCheckBox based on AreDepartmentsFilled()
+                    isDemandsCheckBox = AreDepartmentsFilled();
+
+                    // Update demands checkbox on MainForm
+                    if (isDemandsCheckBox)
+                        EnableDemandsCheckBox();
+                    else
+                        DisableDemandsCheckBox();
+
+                    bool areAllCheckboxesChecked = isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox;
+
+                    if (areAllCheckboxesChecked)
+                    {
+                        if (!mainForm.generateAllocationsButton.Visible)
+                            EnableAllocationsButton();
+
+                        if (shouldUpdateDataGrid)
+                            mainForm.UpdateDataGrid();
+                    }
+                    else
+                    {
+                        if (mainForm.generateAllocationsButton.Visible)
+                            DisableAllocationsButton();
+                    }
+                    break;
+
+                case 2: // Total Demand Mode
+                        // Set isDemandsCheckBox based on totalDemands
+                    isDemandsCheckBox = totalDemands != null && totalDemands.IsDataFilled;
+
+                    // Update demands checkbox on MainForm
+                    if (isDemandsCheckBox)
+                        EnableDemandsCheckBox();
+                    else
+                        DisableDemandsCheckBox();
+
+                    bool totalCheckboxesChecked = isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox;
+
+                    if (totalCheckboxesChecked)
+                    {
+                        if (!mainForm.generateAllocationsButton.Visible)
+                            EnableAllocationsButton();
+
+                        if (shouldUpdateDataGrid)
+                            mainForm.UpdateDataGrid();
+                    }
+                    else
+                    {
+                        if (mainForm.generateAllocationsButton.Visible)
+                            DisableAllocationsButton();
+                    }
+                    break;
+
+                default:
+                    Debug.WriteLine("CANNOT GET DEMAND MODE");
+                    break;
+            }
+            /**
             bool areAllCheckboxesChecked = isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox;
             int demandMode = GetDemandMode();
 
@@ -428,7 +491,7 @@ namespace BusAllocatorApp
                 default:
                     Debug.WriteLine("CANNOT GET DEMAND MODE");
                     break;
-            }
+            }**/
         }
 
         /**

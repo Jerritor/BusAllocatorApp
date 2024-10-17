@@ -140,6 +140,7 @@ namespace BusAllocatorApp
         {
             vars.CheckSetModeCompletionState(true);
 
+            /**
             // Update the requirements checkbox on the Main Form based on the new state
             if (vars.GetDemandsCheckBox())
             {
@@ -150,7 +151,7 @@ namespace BusAllocatorApp
             else
             {
                 vars.DisableDemandsCheckBox();
-            }
+            }**/
         }
     }
 }
