@@ -644,20 +644,20 @@ namespace BusAllocatorApp
                 }
             }
 
-            // Hybrid Routes Costs
-            
-            /**
+            // **Hybrid Routes Costs**
             foreach (var hybrid in hybrid_routes)
             {
-                if (costSmallHybridRoute.ContainsKey(hybrid))
+                var key = (hybrid.Item1, hybrid.Item2);
+
+                if (costSmallHybridRoute.ContainsKey(key))
                 {
-                    objective.SetCoefficient(y_small[hybrid], costSmallHybridRoute[hybrid]);
+                    objective.SetCoefficient(y_small[key], costSmallHybridRoute[key]);
                 }
-                if (costLargeHybridRoute.ContainsKey(hybrid))
+                if (costLargeHybridRoute.ContainsKey(key))
                 {
-                    objective.SetCoefficient(y_large[hybrid], costLargeHybridRoute[hybrid]);
+                    objective.SetCoefficient(y_large[key], costLargeHybridRoute[key]);
                 }
-            }**/
+            }
 
             objective.SetMinimization();
         }
