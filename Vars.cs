@@ -1387,7 +1387,7 @@ namespace BusAllocatorApp
             return demandCounter;
         }
 
-        public Dictionary<string, int> GetDemandsForAlloc(int mode, TimeSet timeSet)
+        public Dictionary<string, int> GetDemandsForAlloc(int mode, TimeSet timeSet, bool isDebug = false)
         {
             Dictionary<string, int> demands = new Dictionary<string, int>();
 
@@ -1408,14 +1408,26 @@ namespace BusAllocatorApp
             else if (mode == 1)
             {
                 // Individual Department Mode
+                // Generate key in "HH:MM:SS_True/False" format
+                // Assuming TimeSet has properties: Time (DateTime or TimeSpan) and IsOutgoing (bool)
+                //string timeFormatted = timeSet.Time.ToString("HH:mm:ss"); // e.g., "16:00:00"
+                string timeFormatted = timeSet.Time.ToString(@"hh\:mm\:ss"); // e.g., "16:00:00"
+                bool isOutgoing = timeSet.IsOutgoing;
+                string timeKey = $"{timeFormatted}_{isOutgoing}"; // e.g., "16:00:00_True"
+
+                if (isDebug) Debug.WriteLine($"Individual Departments Mode: Generated time key '{timeKey}'.");
+
                 foreach (var department in deptsAndDemands)
                 {
+                    if (isDebug) Debug.WriteLine($"Department: {department.Name}, IsDataFilled: {department.IsDataFilled}");
                     if (department.IsDataFilled)
                     {
-                        if (department.DemandData.ContainsKey(timeSet.GetFormattedTimeINOUT()))
+                        if (department.DemandData.ContainsKey(timeKey))
                         {
-                            foreach (var route in department.DemandData[timeSet.GetFormattedTimeINOUT()])
+                            if (isDebug) Debug.WriteLine($"Department {department.Name} has data for time key '{timeKey}'.");
+                            foreach (var route in department.DemandData[timeKey])
                             {
+                                if (isDebug) Debug.WriteLine($"Route: {route.Key}, Demand: {route.Value}");
                                 if (route.Value.HasValue)
                                 {
                                     if (demands.ContainsKey(route.Key))
@@ -1425,12 +1437,59 @@ namespace BusAllocatorApp
                                 }
                             }
                         }
+                        else
+                        {
+                            Debug.WriteLine($"Department {department.Name} does NOT have data for time key '{timeKey}'.");
+                        }
                     }
                 }
+
+                if (isDebug && demands.Count == 0)
+                {
+                    Console.WriteLine($"Individual Departments Mode: No demands collected for time key '{timeKey}'.");
+                }
+
+                /**
+                // Individual Department Mode
+                if (isDebug) Debug.WriteLine("Entering Individual Department Mode");
+                foreach (var department in deptsAndDemands)
+                {
+                    if (isDebug) Debug.WriteLine($"Department: {department.Name}, IsDataFilled: {department.IsDataFilled}");
+                    if (department.IsDataFilled)
+                    {
+                        var timeKey = timeSet.GetFormattedTimeINOUT();
+                        if (isDebug) Debug.WriteLine($"Checking time key: {timeKey}");
+                        if (department.DemandData.ContainsKey(timeKey))
+                        {
+                            if (isDebug) Debug.WriteLine($"Department {department.Name} has data for time key {timeKey}");
+                            foreach (var route in department.DemandData[timeKey])
+                            {
+                                if (isDebug) Debug.WriteLine($"Route: {route.Key}, Demand: {route.Value}");
+                                if (route.Value.HasValue)
+                                {
+                                    if (demands.ContainsKey(route.Key))
+                                        demands[route.Key] += route.Value.Value;
+                                    else
+                                        demands[route.Key] = route.Value.Value;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (isDebug) Debug.WriteLine($"Department {department.Name} does NOT have data for time key {timeKey}");
+                        }
+                    }
+                }**/
             }
             else
             {
                 throw new ArgumentException("Invalid demand mode specified.");
+            }
+
+            if (isDebug) Debug.WriteLine("Demands collected:");
+            foreach (var kvp in demands)
+            {
+                if (isDebug) Debug.WriteLine($"Route: {kvp.Key}, Total Demand: {kvp.Value}");
             }
 
             return demands;

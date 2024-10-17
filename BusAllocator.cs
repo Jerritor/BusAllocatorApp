@@ -416,7 +416,7 @@ namespace BusAllocatorApp
         {
             foreach (var timeSet in timeSets)
             {
-                this.demand = vars.GetDemandsForAlloc(this.DemandMode, timeSet);
+                this.demand = vars.GetDemandsForAlloc(this.DemandMode, timeSet, isDebug: true);
 
                 //Incoming TimeSets
                 if (!timeSet.IsOutgoing)
