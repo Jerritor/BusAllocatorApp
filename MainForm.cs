@@ -609,10 +609,11 @@ namespace BusAllocatorApp
                                                   MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                vars.InstantiateRates(); //replace this later
+                //vars.InstantiateRates(); //replace this later
+                vars.InstantiateVars(isNewRates: true);
 
                 //TODO: ACTIVATE THIS WHEN ITS READY
-                //vars.io.UploadRatesSheet();
+                vars.io.UploadRatesSheet();
             }
             else if (result == DialogResult.No)
             {
@@ -632,6 +633,9 @@ namespace BusAllocatorApp
         private void busRateButton_Click(object sender, EventArgs e)
         {
             vars.io.UploadRatesSheet();
+
+            //REMOVE COMMENT FOR DEBUG
+            vars.PrintCostDictionaries();
         }
         #endregion
 

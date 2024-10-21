@@ -24,7 +24,7 @@ namespace BusAllocatorApp
 
             io.LoadConfig();
 
-            //Load vars from JSON
+            //Load vars from JSON 
             //FirstLoadRoutesTimeSetsDepartments();
         }
 
@@ -109,14 +109,14 @@ namespace BusAllocatorApp
         //////////////////
 
         #region Variable Instantiation
-        public void InstantiateVars()
+        public void InstantiateVars(bool isNewRates = false)
         {
             InstantiateSoloRoutes(true);
             InstantiateHybridRoutes(true);
             InstantiateDeptNames(true);
             InstantiateDates(true);
             InstantiateTimeSets(true);
-            InstantiateRates(true);
+            if (!isNewRates) InstantiateRates(true);
             InstantiateBuffers(true);
             InstantiateBusCapacities(true);
         }
@@ -1747,6 +1747,72 @@ namespace BusAllocatorApp
         {
             Debug.WriteLine("deptsMode = " + IsDeptsAndDemandsCompleted);
             Debug.WriteLine("totalMode = " + IsTotalDemandsCompleted + "\n");
+        }
+
+        /// <summary>
+        /// Prints all cost dictionaries to the debug output for verification purposes.
+        /// </summary>
+        public void PrintCostDictionaries()
+        {
+            Debug.WriteLine("===== Cost Dictionaries Contents =====");
+
+            // Print costSmallBus
+            if (costSmallBus != null && costSmallBus.Count > 0)
+            {
+                Debug.WriteLine("---- costSmallBus ----");
+                foreach (var kvp in costSmallBus)
+                {
+                    Debug.WriteLine($"Route: {kvp.Key}, Cost: {kvp.Value}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("costSmallBus is empty or not initialized.");
+            }
+
+            // Print costLargeBus
+            if (costLargeBus != null && costLargeBus.Count > 0)
+            {
+                Debug.WriteLine("---- costLargeBus ----");
+                foreach (var kvp in costLargeBus)
+                {
+                    Debug.WriteLine($"Route: {kvp.Key}, Cost: {kvp.Value}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("costLargeBus is empty or not initialized.");
+            }
+
+            // Print costSmallHybridRoute
+            if (costSmallHybridRoute != null && costSmallHybridRoute.Count > 0)
+            {
+                Debug.WriteLine("---- costSmallHybridRoute ----");
+                foreach (var kvp in costSmallHybridRoute)
+                {
+                    Debug.WriteLine($"Route: ({kvp.Key.Item1}, {kvp.Key.Item2}), Cost: {kvp.Value}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("costSmallHybridRoute is empty or not initialized.");
+            }
+
+            // Print costLargeHybridRoute
+            if (costLargeHybridRoute != null && costLargeHybridRoute.Count > 0)
+            {
+                Debug.WriteLine("---- costLargeHybridRoute ----");
+                foreach (var kvp in costLargeHybridRoute)
+                {
+                    Debug.WriteLine($"Route: ({kvp.Key.Item1}, {kvp.Key.Item2}), Cost: {kvp.Value}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("costLargeHybridRoute is empty or not initialized.");
+            }
+
+            Debug.WriteLine("===== End of Cost Dictionaries =====\n");
         }
         #endregion
     }
