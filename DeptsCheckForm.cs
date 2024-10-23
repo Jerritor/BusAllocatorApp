@@ -25,7 +25,7 @@ namespace BusAllocatorApp
 
 
             CreateDepartmentList();
-            
+
 
             //Form Closing Event
             //this.FormClosing += DeptsCheckForm_FormClosing;
@@ -71,7 +71,7 @@ namespace BusAllocatorApp
             {
                 int? totalDemand = GetTotalDemandAndCheckboxes(dept);
                 dept.IsDataFilled = totalDemand.HasValue;
-                
+
                 Panel departmentPanel = new Panel
                 {
                     Width = flowLayoutPanel1.ClientSize.Width - 20,
@@ -112,6 +112,7 @@ namespace BusAllocatorApp
             flowLayoutPanel1.Controls.Add(closeButton);
         }
 
+        //Runs before the form has been closed
         private void DeptsCheckForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // Handle any cleanup or actions needed before the form closes
@@ -126,6 +127,31 @@ namespace BusAllocatorApp
         private void closeButton_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        //Runs when the form is closed
+        private void DeptsCheckForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            CompletionCheckOnClose();
+            //vars.CheckSetModeCompletionState(true);
+        }
+
+        private void CompletionCheckOnClose()
+        {
+            vars.CheckSetModeCompletionState(true);
+
+            /**
+            // Update the requirements checkbox on the Main Form based on the new state
+            if (vars.GetDemandsCheckBox())
+            {
+                vars.EnableDemandsCheckBox();
+
+                vars.mainForm.UpdateDataGrid();
+            }
+            else
+            {
+                vars.DisableDemandsCheckBox();
+            }**/
         }
     }
 }

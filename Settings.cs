@@ -10,150 +10,92 @@ namespace BusAllocatorApp
 {
     public class Settings
     {
-        Vars v { get; set; }
+        public Vars vars { get; set; }
 
         //The spreadsheet demand upload mode on app startup
         //true = Individual Demand Mode (default), false = Total Demand Mode (all)
         //default true
         //bool IsIndividualDemandModeOnStartup { get; set; } = true;
-
         public Settings(Vars v)
         {
-            this.v = v;
+            this.vars = v;
         }
 
-        /**
-        public Settings(Vars v, bool StartupMode)
-        {
-            this.v = v;
-            IsIndividualDemandModeOnStartup = StartupMode;
-        }**/
-
-        #region Toggle Demand Mode
+        #region Demand Mode Handling
         //
         //if SelectDemandMode is 1 or 2, the user is selecting the specific demand mode to swap to.
         //0 = toggle, 1 = isDeptsAndDemands Mode, 2 = TotalDemands Mode
         // In Settings Class
         public void ToggleDemandMode(byte selectDemandMode = 0)
         {
-            v.OutputDemandModeToDebugConsole();
+            vars.OutputDemandModeToDebugConsole();
             switch (selectDemandMode)
             {
                 case 1:  // Activate Department Demands Mode
-                    if (v.IsDeptsAndDemandsCompleted == CompletionState.Uninitialized)
+                    if (vars.IsDeptsAndDemandsCompleted == CompletionState.Uninitialized)
                     {
-                        ClearDemandData();
+                        vars.ClearDemandData();
                         // Swapping to DeptsAndDemands mode
-                        v.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
-                        v.IsTotalDemandsCompleted = CompletionState.Uninitialized;
+                        vars.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
+                        vars.IsTotalDemandsCompleted = CompletionState.Uninitialized;
                         // Re-initialize DemandData
-                        v.UpdateDepartmentsWithRoutesAndTimeSets(false);
+                        vars.UpdateDepartmentsWithRoutesAndTimeSets(false);
                     }
                     break;
 
                 case 2:  // Activate Total Demands Mode
-                    if (v.IsTotalDemandsCompleted == CompletionState.Uninitialized)
+                    if (vars.IsTotalDemandsCompleted == CompletionState.Uninitialized)
                     {
-                        ClearDemandData();
+                        vars.ClearDemandData();
                         // Swapping to TotalDemands mode
-                        v.IsTotalDemandsCompleted = CompletionState.Initialized;
-                        v.IsDeptsAndDemandsCompleted = CompletionState.Uninitialized;
+                        vars.IsTotalDemandsCompleted = CompletionState.Initialized;
+                        vars.IsDeptsAndDemandsCompleted = CompletionState.Uninitialized;
                         // Re-initialize TotalDemands if necessary
                     }
                     break;
 
                 default:  // Default behavior: toggle between modes
-                    if (v.IsDeptsAndDemandsCompleted != CompletionState.Uninitialized)
+                    if (vars.IsDeptsAndDemandsCompleted != CompletionState.Uninitialized)
                     {
-                        ClearDemandData();
+                        vars.ClearDemandData();
                         // Currently in DeptsAndDemands mode, switch to TotalDemands mode
-                        v.IsDeptsAndDemandsCompleted = CompletionState.Uninitialized;
-                        v.IsTotalDemandsCompleted = CompletionState.Initialized;
+                        vars.IsDeptsAndDemandsCompleted = CompletionState.Uninitialized;
+                        vars.IsTotalDemandsCompleted = CompletionState.Initialized;
                         // Re-initialize TotalDemands if necessary
                     }
-                    else if (v.IsTotalDemandsCompleted != CompletionState.Uninitialized)
+                    else if (vars.IsTotalDemandsCompleted != CompletionState.Uninitialized)
                     {
-                        ClearDemandData();
+                        vars.ClearDemandData();
                         // Currently in TotalDemands mode, switch to DeptsAndDemands mode
-                        v.IsTotalDemandsCompleted = CompletionState.Uninitialized;
-                        v.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
+                        vars.IsTotalDemandsCompleted = CompletionState.Uninitialized;
+                        vars.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
                         // Re-initialize DemandData
-                        v.UpdateDepartmentsWithRoutesAndTimeSets(false);
+                        vars.UpdateDepartmentsWithRoutesAndTimeSets(false);
                     }
                     else
                     {
-                        v.ClearTotalDemandsData();
-                        v.ClearDeptsAndDemandsData();
+                        vars.ClearTotalDemandsData();
+                        vars.ClearDeptsAndDemandsData();
 
                         // If neither mode is active, default to DeptsAndDemands mode
-                        v.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
-                        v.IsTotalDemandsCompleted = CompletionState.Uninitialized;
+                        vars.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
+                        vars.IsTotalDemandsCompleted = CompletionState.Uninitialized;
                         // Re-initialize DemandData
-                        v.UpdateDepartmentsWithRoutesAndTimeSets(false);
+                        vars.UpdateDepartmentsWithRoutesAndTimeSets(false);
                     }
                     break;
             }
-            v.OutputDemandModeToDebugConsole();
+            vars.OutputDemandModeToDebugConsole();
         }
+        #endregion
 
-        private void ClearDemandData(CompletionState modeToInitialize)
+        #region Incomplete Allocation Checkbox Handling
+        public void SetIncompleteAllocs(bool canIncompleteDemands, bool isDebug = false)
         {
-            if (modeToInitialize == v.IsDeptsAndDemandsCompleted)
-            {
-                v.ClearDeptsAndDemandsData();
-                v.IsDeptsAndDemandsCompleted = CompletionState.Initialized;
-                v.ClearAllDemandsInDataGridView();
-
-                //Debug
-                v.OutputDemandModeToDebugConsole();
-            }
-            else if (modeToInitialize == v.IsTotalDemandsCompleted)
-            {
-                v.ClearTotalDemandsData();
-                v.IsTotalDemandsCompleted = CompletionState.Initialized;
-                v.ClearAllDemandsInDataGridView();
-
-                //Debug
-                v.OutputDemandModeToDebugConsole();
-            }
-            else
-            {
-                MessageBox.Show("Invalid mode specified for clearing demand data.",
-                    "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+            vars.canAllocateWithIncompleteDepts = canIncompleteDemands;
+            //debug prints
+            if (isDebug) Debug.WriteLine($"canAllocateIncomplete = '{vars.canAllocateWithIncompleteDepts}'");
         }
-
-        //Polymorphism (one-case recursive) function that clears the data of the active mode
-        public void ClearDemandData()
-        {
-            //if active mode is individual dept mode
-            if (v.IsDeptsAndDemandsCompleted != CompletionState.Uninitialized)
-            {
-                ClearDemandData(v.IsDeptsAndDemandsCompleted);
-            }
-            //if active mode is total demand mode
-            else if (v.IsTotalDemandsCompleted != CompletionState.Uninitialized)
-            {
-                ClearDemandData(v.IsTotalDemandsCompleted);
-            }
-        }
-
-
-        public void SetDemandModeToComplete()
-        {
-            if (v.IsDeptsAndDemandsCompleted == CompletionState.Initialized)
-            {
-                v.IsDeptsAndDemandsCompleted = CompletionState.Completed;
-            }
-            else if (v.IsTotalDemandsCompleted == CompletionState.Initialized)
-            {
-                v.IsTotalDemandsCompleted = CompletionState.Completed;
-            }
-            v.OutputDemandModeToDebugConsole();
-        }
-
         #endregion
     }
 }

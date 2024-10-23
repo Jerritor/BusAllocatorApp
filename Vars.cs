@@ -16,9 +16,6 @@ namespace BusAllocatorApp
 {
     public class Vars
     {
-        private MainForm mainForm;
-        public IO io;
-
         //Constructor
         public Vars(MainForm form)
         {
@@ -27,17 +24,16 @@ namespace BusAllocatorApp
 
             io.LoadConfig();
 
-            //Load vars from JSON
+            //Load vars from JSON 
             //FirstLoadRoutesTimeSetsDepartments();
         }
 
-        //CONFIG INFO
-        public string configFile = "config.cfg";
-        public string ratesPath { get; set; }
-
-        public string totalDemandFilePath { get; set; }
-
-
+        #region All Vars Fields
+        #region Passed Reference Fields
+        public MainForm mainForm;
+        public IO io;
+        #endregion
+        #region Class Fields
         //--Empty object instantiation--
         //List of Routes
         public List<string>? solo_routes { get; set; }
@@ -74,8 +70,8 @@ namespace BusAllocatorApp
         public List<Department>? deptsAndDemands { get; private set; }
         //this one is used if the setting is total demands
         public Department? totalDemands { get; private set; }
-
-
+        #endregion
+        #region Demand Mode Enum and Flag Tracker Fields
         //Demands Completion Flags - 1 if the demands are ready for generating spreadsheets.
         public enum CompletionState
         {
@@ -89,31 +85,53 @@ namespace BusAllocatorApp
         //tracks totalDemands state
         //is initially off by default as default mode is not all dept demand mode
         public CompletionState IsTotalDemandsCompleted { get; set; } = CompletionState.Uninitialized;
+        #endregion
+        #region MainForm State Trackers
+        //Checkboxes
+        private bool isBusRateCheckBox { get; set; }
+        private bool isDemandsCheckBox { get; set; }
+        private bool isFirstDateCheckBox { get; set; }
+        private bool isSecondDateCheckBox { get; set; }
+
+        #endregion
+        #region Config Fields
+        //CONFIG INFO
+        public string configFile = "config.cfg";
+        public string ratesPath { get; set; }
+        public string totalDemandFilePath { get; set; }
+        #endregion
+        #region Settings Fields
+        public bool canAllocateWithIncompleteDepts { get; set; } = false;
+
+        #endregion
+        #endregion
+
+        //////////////////
 
         #region Variable Instantiation
-        public void InstantiateVars()
+        public void InstantiateVars(bool isNewRates = false)
         {
-            InstantiateSoloRoutes();
-            InstantiateHybridRoutes();
-            InstantiateDeptNames();
-            InstantiateDates();
-            InstantiateTimeSets();
-            InstantiateRates();
-            InstantiateBuffers();
-            InstantiateBusCapacities();
+            InstantiateSoloRoutes(true);
+            InstantiateHybridRoutes(true);
+            InstantiateDeptNames(true);
+            InstantiateDates(true);
+            InstantiateTimeSets(true);
+            if (!isNewRates) InstantiateRates(true);
+            InstantiateBuffers(true);
+            InstantiateBusCapacities(true);
         }
 
-        private void InstantiateSoloRoutes()
+        private void InstantiateSoloRoutes(bool isDebug = false)
         {
             // Instantiate solo_routes list
             solo_routes = new List<string>
             {
                 "ALABANG", "BINAN", "BALIBAGO", "CARMONA", "CABUYAO", "CALAMBA"
             };
-            mainForm.WriteLine("Instantiated solo_routes.");
+            if (isDebug) mainForm.WriteLine("Instantiated solo_routes.");
         }
 
-        private void InstantiateHybridRoutes()
+        private void InstantiateHybridRoutes(bool isDebug = false)
         {
             // Instantiate hybrid_routes list
             hybrid_routes = new List<Tuple<string, string>>
@@ -122,29 +140,29 @@ namespace BusAllocatorApp
                 Tuple.Create("BINAN", "CARMONA"),
                 Tuple.Create("CALAMBA", "CABUYAO")
             };
-            mainForm.WriteLine("Instantiated hybrid_routes.");
+            if (isDebug) mainForm.WriteLine("Instantiated hybrid_routes.");
         }
 
-        private void InstantiateDeptNames()
+        private void InstantiateDeptNames(bool isDebug = false)
         {
             deptNames = new List<string>
             {
                 "3M", "ASTI", "IE", "ICTC", "JCM", "VISHAY", "OKURA", "NIDEC", "R&D / NPI", "TIP", "SUMITRONICS",
                 "MERCHANT", "GLOBAL SKYWARE", "GLOBAL INVACOM", "ANALOG", "ENGG", "QA", "PCMC/SCM", "WAREHOUSE",
-                "FACILITIES", "TQM", "IT", "INTERNAL AUDITOR", "FINANCE", "HR", "SECURITY", "TOPSEARCH", "CANTEEN",
+                "FACILITIES", "TQM", "IM", "INTERNAL AUDITOR", "FINANCE", "HR", "SECURITY", "TOPSEARCH", "CANTEEN",
                 "OFFISTE", "ERTI", "CREOTEC", "ESPI", "Sales and Marketing"
             };
-            mainForm.WriteLine("Instantiated departments.");
+            if (isDebug) mainForm.WriteLine("Instantiated departments.");
         }
 
-        private void InstantiateDates()
+        private void InstantiateDates(bool isDebug = false)
         {
             firstDay = new DateTime(2024, 2, 26); // Monday, Feb 26
             secondDay = new DateTime(2024, 2, 27); // Tuesday, Feb 27
-            mainForm.WriteLine("Instantiated firstDay & secondDay.");
+            if (isDebug) mainForm.WriteLine("Instantiated firstDay & secondDay.");
         }
 
-        private void InstantiateTimeSets()
+        private void InstantiateTimeSets(bool isDebug = false)
         {
             /** OLD WAY
             timeSets = new List<Dictionary<string, object>>
@@ -171,10 +189,10 @@ namespace BusAllocatorApp
                 new TimeSet(false, "7:00AM",false)
             };
 
-            mainForm.WriteLine("Instantiated timeSets.");
+            if (isDebug) mainForm.WriteLine("Instantiated timeSets.");
         }
 
-        private void InstantiateRates()
+        public void InstantiateRates(bool isDebug = false)
         {
             costSmallBus = new Dictionary<string, double>
             {
@@ -184,7 +202,7 @@ namespace BusAllocatorApp
                 { "CABUYAO", 586.5 },
                 { "CALAMBA", 1300.5 }
             };
-            mainForm.WriteLine("Instantiated costSmallBus.");
+            if (isDebug) mainForm.WriteLine("Instantiated costSmallBus.");
 
             costLargeBus = new Dictionary<string, double>
             {
@@ -195,7 +213,7 @@ namespace BusAllocatorApp
                 { "CABUYAO", 1935 },
                 { "CALAMBA", 2127 }
             };
-            mainForm.WriteLine("Instantiated costLargeBus.");
+            if (isDebug) mainForm.WriteLine("Instantiated costLargeBus.");
 
             costSmallHybridRoute = new Dictionary<(string, string), double>
             {
@@ -203,7 +221,7 @@ namespace BusAllocatorApp
                 { ("BINAN", "CARMONA"), 630.0 },
                 { ("CALAMBA", "CABUYAO"), 630.0 }
             };
-            mainForm.WriteLine("Instantiated costSmallHybridRoute.");
+            if (isDebug) mainForm.WriteLine("Instantiated costSmallHybridRoute.");
 
             costLargeHybridRoute = new Dictionary<(string, string), double>
             {
@@ -211,10 +229,10 @@ namespace BusAllocatorApp
                 { ("BINAN", "CARMONA"), 2550 },
                 { ("CALAMBA", "CABUYAO"), 2625 }
             };
-            mainForm.WriteLine("Instantiated costLargeHybridRoute.");
+            if (isDebug) mainForm.WriteLine("Instantiated costLargeHybridRoute.");
         }
 
-        private void InstantiateBuffers()
+        private void InstantiateBuffers(bool isDebug = false)
         {
             bufferCurrentSmall = new Dictionary<object, int>
             {
@@ -228,7 +246,7 @@ namespace BusAllocatorApp
                 { ("BINAN", "CARMONA"), 0 },
                 { ("CALAMBA", "CABUYAO"), 0 }
             };
-            mainForm.WriteLine("Instantiated bufferCurrentSmall.");
+            if (isDebug) mainForm.WriteLine("Instantiated bufferCurrentSmall.");
 
             bufferCurrentLarge = new Dictionary<object, int>
             {
@@ -242,15 +260,287 @@ namespace BusAllocatorApp
                 { ("BINAN", "CARMONA"), 3 },
                 { ("CALAMBA", "CABUYAO"), 3 }
             };
-            mainForm.WriteLine("Instantiated bufferCurrentLarge.");
+            if (isDebug) mainForm.WriteLine("Instantiated bufferCurrentLarge.");
         }
 
-        private void InstantiateBusCapacities()
+        private void InstantiateBusCapacities(bool isDebug = false)
         {
             capacitySmallBus = 18;
             capacityLargeBus = 56;
-            mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
+            if (isDebug) mainForm.WriteLine("Instantiated capacitySmallBus & capacityLargeBus.");
         }
+        #endregion
+
+        #region Completion State Handling and Checker
+        public void SyncMainFormCheckboxes()
+        {
+            isBusRateCheckBox = mainForm.busRateCheckBox.Checked;
+            isDemandsCheckBox = mainForm.demandsCheckBox.Checked;
+            isFirstDateCheckBox = mainForm.firstDateCheckBox.Checked;
+            isSecondDateCheckBox = mainForm.secondDateCheckBox.Checked;
+        }
+
+        //BusRateCheckBox
+        public void DisableBusRateCheckBox()
+        {
+            mainForm.busRateCheckBox.Checked = false;
+            isBusRateCheckBox = false;
+        }
+        public void EnableBusRateCheckBox()
+        {
+            mainForm.busRateCheckBox.Checked = true;
+            isBusRateCheckBox = true;
+        }
+        public bool GetBusRateCheckBox()
+        {
+            return isBusRateCheckBox;
+        }
+        //DemandsCheckBox
+        public void DisableDemandsCheckBox()
+        {
+            mainForm.demandsCheckBox.Checked = false;
+            isDemandsCheckBox = false;
+        }
+        public void EnableDemandsCheckBox()
+        {
+            mainForm.demandsCheckBox.Checked = true;
+            isDemandsCheckBox = true;
+        }
+        public bool GetDemandsCheckBox()
+        {
+            return isDemandsCheckBox;
+        }
+        //FirstDateCheckBox
+        public void DisableFirstDateCheckBox()
+        {
+            mainForm.firstDateCheckBox.Checked = false;
+            isFirstDateCheckBox = false;
+        }
+        public void EnableFirstDateCheckBox()
+        {
+            mainForm.firstDateCheckBox.Checked = true;
+            isFirstDateCheckBox = true;
+        }
+        public bool GetFirstDateCheckBox()
+        {
+            return isFirstDateCheckBox;
+        }
+        //SecondDateCheckBox
+        public void DisableSecondDateCheckBox()
+        {
+            mainForm.secondDateCheckBox.Checked = false;
+            isSecondDateCheckBox = false;
+        }
+        public void EnableSecondDateCheckBox()
+        {
+            mainForm.secondDateCheckBox.Checked = true;
+            isSecondDateCheckBox = true;
+        }
+        public bool GetSecondDateCheckBox()
+        {
+            return isSecondDateCheckBox;
+        }
+
+
+        //Allocations Button Checker and State Setter
+        private void DisableAllocationsButton()
+        {
+            mainForm.WriteLine("The generate allocations button is now disabled. One or more requirements are no longer met.");
+            mainForm.generateAllocationsButton.Enabled = false;
+            mainForm.generateAllocationsButton.Visible = false;
+        }
+        private void EnableAllocationsButton()
+        {
+            mainForm.WriteLine("You can now generate bus allocations. All requirements have been met.");
+            mainForm.generateAllocationsButton.Enabled = true;
+            mainForm.generateAllocationsButton.Visible = true;
+        }
+
+        //Departments Filled State Checker and Completion State Checker
+        //false = No, true = Yes.
+        public bool AreDepartmentsFilled()
+        {
+            // Check the settings checkbox state (canAllocateWithIncompleteDepts)
+            if (!canAllocateWithIncompleteDepts)
+            {
+                // If incomplete departments are not allowed, return true only if all departments are filled
+                return deptsAndDemands.All(dept => dept.IsDataFilled);
+            }
+            else
+            {
+                // If incomplete departments are allowed, return true if at least one department is filled
+                return deptsAndDemands.Any(dept => dept.IsDataFilled);
+            }
+        }
+
+        // isInitialized: set to true if mainForm and vars haven't been initialized yet
+        // shouldUpdateDataGrid: set to true ONLY if the datagridview should be updated as well
+        public void CheckSetModeCompletionState(bool shouldUpdateDataGrid = false)
+        {
+            int demandMode = GetDemandMode();
+
+            switch (demandMode)
+            {
+                case 1: // Individual Departments Mode
+                        // Set isDemandsCheckBox based on AreDepartmentsFilled()
+                    isDemandsCheckBox = AreDepartmentsFilled();
+
+                    // Update demands checkbox on MainForm
+                    if (isDemandsCheckBox)
+                        EnableDemandsCheckBox();
+                    else
+                        DisableDemandsCheckBox();
+
+                    bool areAllCheckboxesChecked = isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox;
+
+                    if (areAllCheckboxesChecked)
+                    {
+                        if (!mainForm.generateAllocationsButton.Visible)
+                            EnableAllocationsButton();
+
+                        if (shouldUpdateDataGrid)
+                            mainForm.UpdateDataGrid();
+                    }
+                    else
+                    {
+                        if (mainForm.generateAllocationsButton.Visible)
+                            DisableAllocationsButton();
+                    }
+                    break;
+
+                case 2: // Total Demand Mode
+                        // Set isDemandsCheckBox based on totalDemands
+                    isDemandsCheckBox = totalDemands != null && totalDemands.IsDataFilled;
+
+                    // Update demands checkbox on MainForm
+                    if (isDemandsCheckBox)
+                        EnableDemandsCheckBox();
+                    else
+                        DisableDemandsCheckBox();
+
+                    bool totalCheckboxesChecked = isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox;
+
+                    if (totalCheckboxesChecked)
+                    {
+                        if (!mainForm.generateAllocationsButton.Visible)
+                            EnableAllocationsButton();
+
+                        if (shouldUpdateDataGrid)
+                            mainForm.UpdateDataGrid();
+                    }
+                    else
+                    {
+                        if (mainForm.generateAllocationsButton.Visible)
+                            DisableAllocationsButton();
+                    }
+                    break;
+
+                default:
+                    Debug.WriteLine("CANNOT GET DEMAND MODE");
+                    break;
+            }
+            /**
+            bool areAllCheckboxesChecked = isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox;
+            int demandMode = GetDemandMode();
+
+            switch (demandMode)
+            {
+                case 1: // Individual Departments Mode
+                    bool isComplete = areAllCheckboxesChecked && AreDepartmentsFilled();
+
+                    if (isComplete)
+                    {
+
+                        if (!mainForm.generateAllocationsButton.Visible)
+                            EnableAllocationsButton();
+
+                        if (shouldUpdateDataGrid)
+                            mainForm.UpdateDataGrid();
+                    }
+                    else
+                    {
+                        //SetDemandModeToIncomplete(IsDeptsAndDemandsCompleted);
+
+                        if (mainForm.generateAllocationsButton.Visible)
+                            DisableAllocationsButton();
+                    }
+                    break;
+
+
+                case 2: // Total Demand Mode
+                    bool totalDemandsFilled = totalDemands != null && totalDemands.IsDataFilled;
+
+                    if (areAllCheckboxesChecked && totalDemandsFilled)
+                    {
+
+                        if (!mainForm.generateAllocationsButton.Visible)
+                            EnableAllocationsButton();
+
+                        if (shouldUpdateDataGrid)
+                            mainForm.UpdateDataGrid();
+                    }
+                    else
+                    {
+                        //SetDemandModeToIncomplete(IsTotalDemandsCompleted);
+
+                        if (mainForm.generateAllocationsButton.Visible)
+                            DisableAllocationsButton();
+                    }
+                    break;
+
+                default:
+                    Debug.WriteLine("CANNOT GET DEMAND MODE");
+                    break;
+            }**/
+        }
+
+        /**
+        //isInitialized: set to true if mainForm and vars hasnt been initialized yet
+        //shouldUpdateDataGrid, should set to true ONLY if the datagridview should be updated as well
+        public void CheckSetModeCompletionState(bool shouldUpdateDataGrid = false)
+        {
+            //bool areDeptsFilled = false;
+            //if (isInitialized) areDeptsFilled = AreDepartmentsFilled();
+
+            bool areAllCheckboxesChecked = isBusRateCheckBox && isDemandsCheckBox && isFirstDateCheckBox && isSecondDateCheckBox;
+            int demandMode = GetDemandMode();
+
+            //individual dept mode
+            if (demandMode == 1)
+            {
+                //if all requirements are met
+                if (AreDepartmentsFilled() && areAllCheckboxesChecked)
+                {
+                    if (!mainForm.generateAllocationsButton.Visible) EnableAllocationsButton();
+
+                    if (shouldUpdateDataGrid) mainForm.UpdateDataGrid();
+                }
+                else
+                {
+                    if (mainForm.generateAllocationsButton.Visible) DisableAllocationsButton();
+                }
+            }
+            //total dept mode
+            if (demandMode == 2)
+            {
+                //if all requirements are met
+                if (areAllCheckboxesChecked)
+                {
+                    if (!mainForm.generateAllocationsButton.Visible) EnableAllocationsButton();
+
+                    if (shouldUpdateDataGrid) mainForm.UpdateDataGrid();
+                }
+                else
+                {
+                    if (mainForm.generateAllocationsButton.Visible) DisableAllocationsButton();
+                }
+            }
+            else
+            {
+                Debug.WriteLine("CANNOT GET DEMAND MODE");
+            }
+        }
+        **/
         #endregion
 
         #region To_String Functions
@@ -289,20 +579,23 @@ namespace BusAllocatorApp
         #endregion
 
         #region IO Loading JSON Files
-        private void LoadRoutes()
+        private void LoadRoutes(bool isDebug = false)
         {
             (solo_routes, hybrid_routes) = io.LoadRoutes();
 
             //printing
-            mainForm.WriteLine(StringListToString(solo_routes));
-            mainForm.WriteLine(StringListOfTuplesToString(hybrid_routes));
+            if (isDebug)
+            {
+                mainForm.WriteLine(StringListToString(solo_routes));
+                mainForm.WriteLine(StringListOfTuplesToString(hybrid_routes));
+            }
         }
 
-        private void LoadTimeSets()
+        private void LoadTimeSets(bool isDebug = false)
         {
             timeSets = io.LoadTimeSets();
 
-            PrintAllTimeSets();
+            if (isDebug) PrintAllTimeSets();
             //mainForm.WriteLine(StringListToString(timeSets));
         }
 
@@ -311,7 +604,7 @@ namespace BusAllocatorApp
             deptNames = io.LoadDeptNames();
         }
 
-        public void LoadDepartments(bool isInitialLoad = false)
+        public void LoadDepartments(bool isInitialLoad = false, bool isDebug = false)
         {
             LoadDepartmentNames();
 
@@ -321,10 +614,13 @@ namespace BusAllocatorApp
             //initialize the department demands
             UpdateDepartmentsWithRoutesAndTimeSets(isInitialLoad);
 
-            //printing department names
-            mainForm.WriteLine(StringListToString(deptNames));
-            //printing departments object list
-            PrintAllDepartments();
+            if (isDebug)
+            {
+                //printing department names
+                mainForm.WriteLine(StringListToString(deptNames));
+                //printing departments object list
+                PrintAllDepartments();
+            }
         }
 
         public void LoadJSONFiles()
@@ -731,7 +1027,6 @@ namespace BusAllocatorApp
             }
             mainForm.WriteLine("Cleared all demand data from Total Demand Mode.");
         }
-
         #endregion
 
         #region Individual Department Demand Spreadsheet Processing
@@ -1005,7 +1300,83 @@ namespace BusAllocatorApp
 
         #endregion
 
-        #region Demand Mode State Retrieval
+        #region Demand Mode State Handling
+        //Same as SetDemandModeToIncomplete
+        public void ClearDemandData()
+        {
+            //if active mode is individual dept mode
+            if (IsDeptsAndDemandsCompleted != CompletionState.Uninitialized)
+            {
+                ClearDeptsAndDemandsData();
+                SetDemandModeToIncomplete(IsDeptsAndDemandsCompleted);
+                ClearAllDemandsInDataGridView();
+            }
+            //if active mode is total demand mode
+            else if (IsTotalDemandsCompleted != CompletionState.Uninitialized)
+            {
+                ClearTotalDemandsData();
+                SetDemandModeToIncomplete(IsTotalDemandsCompleted);
+                ClearAllDemandsInDataGridView();
+            }
+        }
+
+        //also clears demand data
+        public void SetDemandModeToIncomplete(CompletionState modeToInitialize, bool isDebug = false)
+        {
+            if (modeToInitialize == IsDeptsAndDemandsCompleted)
+            {
+                
+                IsDeptsAndDemandsCompleted = CompletionState.Initialized;
+                DisableDemandsCheckBox();
+
+                DisableAllocationsButton();
+
+                //canAllocateWithIncompleteDepts = false;
+
+                //CheckSetModeCompletionState(false);
+
+                if (isDebug) OutputDemandModeToDebugConsole();
+            }
+            else if (modeToInitialize == IsTotalDemandsCompleted)
+            {
+                
+                IsTotalDemandsCompleted = CompletionState.Initialized;
+                DisableDemandsCheckBox();
+
+                DisableAllocationsButton();
+                //CheckSetModeCompletionState(false);
+
+                if (isDebug) OutputDemandModeToDebugConsole();
+            }
+            else
+            {
+                MessageBox.Show("Invalid mode specified for clearing demand data.",
+                    "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void SetDemandModeToComplete(bool isDebug = false)
+        {
+            if (IsDeptsAndDemandsCompleted == CompletionState.Initialized)
+            {
+                EnableDemandsCheckBox();
+                CheckSetModeCompletionState(false);
+
+                IsDeptsAndDemandsCompleted = CompletionState.Completed;
+            }
+            else if (IsTotalDemandsCompleted == CompletionState.Initialized)
+            {
+                EnableDemandsCheckBox();
+                CheckSetModeCompletionState(false);
+
+                IsTotalDemandsCompleted = CompletionState.Completed;
+            }
+
+            if (isDebug) OutputDemandModeToDebugConsole();
+        }
+
+        //Demand Mode State Retrieval
         //1 = individual department mode, 2 = total department mode
         public int GetDemandMode()
         {
@@ -1025,6 +1396,227 @@ namespace BusAllocatorApp
                 throw new InvalidOperationException("Demand mode is not properly initialized.");
             }
         }
+
+        public CompletionState GetDemandModeObject()
+        {
+            int demandModeNum = GetDemandMode();
+            if (demandModeNum == 2)
+            {
+                return IsTotalDemandsCompleted;
+            }
+            //mode == 1
+            else
+            {
+                return IsDeptsAndDemandsCompleted;
+            }
+        }
+        #endregion
+
+        #region Demand Summation
+        private int CalculateTotalDemands(Dictionary<string, Dictionary<string, int?>> demandData)
+        {
+            int total = 0;
+            // Iterate over each time set in the demand data
+            foreach (var timeSet in demandData)
+                // Iterate over each route within the current time set
+                foreach (var route in timeSet.Value)
+                    // Only add to the counter if the demand value is not null
+                    if (route.Value.HasValue)
+                        total += route.Value.Value;
+            return total;
+        }
+
+        public int GetDemandsTotal(int mode)
+        {
+            // Initialize the total demand counter
+            int demandCounter = 0;
+
+            //Total Demand Mode
+            if (mode == 2) demandCounter = CalculateTotalDemands(totalDemands.DemandData);
+
+            // Mode 1: Calculate total demands by iterating over each department in deptsAndDemands
+            else if (mode == 1)
+            {
+                foreach (var department in deptsAndDemands)
+                {
+                    // Only process departments that have filled demand data
+                    if (department.IsDataFilled) demandCounter += CalculateTotalDemands(department.DemandData);
+                }
+            }
+            // Throw an exception if an invalid mode is provided
+            else throw new ArgumentException("Invalid demand mode specified.");
+
+            // Return the calculated total demands
+            return demandCounter;
+        }
+
+        public Dictionary<string, int> GetDemandsForAlloc(int mode, TimeSet timeSet, bool isDebug = false)
+        {
+            Dictionary<string, int> demands = new Dictionary<string, int>();
+
+            if (mode == 2)
+            {
+                // Total Demand Mode
+                if (totalDemands.DemandData.ContainsKey(timeSet.GetFormattedTimeINOUT()))
+                {
+                    foreach (var route in totalDemands.DemandData[timeSet.GetFormattedTimeINOUT()])
+                    {
+                        if (route.Value.HasValue)
+                        {
+                            demands[route.Key] = route.Value.Value;
+                        }
+                    }
+                }
+            }
+            else if (mode == 1)
+            {
+                // Individual Department Mode
+                // Generate key in "HH:MM:SS_True/False" format
+                // Assuming TimeSet has properties: Time (DateTime or TimeSpan) and IsOutgoing (bool)
+                //string timeFormatted = timeSet.Time.ToString("HH:mm:ss"); // e.g., "16:00:00"
+                string timeFormatted = timeSet.Time.ToString(@"hh\:mm\:ss"); // e.g., "16:00:00"
+                bool isOutgoing = timeSet.IsOutgoing;
+                string timeKey = $"{timeFormatted}_{isOutgoing}"; // e.g., "16:00:00_True"
+
+                if (isDebug) Debug.WriteLine($"Individual Departments Mode: Generated time key '{timeKey}'.");
+
+                foreach (var department in deptsAndDemands)
+                {
+                    if (isDebug) Debug.WriteLine($"Department: {department.Name}, IsDataFilled: {department.IsDataFilled}");
+                    if (department.IsDataFilled)
+                    {
+                        if (department.DemandData.ContainsKey(timeKey))
+                        {
+                            if (isDebug) Debug.WriteLine($"Department {department.Name} has data for time key '{timeKey}'.");
+                            foreach (var route in department.DemandData[timeKey])
+                            {
+                                if (isDebug) Debug.WriteLine($"Route: {route.Key}, Demand: {route.Value}");
+                                if (route.Value.HasValue)
+                                {
+                                    if (demands.ContainsKey(route.Key))
+                                        demands[route.Key] += route.Value.Value;
+                                    else
+                                        demands[route.Key] = route.Value.Value;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Department {department.Name} does NOT have data for time key '{timeKey}'.");
+                        }
+                    }
+                }
+
+                if (isDebug && demands.Count == 0)
+                {
+                    Console.WriteLine($"Individual Departments Mode: No demands collected for time key '{timeKey}'.");
+                }
+
+                /**
+                // Individual Department Mode
+                if (isDebug) Debug.WriteLine("Entering Individual Department Mode");
+                foreach (var department in deptsAndDemands)
+                {
+                    if (isDebug) Debug.WriteLine($"Department: {department.Name}, IsDataFilled: {department.IsDataFilled}");
+                    if (department.IsDataFilled)
+                    {
+                        var timeKey = timeSet.GetFormattedTimeINOUT();
+                        if (isDebug) Debug.WriteLine($"Checking time key: {timeKey}");
+                        if (department.DemandData.ContainsKey(timeKey))
+                        {
+                            if (isDebug) Debug.WriteLine($"Department {department.Name} has data for time key {timeKey}");
+                            foreach (var route in department.DemandData[timeKey])
+                            {
+                                if (isDebug) Debug.WriteLine($"Route: {route.Key}, Demand: {route.Value}");
+                                if (route.Value.HasValue)
+                                {
+                                    if (demands.ContainsKey(route.Key))
+                                        demands[route.Key] += route.Value.Value;
+                                    else
+                                        demands[route.Key] = route.Value.Value;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (isDebug) Debug.WriteLine($"Department {department.Name} does NOT have data for time key {timeKey}");
+                        }
+                    }
+                }**/
+            }
+            else
+            {
+                throw new ArgumentException("Invalid demand mode specified.");
+            }
+
+            if (isDebug) Debug.WriteLine("Demands collected:");
+            foreach (var kvp in demands)
+            {
+                if (isDebug) Debug.WriteLine($"Route: {kvp.Key}, Total Demand: {kvp.Value}");
+            }
+
+            return demands;
+        }
+
+        /**
+        /// <summary>
+        /// Aggregates demand data for allocation based on the specified mode.
+        /// </summary>
+        /// <param name="mode">Demand mode: 1 for Individual Department Mode, 2 for Total Demand Mode.</param>
+        /// <returns>A dictionary mapping each route to its total demand.</returns>
+        public Dictionary<string, int> GetDemandsForAlloc(int mode)
+        {
+            Dictionary<string, int> demands = new Dictionary<string, int>();
+
+            if (mode == 2)
+            {
+                // Total Demand Mode
+                foreach (var timeSet in totalDemands.DemandData)
+                {
+                    foreach (var route in timeSet.Value)
+                    {
+                        if (route.Value.HasValue)
+                        {
+                            if (demands.ContainsKey(route.Key))
+                                demands[route.Key] += route.Value.Value;
+                            else
+                                demands[route.Key] = route.Value.Value;
+                        }
+                    }
+                }
+            }
+            else if (mode == 1)
+            {
+                // Individual Department Mode
+                foreach (var department in deptsAndDemands)
+                {
+                    if (department.IsDataFilled)
+                    {
+                        foreach (var timeSet in department.DemandData)
+                        {
+                            foreach (var route in timeSet.Value)
+                            {
+                                if (route.Value.HasValue)
+                                {
+                                    if (demands.ContainsKey(route.Key))
+                                        demands[route.Key] += route.Value.Value;
+                                    else
+                                        demands[route.Key] = route.Value.Value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Invalid demand mode specified.");
+            }
+
+            return demands;
+        }
+        **/
+
         #endregion
 
         #region DataGridView Handling
@@ -1124,12 +1716,9 @@ namespace BusAllocatorApp
             mainForm.FormatDataGridView();
             mainForm.ResizeFormToFitTableLayoutPanel();
         }
-
-
-
-
         #endregion
 
+        #region Debug Functions
         //Debug Parser Function
         public void OutputDemandsToDebugConsole()
         {
@@ -1160,5 +1749,71 @@ namespace BusAllocatorApp
             Debug.WriteLine("totalMode = " + IsTotalDemandsCompleted + "\n");
         }
 
+        /// <summary>
+        /// Prints all cost dictionaries to the debug output for verification purposes.
+        /// </summary>
+        public void PrintCostDictionaries()
+        {
+            Debug.WriteLine("===== Cost Dictionaries Contents =====");
+
+            // Print costSmallBus
+            if (costSmallBus != null && costSmallBus.Count > 0)
+            {
+                Debug.WriteLine("---- costSmallBus ----");
+                foreach (var kvp in costSmallBus)
+                {
+                    Debug.WriteLine($"Route: {kvp.Key}, Cost: {kvp.Value}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("costSmallBus is empty or not initialized.");
+            }
+
+            // Print costLargeBus
+            if (costLargeBus != null && costLargeBus.Count > 0)
+            {
+                Debug.WriteLine("---- costLargeBus ----");
+                foreach (var kvp in costLargeBus)
+                {
+                    Debug.WriteLine($"Route: {kvp.Key}, Cost: {kvp.Value}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("costLargeBus is empty or not initialized.");
+            }
+
+            // Print costSmallHybridRoute
+            if (costSmallHybridRoute != null && costSmallHybridRoute.Count > 0)
+            {
+                Debug.WriteLine("---- costSmallHybridRoute ----");
+                foreach (var kvp in costSmallHybridRoute)
+                {
+                    Debug.WriteLine($"Route: ({kvp.Key.Item1}, {kvp.Key.Item2}), Cost: {kvp.Value}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("costSmallHybridRoute is empty or not initialized.");
+            }
+
+            // Print costLargeHybridRoute
+            if (costLargeHybridRoute != null && costLargeHybridRoute.Count > 0)
+            {
+                Debug.WriteLine("---- costLargeHybridRoute ----");
+                foreach (var kvp in costLargeHybridRoute)
+                {
+                    Debug.WriteLine($"Route: ({kvp.Key.Item1}, {kvp.Key.Item2}), Cost: {kvp.Value}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("costLargeHybridRoute is empty or not initialized.");
+            }
+
+            Debug.WriteLine("===== End of Cost Dictionaries =====\n");
+        }
+        #endregion
     }
 }

@@ -39,7 +39,7 @@
             secondDatePicker = new DateTimePicker();
             secondDateCheckBox = new CheckBox();
             firstDateCheckBox = new CheckBox();
-            deptsCheckBox = new CheckBox();
+            demandsCheckBox = new CheckBox();
             busRateCheckBox = new CheckBox();
             firstDatePicker = new DateTimePicker();
             busRateButton = new Button();
@@ -179,7 +179,7 @@
             panel1.Controls.Add(secondDatePicker);
             panel1.Controls.Add(secondDateCheckBox);
             panel1.Controls.Add(firstDateCheckBox);
-            panel1.Controls.Add(deptsCheckBox);
+            panel1.Controls.Add(demandsCheckBox);
             panel1.Controls.Add(busRateCheckBox);
             panel1.Controls.Add(firstDatePicker);
             panel1.Location = new Point(3, 28);
@@ -229,19 +229,19 @@
             firstDateCheckBox.TextAlign = ContentAlignment.MiddleRight;
             firstDateCheckBox.UseVisualStyleBackColor = true;
             // 
-            // deptsCheckBox
+            // demandsCheckBox
             // 
-            deptsCheckBox.AutoCheck = false;
-            deptsCheckBox.AutoSize = true;
-            deptsCheckBox.Cursor = Cursors.No;
-            deptsCheckBox.FlatStyle = FlatStyle.Flat;
-            deptsCheckBox.Font = new Font("Segoe UI", 12F);
-            deptsCheckBox.Location = new Point(3, 53);
-            deptsCheckBox.Name = "deptsCheckBox";
-            deptsCheckBox.Size = new Size(201, 25);
-            deptsCheckBox.TabIndex = 1;
-            deptsCheckBox.Text = "All Department Demands";
-            deptsCheckBox.UseVisualStyleBackColor = true;
+            demandsCheckBox.AutoCheck = false;
+            demandsCheckBox.AutoSize = true;
+            demandsCheckBox.Cursor = Cursors.No;
+            demandsCheckBox.FlatStyle = FlatStyle.Flat;
+            demandsCheckBox.Font = new Font("Segoe UI", 12F);
+            demandsCheckBox.Location = new Point(3, 53);
+            demandsCheckBox.Name = "demandsCheckBox";
+            demandsCheckBox.Size = new Size(238, 25);
+            demandsCheckBox.TabIndex = 1;
+            demandsCheckBox.Text = "Employee Bus Route Demands";
+            demandsCheckBox.UseVisualStyleBackColor = true;
             // 
             // busRateCheckBox
             // 
@@ -393,9 +393,10 @@
             generateAllocationsButton.Name = "generateAllocationsButton";
             generateAllocationsButton.Size = new Size(584, 41);
             generateAllocationsButton.TabIndex = 2;
-            generateAllocationsButton.Text = "Generate Allocations Spreadsheet";
+            generateAllocationsButton.Text = "Generate Allocations";
             generateAllocationsButton.UseVisualStyleBackColor = false;
             generateAllocationsButton.Visible = false;
+            generateAllocationsButton.Click += generateAllocationsButton_Click;
             // 
             // outputLog
             // 
@@ -461,9 +462,6 @@
         private Button busRateButton;
         private Label label1;
         private Panel panel1;
-        private CheckBox secondDateCheckBox;
-        private CheckBox firstDateCheckBox;
-        private CheckBox deptsCheckBox;
         public CheckBox busRateCheckBox;
         private Button uploadDemandButton;
         private Button editSecondDateButton;
@@ -477,11 +475,14 @@
         private TableLayoutPanel tableLayoutPanel2;
         private Button settingsButton;
         private Button clearDemandDataButton;
-        private Button generateAllocationsButton;
         private Label label3;
         private TextBox outputLog;
         private FolderBrowserDialog folderBrowserDialog1;
         public DataGridView dataGridView1;
         public Button checkEditDemandButton;
+        public Button generateAllocationsButton;
+        public CheckBox demandsCheckBox;
+        public CheckBox secondDateCheckBox;
+        public CheckBox firstDateCheckBox;
     }
 }

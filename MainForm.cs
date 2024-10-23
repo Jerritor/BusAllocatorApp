@@ -1,4 +1,6 @@
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
+using System.Security;
 using System.Windows.Forms;
 
 namespace BusAllocatorApp
@@ -45,6 +47,7 @@ namespace BusAllocatorApp
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            vars.SyncMainFormCheckboxes();
             //Enable below to create JSON files
             //vars.GenerateJSONFiles();
         }
@@ -98,25 +101,268 @@ namespace BusAllocatorApp
 
         public void UpdateTotalDemandDisplay()
         {
+            // Determine the current demand mode: 1 = Individual Department Mode, 2 = Total Demand Mode
+            int demandMode = vars.GetDemandMode();
+
+            // This will hold the demand data to display
+            Dictionary<string, Dictionary<string, int?>> displayDemandData = null;
+
+            // This will hold the formatted shift names for column headers
+            List<string> shiftsFormatted = new List<string>();
+
+            // This will map formatted shift names back to raw time keys (only used in Individual Department Mode)
+            Dictionary<string, string> formattedToRawShiftMap = new Dictionary<string, string>();
+
+            if (demandMode == 2)
+            {
+                // --- Total Demand Mode ---
+
+                if (vars.totalDemands == null || vars.totalDemands.DemandData == null)
+                {
+                    MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Use the total demands data directly
+                displayDemandData = vars.totalDemands.DemandData;
+
+                // Get all shifts (formatted strings) and sort them
+                shiftsFormatted = displayDemandData.Keys.OrderBy(s => s).ToList(); // Assuming shifts are already formatted strings
+            }
+            else if (demandMode == 1)
+            {
+                // --- Individual Department Mode ---
+
+                // Aggregate demands from all departments
+                displayDemandData = new Dictionary<string, Dictionary<string, int?>>();
+
+                foreach (var department in vars.deptsAndDemands)
+                {
+                    if (!department.IsDataFilled)
+                    {
+                        // Optionally skip departments without data
+                        continue;
+                    }
+
+                    foreach (var timeKey in department.DemandData.Keys)
+                    {
+                        if (!displayDemandData.ContainsKey(timeKey))
+                        {
+                            displayDemandData[timeKey] = new Dictionary<string, int?>();
+                        }
+
+                        foreach (var route in department.DemandData[timeKey].Keys)
+                        {
+                            int? demandValue = department.DemandData[timeKey][route];
+                            if (demandValue.HasValue)
+                            {
+                                if (!displayDemandData[timeKey].ContainsKey(route))
+                                {
+                                    displayDemandData[timeKey][route] = 0;
+                                }
+                                displayDemandData[timeKey][route] += demandValue.Value;
+                            }
+                        }
+                    }
+                }
+
+                if (displayDemandData.Count == 0)
+                {
+                    MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Build a mapping from raw time keys ("HH:mm:ss_True/False") to formatted shift names ("OUT 4:00PM")
+                var rawToFormattedShiftMap = vars.timeSets.ToDictionary(
+                    ts => $"{ts.Time.ToString(@"hh\:mm\:ss")}_{ts.IsOutgoing}",
+                    ts => ts.GetFormattedTimeINOUT());
+
+                // Invert the mapping for easy lookup (formatted to raw)
+                formattedToRawShiftMap = rawToFormattedShiftMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+
+                // Now, prepare the formatted shifts list in a sorted order
+                shiftsFormatted = displayDemandData.Keys
+                    .Where(k => rawToFormattedShiftMap.ContainsKey(k))
+                    .Select(k => rawToFormattedShiftMap[k])
+                    .OrderBy(s => s)
+                    .ToList();
+            }
+            else
+            {
+                // Unknown demand mode
+                MessageBox.Show("Unknown demand mode selected. Please contact support.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // --- Preparing the Display Table ---
+
+            // Clear existing columns and rows
+            table.Columns.Clear();
+            table.Rows.Clear();
+
+            // Add "Location" column
+            table.Columns.Add("Location", typeof(string));
+
+            // Add a column for each shift
+            foreach (var shift in shiftsFormatted)
+            {
+                table.Columns.Add(shift, typeof(int));
+            }
+
+            // Populate the DataTable with solo_routes
+            foreach (var route in vars.solo_routes)
+            {
+                DataRow newRow = table.NewRow();
+                newRow["Location"] = route;
+
+                for (int i = 0; i < shiftsFormatted.Count; i++)
+                {
+                    string shift = shiftsFormatted[i];
+                    string rawTimeKey = demandMode == 2 ? shift : (formattedToRawShiftMap.ContainsKey(shift) ? formattedToRawShiftMap[shift] : "");
+
+                    if (demandMode == 2)
+                    {
+                        // Total Demand Mode
+                        if (displayDemandData.ContainsKey(shift) && displayDemandData[shift].ContainsKey(route))
+                        {
+                            newRow[shift] = displayDemandData[shift][route];
+                        }
+                        else
+                        {
+                            // If for some reason the route is missing, default to 0
+                            newRow[shift] = 0;
+                        }
+                    }
+                    else if (demandMode == 1)
+                    {
+                        // Individual Department Mode
+                        if (!string.IsNullOrEmpty(rawTimeKey) && displayDemandData.ContainsKey(rawTimeKey) && displayDemandData[rawTimeKey].ContainsKey(route))
+                        {
+                            newRow[shift] = displayDemandData[rawTimeKey][route];
+                        }
+                        else
+                        {
+                            // If the route is missing for this shift, default to 0
+                            newRow[shift] = 0;
+                        }
+                    }
+                }
+
+                table.Rows.Add(newRow);
+            }
+
+            /**
+            // Determine the current demand mode: 1 = Individual Department Mode, 2 = Total Demand Mode
+            int demandMode = vars.GetDemandMode();
+
+            // This will hold the demand data to display
+            Dictionary<string, Dictionary<string, int?>> demandData = null;
+
+            // Total Demand Mode
+            if (demandMode == 2)
+            {
+                
+                if (vars.totalDemands == null || vars.totalDemands.DemandData == null)
+                {
+                    MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                demandData = vars.totalDemands.DemandData;
+            }
+            // Individual Department Mode
+            else if (demandMode == 1)
+            {
+                // Aggregate demands from all departments
+                demandData = new Dictionary<string, Dictionary<string, int?>>();
+
+                foreach (var department in vars.deptsAndDemands)
+                {
+                    if (!department.IsDataFilled)
+                    {
+                        // Optionally skip departments without data
+                        continue;
+                    }
+
+                    foreach (var timeKey in department.DemandData.Keys)
+                    {
+                        if (!demandData.ContainsKey(timeKey))
+                        {
+                            demandData[timeKey] = new Dictionary<string, int?>();
+                        }
+
+                        foreach (var route in department.DemandData[timeKey].Keys)
+                        {
+                            int? demandValue = department.DemandData[timeKey][route];
+                            if (demandValue.HasValue)
+                            {
+                                if (!demandData[timeKey].ContainsKey(route))
+                                {
+                                    demandData[timeKey][route] = 0;
+                                }
+                                demandData[timeKey][route] += demandValue.Value;
+                            }
+                        }
+                    }
+                }
+
+                if (demandData.Count == 0)
+                {
+                    MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Unknown demand mode selected. Please contact support.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Now, demandData contains the aggregated demands for the current mode.
+
+            // Get all unique shifts (time keys) from DemandData and order them
+            var shifts = demandData.Keys.OrderBy(s => s).ToList();
+
+            // Clear existing columns and rows in the table
+            table.Columns.Clear();
+            table.Rows.Clear();
+
+            // Add "Location" column
+            table.Columns.Add("Location", typeof(string));
+
+            // Add a column for each shift
+            foreach (var shift in shifts)
+            {
+                table.Columns.Add(shift, typeof(int));
+            }
+
+            // Populate the DataTable with solo_routes
+            foreach (var route in vars.solo_routes)
+            {
+                DataRow newRow = table.NewRow();
+                newRow["Location"] = route;
+
+                foreach (var shift in shifts)
+                {
+                    if (demandData[shift].ContainsKey(route))
+                    {
+                        newRow[shift] = demandData[shift][route];
+                    }
+                    else
+                    {
+                        // If the route is missing for this shift, default to 0
+                        newRow[shift] = 0;
+                    }
+                }
+
+                table.Rows.Add(newRow);
+            }
+            **/ //2
+            /**
             if (vars.totalDemands == null || vars.totalDemands.DemandData == null)
             {
                 MessageBox.Show("No demand data available to display.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-
-            // Add "Location" column
-            //table.Columns.Add("Location", typeof(string));
-
-            // Get all unique shifts from DemandData and order them as desired
-            var shifts = vars.totalDemands.DemandData.Keys.OrderBy(s => s).ToList();
-
-            // Add a column for each shift
-            /**
-            foreach (var shift in shifts)
-            {
-                table.Columns.Add(shift, typeof(int));
-            }
-            **/
 
             //clear current rows
             table.Rows.Clear();
@@ -142,6 +388,7 @@ namespace BusAllocatorApp
 
                 table.Rows.Add(newRow);
             }
+            **/ //1
         }
 
 
@@ -166,6 +413,47 @@ namespace BusAllocatorApp
         }
 
         #region DATE PICKERS
+        private bool CheckFirstDate(out bool result)
+        {
+            if (isSecondDateSet && (secondDatePicker.Value.Date <= firstDatePicker.Value.Date))
+            {
+                MessageBox.Show("The first date must be before the second date.",
+                    "Invalid First Date",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                vars.DisableFirstDateCheckBox();
+
+                result = false;
+                return false;
+            }
+            else
+            {
+                vars.EnableFirstDateCheckBox();
+                result = true;
+                return true;
+            }
+        }
+
+        private bool CheckSecondDate()
+        {
+            if (secondDatePicker.Value.Date <= firstDatePicker.Value.Date)
+            {
+                MessageBox.Show("The second date must be after the first date.",
+                    "Invalid Second Date",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                vars.DisableSecondDateCheckBox();
+                return false;
+            }
+            else
+            {
+                vars.EnableSecondDateCheckBox();
+                return true;
+            }
+        }
+
         private void editFirstDateButton_Click(object sender, EventArgs e)
         {
             firstDatePicker.Enabled = true;
@@ -182,87 +470,54 @@ namespace BusAllocatorApp
 
         private void setFirstDateButton_Click(object sender, EventArgs e)
         {
-            if (isSecondDateSet && !CheckFirstDate()) { return; }
+            bool isFirstDate = false;
+            //bool result = false;
+            //if (isSecondDateSet && !CheckFirstDate(out result)) return;
+            //else isFirstDate = result;
 
-            firstDatePicker.Enabled = false;
-            setFirstDateButton.Enabled = false;
-            editFirstDateButton.Enabled = true;
-            editSecondDateButton.Enabled = true;
-            firstDatePicker.Enabled = false;
-
-            setFirstDateButton.Enabled = false;
-            setFirstDateButton.Visible = false;
-
-            editFirstDateButton.Enabled = true;
-            editFirstDateButton.Visible = true;
-
-            editSecondDateButton.Enabled = true;
-            editSecondDateButton.Visible = true;
-
-            firstDateCheckBox.Checked = true;
-
-            vars.firstDay = firstDatePicker.Value.Date;
-            string formattedDate = firstDatePicker.Value.ToLongDateString();
-            WriteLine("First date selected: " + formattedDate);
-            //WriteLine(vars.firstDay.Value.ToString());
-        }
-
-        private void editSecondDateButton_Click(object sender, EventArgs e)
-        {
-            secondDatePicker.Enabled = true;
-
-            editFirstDateButton.Enabled = false;
-            editFirstDateButton.Visible = false;
-
-            editSecondDateButton.Enabled = false;
-            editSecondDateButton.Visible = false;
-
-            setSecondDateButton.Enabled = true;
-            setSecondDateButton.Visible = true;
-        }
-
-        private bool CheckFirstDate()
-        {
-            if (isSecondDateSet && (secondDatePicker.Value.Date <= firstDatePicker.Value.Date))
+            if (isSecondDateSet)
             {
-                firstDateCheckBox.Checked = false;
-
-                MessageBox.Show("The first date must be before the second date.",
-                    "Invalid First Date",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-
-                return false;
+                // If the second date is set, validate the first date against it
+                bool checkResult = CheckFirstDate(out bool result);
+                if (!checkResult)
+                {
+                    // If validation fails, exit the method
+                    return;
+                }
+                isFirstDate = result; // Assign the result from CheckFirstDate
             }
-            else { return true; }
-        }
-
-        private bool CheckSecondDate()
-        {
-            if (secondDatePicker.Value.Date <= firstDatePicker.Value.Date)
+            else
             {
-                secondDateCheckBox.Checked = false;
-
-                MessageBox.Show("The second date must be after the first date.",
-                    "Invalid Second Date",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-
-                return false;
+                vars.EnableFirstDateCheckBox();
+                // If the second date is not set, setting the first date is always valid
+                isFirstDate = true;
             }
-            else { return true; }
-        }
 
-        private void firstDatePicker_ValueChanged(object sender, EventArgs e)
-        {
-            CheckFirstDate();
-        }
 
-        private void secondDatePicker_ValueChanged(object sender, EventArgs e)
-        {
-            CheckSecondDate();
-        }
+            if (isFirstDate)
+            {
+                firstDatePicker.Enabled = false;
+                setFirstDateButton.Enabled = false;
+                editFirstDateButton.Enabled = true;
+                editSecondDateButton.Enabled = true;
+                firstDatePicker.Enabled = false;
 
+                setFirstDateButton.Enabled = false;
+                setFirstDateButton.Visible = false;
+
+                editFirstDateButton.Enabled = true;
+                editFirstDateButton.Visible = true;
+
+                editSecondDateButton.Enabled = true;
+                editSecondDateButton.Visible = true;
+
+                vars.firstDay = firstDatePicker.Value.Date;
+                string formattedDate = firstDatePicker.Value.ToLongDateString();
+                WriteLine("First date selected: " + formattedDate);
+                //WriteLine(vars.firstDay.Value.ToString());
+            }
+            vars.CheckSetModeCompletionState(true);
+        }
         private void setSecondDateButton_Click(object sender, EventArgs e)
         {
             if (CheckSecondDate())
@@ -278,8 +533,6 @@ namespace BusAllocatorApp
                 editSecondDateButton.Enabled = true;
                 editSecondDateButton.Visible = true;
 
-                secondDateCheckBox.Checked = true;
-
                 isSecondDateSet = true;
 
                 vars.secondDay = secondDatePicker.Value.Date;
@@ -287,6 +540,31 @@ namespace BusAllocatorApp
                 WriteLine("Second date selected: " + formattedDate);
                 //WriteLine(vars.secondDay.Value.ToString());
             }
+            vars.CheckSetModeCompletionState(true);
+        }
+        private void editSecondDateButton_Click(object sender, EventArgs e)
+        {
+            secondDatePicker.Enabled = true;
+
+            editFirstDateButton.Enabled = false;
+            editFirstDateButton.Visible = false;
+
+            editSecondDateButton.Enabled = false;
+            editSecondDateButton.Visible = false;
+
+            setSecondDateButton.Enabled = true;
+            setSecondDateButton.Visible = true;
+        }
+        private void firstDatePicker_ValueChanged(object sender, EventArgs e)
+        {
+            //'out _' discards the outputed value
+            CheckFirstDate(out _);
+            vars.CheckSetModeCompletionState(true);
+        }
+        private void secondDatePicker_ValueChanged(object sender, EventArgs e)
+        {
+            CheckSecondDate();
+            vars.CheckSetModeCompletionState(true);
         }
         #endregion
 
@@ -310,11 +588,16 @@ namespace BusAllocatorApp
                                     "Rates Path Missing",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Information);
+
+                    vars.DisableBusRateCheckBox();
+                    //vars.CheckSetModeCompletionState();
                 }
                 else
                 {
                     ShowRatesChangedPopup();
                 }
+
+                //TODO: ADD MORE IFELSE STATEMENTS TO CHECK OTHER CONFIG OPTIONS HERE
             }
         }
 
@@ -326,12 +609,20 @@ namespace BusAllocatorApp
                                                   MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
+                //vars.InstantiateRates(); //replace this later
+                vars.InstantiateVars(isNewRates: true);
+
+                //TODO: ACTIVATE THIS WHEN ITS READY
                 vars.io.UploadRatesSheet();
             }
             else if (result == DialogResult.No)
             {
                 MessageBox.Show("Rates confirmed. Proceeding with loading rates.");
-                busRateCheckBox.Checked = true;
+                vars.InstantiateVars(); //replace this later
+
+                vars.EnableBusRateCheckBox(); //put this in the logic code below once implemented
+                //vars.CheckSetModeCompletionState(); //this too
+
                 // Proceed with loading rates
             }
         }
@@ -342,6 +633,9 @@ namespace BusAllocatorApp
         private void busRateButton_Click(object sender, EventArgs e)
         {
             vars.io.UploadRatesSheet();
+
+            //REMOVE COMMENT FOR DEBUG
+            vars.PrintCostDictionaries();
         }
         #endregion
 
@@ -354,32 +648,7 @@ namespace BusAllocatorApp
 
         private void uploadDemandButton_Click(object sender, EventArgs e)
         {
-            /**
-            vars.io.UploadTotalDemandSheet();
-
-            if (!string.IsNullOrEmpty(vars.totalDemandFilePath))
-            {
-                // Process the total demand spreadsheet
-                vars.ProcessTotalDemandSpreadsheet();
-
-                // Check if the total demands data was filled successfully
-                if (vars.totalDemands.IsDataFilled)
-                {
-                    settings.SetDemandModeToComplete();
-                    MessageBox.Show("Demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    UpdateDataGrid();
-                }
-                else
-                {
-                    MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-            }
-            else
-            {
-                MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            **/
-            // Determine the current demand mode
+            // Determine the current demand mode: 1 = individual departments mode, 2 = total demand mode
             int demandMode = vars.GetDemandMode();
 
             // Total Demand Mode
@@ -389,76 +658,109 @@ namespace BusAllocatorApp
 
                 if (!string.IsNullOrEmpty(vars.totalDemandFilePath))
                 {
-                    // Process the total demand spreadsheet
-                    vars.ProcessTotalDemandSpreadsheet();
+                    try
+                    {
+                        // Process the total demand spreadsheet
+                        vars.ProcessTotalDemandSpreadsheet();
 
-                    // Check if the total demands data was filled successfully
-                    if (vars.totalDemands.IsDataFilled)
-                    {
-                        settings.SetDemandModeToComplete();
-                        MessageBox.Show("Demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        UpdateDataGrid();
+                        if (vars.totalDemands != null)
+                        {
+                            // Check if the total demands data was filled successfully
+                            if (vars.totalDemands.IsDataFilled)
+                            {
+                                vars.SetDemandModeToComplete();
+                                WriteLine("Demand data was successfully filled!");
+                                UpdateDataGrid();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("An error occurred: Demand data could not be processed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        MessageBox.Show("Demand data could not be completely filled. Please check for any empty fields in the Excel file.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        // Handle the specific exception thrown by ProcessTotalDemandSpreadsheet
+                        MessageBox.Show($"An error occurred while processing the spreadsheet: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-                else
-                {
-                    MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                else MessageBox.Show("No file selected. Please upload a valid demand sheet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             // Individual Department Mode
             else if (demandMode == 1)
             {
-                
                 // Upload department spreadsheet(s)
                 List<string> selectedFilePaths = vars.io.UploadIndivDeptSpreadsheet();
 
                 // Check if any files were selected
                 if (selectedFilePaths != null && selectedFilePaths.Any())
                 {
-                    //bool allDataFilled = true;
-
                     foreach (string filePath in selectedFilePaths)
                     {
                         // Process each file immediately
-                        bool isDataFilled = vars.ProcessIndivDeptSpreadsheet(filePath,true);
+                        bool isDataFilled = vars.ProcessIndivDeptSpreadsheet(filePath, true);
 
-                        
-                        if (isDataFilled)
-                        {
-                            MessageBox.Show($"Demand data was successfully filled for file: {Path.GetFileName(filePath)}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                            //Disabled because grid should be updated only when all demands are set or when checkbox in settings is checked
-                            //UpdateDataGrid(); // Update the grid after each successful upload
-                        }
+                        if (isDataFilled) WriteLine($"Demand data was successfully filled for file: {Path.GetFileName(filePath)}");
                         else
                         {
-                            //allDataFilled = false;
-                            MessageBox.Show($"Demand data could not be completely filled for file: {Path.GetFileName(filePath)}. Please check for any empty fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            string fileDemandErrorMsg = $"Demand data could not be completely filled for file: {Path.GetFileName(filePath)}. Please check for any empty fields.";
+                            WriteLine(fileDemandErrorMsg);
+                            MessageBox.Show(fileDemandErrorMsg, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
 
-                    /**
-                    if (allDataFilled)
+                    //////////FILE PROCESSING DONE HERE
+
+
+                    // After processing all files
+                    int totalDepartments = vars.deptsAndDemands.Count;
+                    int filledDepartments = vars.deptsAndDemands.Count(dept => dept.IsDataFilled);
+
+                    //if incomplete demands checkbox is enabled in settings AND there is at least 1 filled department
+                    if (vars.canAllocateWithIncompleteDepts)
                     {
-                        settings.SetDemandModeToComplete();
-                    }**/
-                        
-                }
-                else //no files selected
-                {
-                    MessageBox.Show("No files selected. Please upload valid department demand sheets.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else // Handle unexpected demand modes
-            {
-                MessageBox.Show("Unknown demand mode selected. Please contact support.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                        if (filledDepartments > 0)
+                        {
+                            // Some departments have data filled, and allocations can proceed with incomplete departments
+                            vars.SetDemandModeToComplete();
 
+                            string incompleteDeptsModeIsCompletedMsg = $"Demand data was successfully filled for {filledDepartments} out of {totalDepartments} departments.";
+                            MessageBox.Show(incompleteDeptsModeIsCompletedMsg, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            WriteLine(incompleteDeptsModeIsCompletedMsg);
 
+                            UpdateDataGrid();
+                        }
+                        else
+                        {
+                            WriteLine("No departments have been completed yet.");
+                            vars.SetDemandModeToIncomplete(vars.GetDemandModeObject());
+                        }
+                    }
+                    //If incomplete demands checkbox is disabled
+                    else
+                    {
+                        //all departments have data filled
+                        if (filledDepartments == totalDepartments)
+                        {
+                            vars.SetDemandModeToComplete();
+                            MessageBox.Show("All demand data was successfully filled!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            UpdateDataGrid();
+                        }
+                        else
+                        {
+                            // Not enough data to make allocations
+                            WriteLine($"Not all departments' demands are completed yet. Keep uploading department spreadsheets or allocate more manually.");
+                            vars.SetDemandModeToIncomplete(vars.GetDemandModeObject());
+                        }
+                    }
+                }
+                else MessageBox.Show("No files selected. Please upload valid department demand sheets.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else MessageBox.Show("Unknown demand mode selected. Please contact support.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             //vars.OutputDemandsToDebugConsole();
         }
@@ -467,7 +769,7 @@ namespace BusAllocatorApp
         #region Settings Button
         private void settingsButton_Click(object sender, EventArgs e)
         {
-            SettingsForm settingsForm = new SettingsForm(settings, this);
+            SettingsForm settingsForm = new SettingsForm(settings, this, vars);
 
             settingsForm.ShowDialog();
         }
@@ -476,8 +778,13 @@ namespace BusAllocatorApp
         #region Clear Demand Data Button
         private void clearDemandDataButton_Click(object sender, EventArgs e)
         {
-            settings.ClearDemandData();
+            vars.ClearDemandData();
         }
         #endregion
+
+        private void generateAllocationsButton_Click(object sender, EventArgs e)
+        {
+            BusAllocator allocator = new BusAllocator(vars, vars.GetDemandMode());
+        }
     }
 }

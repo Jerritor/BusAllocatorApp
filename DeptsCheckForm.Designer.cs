@@ -86,6 +86,7 @@
             Name = "DeptsCheckForm";
             Text = "Departments Check";
             FormClosing += DeptsCheckForm_FormClosing;
+            FormClosed += DeptsCheckForm_FormClosed;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             ResumeLayout(false);

@@ -164,8 +164,7 @@ namespace BusAllocatorApp
                                     MessageBoxIcon.Error);
                 }
             }
-
-            if (Directory.Exists(dataFolder))
+            else //if (Directory.Exists(dataFolder))
             {
                 bool isEmpty = Directory.GetFiles(dataFolder).Length == 0 &&
                                Directory.GetDirectories(dataFolder).Length == 0;
@@ -213,23 +212,221 @@ namespace BusAllocatorApp
         #region FILE UPLOADING
         public void UploadRatesSheet()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Excel Files|*.xlsx;*.xls";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Excel Files|*.xlsx;*.xls"
+            };
+
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 vars.ratesPath = openFileDialog.FileName;
                 SetConfigOption("rate_path", vars.ratesPath);
-                mainform.busRateCheckBox.Checked = true;
 
-                //mainform.WriteLine("Rates sheet uploaded succesfully! " + vars.ratesPath);
+                try
+                {
+                    // Open the Excel file as a FileStream
+                    using (var stream = File.Open(vars.ratesPath, FileMode.Open, FileAccess.Read))
+                    {
+                        // Create an ExcelDataReader
+                        using (var reader = ExcelReaderFactory.CreateReader(stream))
+                        {
+                            // AsDataSet configuration to use first row as column names
+                            var conf = new ExcelDataSetConfiguration
+                            {
+                                ConfigureDataTable = (_) => new ExcelDataTableConfiguration
+                                {
+                                    UseHeaderRow = true
+                                }
+                            };
 
-                
+                            // Read the Excel file into a DataSet
+                            var result = reader.AsDataSet(conf);
 
-                // Logic to handle the file upload
-                //MessageBox.Show("Rates sheet uploaded successfully!");
-                // Proceed with loading rates
+                            // Check if there is at least one worksheet
+                            if (result.Tables.Count == 0)
+                            {
+                                MessageBox.Show("The Excel file does not contain any worksheets.", "Empty Workbook", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                vars.DisableBusRateCheckBox();
+                                return;
+                            }
+
+                            // Get the first worksheet
+                            var dataTable = result.Tables[0];
+
+                            // Initialize dictionaries
+                            vars.costSmallBus = new Dictionary<string, double>();
+                            vars.costLargeBus = new Dictionary<string, double>();
+                            vars.costSmallHybridRoute = new Dictionary<(string, string), double>();
+                            vars.costLargeHybridRoute = new Dictionary<(string, string), double>();
+
+                            // Identify all 'ROUTE' and 'TOTAL' columns
+                            List<int> routeColumns = new List<int>();
+                            List<int> totalColumns = new List<int>();
+
+                            // Collect all 'ROUTE' and 'TOTAL' columns
+                            for (int i = 0; i < dataTable.Columns.Count; i++)
+                            {
+                                string header = dataTable.Columns[i].ColumnName.Trim().ToUpperInvariant();
+                                if (header.StartsWith("ROUTE"))
+                                {
+                                    routeColumns.Add(i);
+                                }
+                                else if (header.StartsWith("TOTAL"))
+                                {
+                                    totalColumns.Add(i);
+                                }
+                            }
+
+                            // Validate that the number of 'ROUTE' and 'TOTAL' columns match
+                            if (routeColumns.Count != totalColumns.Count || routeColumns.Count == 0)
+                            {
+                                MessageBox.Show("The rates sheet must contain an equal number of 'ROUTE' and 'TOTAL' columns, with at least one pair.", "Invalid Columns", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                vars.DisableBusRateCheckBox();
+                                return;
+                            }
+
+                            // Iterate through each row in the DataTable
+                            foreach (DataRow row in dataTable.Rows)
+                            {
+                                for (int pairIndex = 0; pairIndex < routeColumns.Count; pairIndex++)
+                                {
+                                    int routeCol = routeColumns[pairIndex];
+                                    int totalCol = totalColumns[pairIndex];
+
+                                    // Read and trim the ROUTE value
+                                    string routeCellValue = row[routeCol]?.ToString().Trim();
+
+                                    // Skip empty or null ROUTE entries
+                                    if (string.IsNullOrEmpty(routeCellValue))
+                                        continue;
+
+                                    // Read and trim the TOTAL value
+                                    string totalCellValue = row[totalCol]?.ToString().Trim();
+
+                                    // Skip if the TOTAL value is empty, meaning no cost for this bus size on this route
+                                    if (string.IsNullOrEmpty(totalCellValue))
+                                    {
+                                        vars.mainForm.WriteLine($"No cost provided for route '{routeCellValue}' in row {dataTable.Rows.IndexOf(row) + 2}, skipping this entry for this size of bus.");
+                                        continue;
+                                    }
+
+                                    // Parse the TOTAL value
+                                    if (!double.TryParse(totalCellValue, out double totalCost))
+                                    {
+                                        MessageBox.Show($"Invalid bus cost in row {dataTable.Rows.IndexOf(row) + 2} for route '{routeCellValue}'. Please ensure all costs are numerical.", "Invalid Data", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        vars.DisableBusRateCheckBox();
+                                        return;
+                                    }
+
+                                    string route = routeCellValue.ToUpperInvariant();
+
+                                    // Check if it's a hybrid route by looking for "VIA"
+                                    if (route.Contains("VIA", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var routeParts = route.Split(new string[] { " VIA " }, StringSplitOptions.None);
+                                        if (routeParts.Length == 2)
+                                        {
+                                            string route1 = routeParts[0].Trim().ToUpperInvariant();
+                                            string route2 = routeParts[1].Trim().ToUpperInvariant();
+                                            var routeTuple = (route1, route2);
+
+                                            // Check for reversed hybrid routes
+                                            var reversedRouteTuple = (route2, route1);
+
+                                            // Check if this route or its reverse exists in hybrid_routes
+                                            if (vars.hybrid_routes.Any(t => (t.Item1 == routeTuple.Item1 && t.Item2 == routeTuple.Item2) || (t.Item1 == reversedRouteTuple.Item1 && t.Item2 == reversedRouteTuple.Item2)))
+                                            {
+                                                // Add to hybrid route dictionaries
+                                                if (pairIndex % 2 == 0)
+                                                {
+                                                    // Assume this is a large bus if pairIndex is even
+                                                    if (!vars.costLargeHybridRoute.ContainsKey(routeTuple))
+                                                        vars.costLargeHybridRoute.Add(routeTuple, totalCost);
+                                                    else
+                                                        vars.costLargeHybridRoute[routeTuple] = totalCost;
+                                                }
+                                                else
+                                                {
+                                                    // Otherwise, assume it's a small bus
+                                                    if (!vars.costSmallHybridRoute.ContainsKey(routeTuple))
+                                                        vars.costSmallHybridRoute.Add(routeTuple, totalCost);
+                                                    else
+                                                        vars.costSmallHybridRoute[routeTuple] = totalCost;
+                                                }
+
+                                                vars.mainForm.WriteLine($"Added/Updated Hybrid Route: ({route1}, {route2}) with cost {totalCost}.");
+                                            }
+                                            else
+                                            {
+                                                vars.mainForm.WriteLine($"Skipped unrecognized hybrid route: ({route1}, {route2}).");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show($"Invalid hybrid route format in row {dataTable.Rows.IndexOf(row) + 2}: '{route}'. Expected format 'ROUTE1 VIA ROUTE2'.", "Invalid Route Format", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                            vars.DisableBusRateCheckBox();
+                                            return;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Solo route
+                                        string routeName = route.ToUpperInvariant();
+
+                                        if (vars.solo_routes.Contains(routeName))
+                                        {
+                                            // Add to solo route dictionaries based on bus size (large or small)
+                                            if (pairIndex % 2 == 0)
+                                            {
+                                                // Assume this is for the large bus
+                                                if (!vars.costLargeBus.ContainsKey(routeName))
+                                                    vars.costLargeBus.Add(routeName, totalCost);
+                                                else
+                                                    vars.costLargeBus[routeName] = totalCost;
+
+                                                vars.mainForm.WriteLine($"Added/Updated Large Solo Route: {routeName} with cost {totalCost}.");
+                                            }
+                                            else
+                                            {
+                                                // Assume this is for the small bus
+                                                if (!vars.costSmallBus.ContainsKey(routeName))
+                                                    vars.costSmallBus.Add(routeName, totalCost);
+                                                else
+                                                    vars.costSmallBus[routeName] = totalCost;
+
+                                                vars.mainForm.WriteLine($"Added/Updated Small Solo Route: {routeName} with cost {totalCost}.");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            vars.mainForm.WriteLine($"Skipped unrecognized solo route: {routeName}.");
+                                        }
+                                    }
+                                }
+                            }
+
+                            // After successfully reading all data, enable the bus rate checkbox
+                            vars.EnableBusRateCheckBox();
+                            vars.PrintCostDictionaries(); // Print debug info
+                            vars.mainForm.WriteLine("Rates sheet uploaded successfully!");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occurred while uploading the rates sheet: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    vars.DisableBusRateCheckBox();
+                }
             }
+            else
+            {
+                vars.DisableBusRateCheckBox();
+            }
+
+            // Check and update the completion state
+            //vars.CheckSetModeCompletionState(false);
         }
+
 
         public void UploadTotalDemandSheet()
         {
@@ -357,18 +554,6 @@ namespace BusAllocatorApp
 
             return timeSets;
         }
-        /**
-        public List<Dictionary<string, object>> LoadTimeSets()
-        {
-            string timeSetsFilePath = GetPathInDataFolder(timeSetsFileName);
-            if (!File.Exists(timeSetsFilePath))
-            {
-                return new List<Dictionary<string, object>>();
-            }
-
-            string json = File.ReadAllText(timeSetsFilePath);
-            return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(json);
-        }**/
 
         //Load Departments
         public List<string> LoadDeptNames()
